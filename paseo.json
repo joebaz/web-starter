@@ -17,6 +17,9 @@
   "metadataGeneration": {
     "branchName": {
       "instructions": "Format: <type>/<short-kebab-case-description>.\n\nChoose exactly one type:\n- \"content\" for Japanese site copy, images, events, page content, and site links.\n- \"docs\" for repository documentation and instructions only, such as README.md, CONTRIBUTING.md, AGENTS.md, CLAUDE.md, and similar non-site documentation.\n- \"fix\" for broken or incorrect site behavior, layout, accessibility, or functionality.\n- \"feature\" for one cohesive new or expanded capability.\n\nUse a concise, specific, lowercase kebab-case description. Do not use any other prefix."
+    },
+    "pullRequest": {
+      "instructions": "Include \"Closes #\" and the GitHub Issue # at the start of the PR body. Describe the changes made in plain English following the statement. "
     }
   }
 }
