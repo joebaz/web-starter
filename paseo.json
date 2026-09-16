@@ -1,0 +1,22 @@
+{
+  "worktree": {
+    "setup": "npm ci"
+  },
+  "scripts": {
+    "Dev Server": {
+      "type": "service",
+      "command": "npm run dev"
+    },
+    "Playwright Test": {
+      "command": "npm test"
+    },
+    "Verify Production": {
+      "command": "npm run build"
+    }
+  },
+  "metadataGeneration": {
+    "branchName": {
+      "instructions": "Format: <type>/<short-kebab-case-description>.\n\nChoose exactly one type:\n- \"content\" for editorial or site-content changes, such as Japanese copy, images, event information, page content, or links.\n- \"fix\" for a correction to existing behavior, layout, accessibility, or functionality that is broken or incorrect.\n- \"feature\" for a cohesive implementation that adds new or materially expanded website functionality.\n\nUse a concise, specific, lowercase kebab-case description. Do not use any other prefix."
+    }
+  }
+}

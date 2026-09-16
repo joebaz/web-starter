@@ -8,8 +8,7 @@ A private, code-owned starter for small static websites.
 - npm
 - Playwright browsers
 
-This repository includes `.nvmrc`. With the zsh/nvm auto-switch hook configured,
-entering this directory selects the declared Node version automatically.
+This repository includes `.nvmrc`. With the zsh/nvm auto-switch hook configured, entering this directory selects the declared Node version automatically.
 
 ## Start a new project
 
@@ -24,12 +23,9 @@ npm run dev        # Starts local Astro development
 npm test           # Runs Chromium, Firefox, and WebKit smoke tests
 ```
 
-`npm install` reads `package.json` and `package-lock.json` and installs the complete
-dependency tree. Do not install dependencies individually unless you intentionally add
-a new package.
+`npm install` reads `package.json` and `package-lock.json` and installs the complete dependency tree. Do not install dependencies individually unless you intentionally add a new package.
 
-Playwright starts Astro automatically when you run `npm test`; you do not need to keep
-`npm run dev` running for the test command.
+Playwright starts Astro automatically when you run `npm test`; you do not need to keep `npm run dev` running for the test command.
 
 ## Commands
 
@@ -42,6 +38,31 @@ Playwright starts Astro automatically when you run `npm test`; you do not need t
 | `npm run preview` | `package.json` | Astro | Preview the completed `dist/` build locally |
 | `npx playwright install` | Playwright CLI | Playwright | Install browser binaries locally when they are missing |
 
+## Paseo
+
+This repository supports [Paseo](https://paseo.sh/) for isolated, agent-assisted work. `paseo.json` is committed project configuration. Paseo runs `npm ci` through the configured worktree setup hook when it creates a worktree.
+
+Configured Paseo scripts:
+
+| Script | Command | Purpose |
+|---|---|---|
+| Dev Server | `npm run dev` | Start Astro for local visual review |
+| Playwright Test | `npm test` | Run browser smoke tests |
+| Verify Production | `npm run build` | Build the deployable site |
+
+Worktree branch names follow this format:
+
+```text
+<type>/<short-kebab-case-description>
+```
+
+Types:
+- `content` for editorial/site-content changes
+- `fix` for corrections, and
+- `feature` for cohesive new or expanded functionality.
+
+Paseo’s local configuration, worktrees, logs, and credentials live in the User/Home folder outside the repo at `~/.paseo/`.
+
 ## Testing
 
 Run all browser smoke tests:
@@ -50,13 +71,9 @@ Run all browser smoke tests:
 npm test
 ```
 
-The command removes stale Playwright output, starts Astro automatically, runs the
-configured browser tests, and removes output after a successful run.
+The command removes stale Playwright output, starts Astro automatically, runs the configured browser tests, and removes output after a successful run.
 
-If a test fails, the final cleanup does not run. Fresh failure evidence remains in
-`test-results/` for diagnosis. Failed tests also capture a screenshot. Routine
-successful test runs do not create an HTML report. Generated Playwright output is
-ignored by Git.
+If a test fails, the final cleanup does not run. Fresh failure evidence remains in `test-results/` for diagnosis. Failed tests also capture a screenshot. Routine successful test runs do not create an HTML report. Generated Playwright output is ignored by Git.
 
 Browser coverage:
 
@@ -78,6 +95,7 @@ Browser coverage:
 | `eslint.config.mjs` | ESLint configuration |
 | `package.json` | Dependency manifest, Node compatibility range, and project command definitions |
 | `package-lock.json` | Locked dependency versions for repeatable installs |
+| `paseo.json` | Paseo worktree setup, scripts, and branch-name generation guidance |
 | `playwright.config.ts` | Browser projects, server startup, retry, trace, screenshot, and artifact settings |
 | `prettier.config.mjs` | Prettier formatting configuration |
 | `public/` | Static files copied to the built site unchanged |
@@ -105,5 +123,4 @@ The expected deployment target is Cloudflare Pages.
 npm run build
 ```
 
-Astro produces the deployable static site in `dist/`. Configure the deployment platform
-to publish `dist/`, never the repository root.
+Astro produces the deployable static site in `dist/`. Configure the deployment platform to publish `dist/`, never the repository root.
