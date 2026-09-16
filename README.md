@@ -57,9 +57,10 @@ Worktree branch names follow this format:
 ```
 
 Types:
-- `content` for editorial/site-content changes
-- `fix` for corrections, and
-- `feature` for cohesive new or expanded functionality.
+- `content` for Japanese site copy, images, events, page content, and site links
+- `docs` for repository documentation and instructions only, such as `README.md`, `CONTRIBUTING.md`, `AGENTS.md`, `CLAUDE.md`, and similar non-site documentation
+- `fix` for broken or incorrect site behavior, layout, accessibility, or functionality
+- `feature` for one cohesive new or expanded capability
 
 Paseo’s local configuration, worktrees, logs, and credentials live in the User/Home folder outside the repo at `~/.paseo/`.
 

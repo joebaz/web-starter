@@ -16,7 +16,7 @@
   },
   "metadataGeneration": {
     "branchName": {
-      "instructions": "Format: <type>/<short-kebab-case-description>.\n\nChoose exactly one type:\n- \"content\" for editorial or site-content changes, such as Japanese copy, images, event information, page content, or links.\n- \"fix\" for a correction to existing behavior, layout, accessibility, or functionality that is broken or incorrect.\n- \"feature\" for a cohesive implementation that adds new or materially expanded website functionality.\n\nUse a concise, specific, lowercase kebab-case description. Do not use any other prefix."
+      "instructions": "Format: <type>/<short-kebab-case-description>.\n\nChoose exactly one type:\n- \"content\" for Japanese site copy, images, events, page content, and site links.\n- \"docs\" for repository documentation and instructions only, such as README.md, CONTRIBUTING.md, AGENTS.md, CLAUDE.md, and similar non-site documentation.\n- \"fix\" for broken or incorrect site behavior, layout, accessibility, or functionality.\n- \"feature\" for one cohesive new or expanded capability.\n\nUse a concise, specific, lowercase kebab-case description. Do not use any other prefix."
     }
   }
 }
