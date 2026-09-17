@@ -56,12 +56,7 @@ Worktree branch names follow this format:
 <type>/<short-kebab-case-description>
 ```
 
-Types:
-
-- `content` for Japanese site copy, images, events, page content, and site links
-- `docs` for repository documentation and instructions only, such as `README.md`, `CONTRIBUTING.md`, `AGENTS.md`, `CLAUDE.md`, and similar non-site documentation
-- `fix` for broken or incorrect site behavior, layout, accessibility, or functionality
-- `feature` for one cohesive new or expanded capability
+Four branch types are available. See [CONTRIBUTING.md](CONTRIBUTING.md) for the complete issue, branch, and validation workflow.
 
 Paseo’s local configuration, worktrees, logs, and credentials live in the User/Home folder outside the repo at `~/.paseo/`.
 
