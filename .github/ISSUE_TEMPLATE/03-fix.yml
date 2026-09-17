@@ -51,14 +51,18 @@ body:
     attributes:
       label: Steps or example
       description: If available, provide minimal reproduction steps or a concrete example. Note whether the issue is consistent or intermittent, and include browser, device, or assistive technology details only when relevant.
+      value: |
+        <!-- Add reproduction steps or a concrete example when available. -->
     validations:
       required: false
 
-  - type: upload
+  - type: textarea
     id: supporting_files
     attributes:
       label: Supporting files
       description: Upload screenshots, recordings, or other files that help explain the problem. Before uploading, redact private personal or customer information unless it is approved for public website publication.
+      value: |
+        <!-- Attach supporting files here. -->
     validations:
       required: false
 
@@ -67,5 +71,7 @@ body:
     attributes:
       label: What must stay the same?
       description: List any related behavior, layout, or content that should not change.
+      value: |
+        <!-- Add anything that must remain unchanged. -->
     validations:
       required: false
