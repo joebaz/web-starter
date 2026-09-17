@@ -49,14 +49,18 @@ body:
     attributes:
       label: Content and references
       description: Provide any text, public links, or examples that can help with this change. Indicate whether each item is final content or reference material.
+      value: |
+        <!-- Add content, references, or examples when available. -->
     validations:
       required: false
 
-  - type: upload
+  - type: textarea
     id: supporting_files
     attributes:
       label: Supporting files
       description: Upload any images or PDFs that can help with this change. Before uploading, redact private personal or customer information unless it is approved for public website publication. Indicate in the field above whether each file is final content or reference material.
+      value: |
+        <!-- Attach supporting files here. -->
     validations:
       required: false
 
@@ -65,5 +69,7 @@ body:
     attributes:
       label: What must stay the same?
       description: List anything that should not change, such as existing wording, images, links, layout, or behavior.
+      value: |
+        <!-- Add anything that must remain unchanged. -->
     validations:
       required: false
