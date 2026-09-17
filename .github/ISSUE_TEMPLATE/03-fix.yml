@@ -1,4 +1,4 @@
-name: Fix
+name: Fix Issue
 description: Report unintended site behavior or an uncovered design gap.
 title: "[Fix]: "
 labels:
