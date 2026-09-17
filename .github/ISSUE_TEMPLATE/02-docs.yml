@@ -44,14 +44,18 @@ body:
     attributes:
       label: Source material and examples
       description: Provide any public links, freeform context, or examples that can help create or update the document.
+      value: |
+        <!-- Add source material or examples when available. -->
     validations:
       required: false
 
-  - type: upload
+  - type: textarea
     id: supporting_files
     attributes:
       label: Supporting files
       description: Upload any documents or images that can help with this change. Before uploading, redact private personal or customer information.
+      value: |
+        <!-- Attach supporting files here. -->
     validations:
       required: false
 
@@ -60,5 +64,7 @@ body:
     attributes:
       label: Out of scope for this document
       description: List anything this document should not cover.
+      value: |
+        <!-- Add anything this document should not cover. -->
     validations:
       required: false
