@@ -1,0 +1,69 @@
+name: Content change
+description: Request one focused change to site content, structure, shared data, or metadata.
+title: "[Content]: "
+labels:
+  - content
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Describe one focused or cohesive outcome. A change may affect multiple pages or shared components.
+
+        Do not include secrets, credentials, `.env` values, or local paths.
+
+  - type: dropdown
+    id: request_type
+    attributes:
+      label: Primary request type
+      description: Choose the best match. Select "Not sure" if you would like help classifying the request.
+      options:
+        - Update structured content
+        - Edit existing pages
+        - Update shared site data
+        - Add a page
+        - Delete a page
+        - Change navigation or site structure
+        - Update site metadata
+        - Not sure
+    validations:
+      required: true
+
+  - type: textarea
+    id: desired_outcome
+    attributes:
+      label: Desired outcome
+      description: What would you like visitors to see, understand, or be able to find after this change?
+    validations:
+      required: true
+
+  - type: textarea
+    id: success
+    attributes:
+      label: What does success look like?
+      description: Describe the observable results that would make this change complete. You do not need to provide technical implementation details.
+    validations:
+      required: true
+
+  - type: textarea
+    id: content_and_references
+    attributes:
+      label: Content and references
+      description: Provide any text, public links, or examples that can help with this change. Indicate whether each item is final content or reference material.
+    validations:
+      required: false
+
+  - type: upload
+    id: supporting_files
+    attributes:
+      label: Supporting files
+      description: Upload any images or PDFs that can help with this change. Indicate in the field above whether each file is final content or reference material.
+    validations:
+      required: false
+
+  - type: textarea
+    id: unchanged
+    attributes:
+      label: What must stay the same?
+      description: List anything that should not change, such as existing wording, images, links, layout, or behavior.
+    validations:
+      required: false
