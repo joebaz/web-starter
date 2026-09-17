@@ -6,6 +6,17 @@ This guide describes the workflow for contributing to this repository.
 
 Use a GitHub Issue to define the work before making a change. Keep each change focused on one issue or cohesive outcome.
 
+## Choose an issue type
+
+Select the GitHub Issue form that best matches the work:
+
+- **Content:** Changes to user-facing content, images, shared data, metadata, navigation, or page structure.
+- **Documentation:** Repository documentation or instructions only. Choose the primary document type: **SOP** for repeatable instructions, **Reference** for facts and conventions, **Design** for a proposed-work specification, or **Other** for another documentation request.
+- **Fix:** Unintended behavior, layout, accessibility, or functionality, including an uncovered design gap in an existing capability.
+- **Feature:** One cohesive new or expanded capability.
+
+Use the Documentation form only for repository documentation and instructions. Do not use it for changes to user-facing content, behavior, tests, builds, deployment, or external services.
+
 ## Choose a branch type
 
 Create a branch using this format:
@@ -16,14 +27,14 @@ Create a branch using this format:
 
 Choose exactly one of these types:
 
-- `content`: Japanese site copy, images, events, page content, and site links.
-- `docs`: Repository documentation and instructions only, such as `README.md`, `CONTRIBUTING.md`, `AGENTS.md`, `CLAUDE.md`, and similar non-site documentation.
-- `fix`: Broken or incorrect site behavior, layout, accessibility, or functionality.
+- `content`: User-facing content, images, shared data, metadata, navigation, or page structure.
+- `docs`: Repository documentation and instructions only, such as `README.md`, `CONTRIBUTING.md`, `AGENTS.md`, `CLAUDE.md`, and similar documentation.
+- `fix`: Broken or incorrect behavior, layout, accessibility, or functionality, including an uncovered design gap in an existing capability.
 - `feature`: One cohesive new or expanded capability.
 
 Use a concise, specific, lowercase kebab-case description. Do not use any other prefix.
 
-Do not use `docs` if the change affects site content, site behavior, test behavior, build behavior, deployment, or external services.
+Do not use `docs` if the change affects user-facing content, behavior, tests, builds, deployment, or external services.
 
 ## Validate your change
 
@@ -36,7 +47,7 @@ npm run format:check
 npm test
 ```
 
-Also review Japanese copy, links, meaningful alt text, and affected pages at relevant responsive sizes.
+Also review content for accuracy, links, meaningful alt text, and affected pages at relevant responsive sizes.
 
 ### `docs`
 
