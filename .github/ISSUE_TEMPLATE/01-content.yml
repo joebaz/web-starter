@@ -9,7 +9,7 @@ body:
       value: |
         Describe one focused or cohesive outcome. A change may affect multiple pages or shared components.
 
-        Do not include secrets, credentials, `.env` values, or local paths.
+        Do not include secrets, credentials, `.env` values, local paths, or private personal or customer information. Only provide personal information that is approved for public website publication.
 
   - type: dropdown
     id: request_type
@@ -56,7 +56,7 @@ body:
     id: supporting_files
     attributes:
       label: Supporting files
-      description: Upload any images or PDFs that can help with this change. Indicate in the field above whether each file is final content or reference material.
+      description: Upload any images or PDFs that can help with this change. Before uploading, redact private personal or customer information unless it is approved for public website publication. Indicate in the field above whether each file is final content or reference material.
     validations:
       required: false
 
