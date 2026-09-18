@@ -78,6 +78,10 @@ Browser coverage:
 - Firefox
 - WebKit
 
+## Launch checklist
+
+The canonical [site launch checklist](https://github.com/joebaz/web-starter/wiki) lives in this template's GitHub Wiki. After creating a repository from this template, initialize that repository's Wiki and copy the template Wiki into it before tracking project-specific launch work and operating notes.
+
 ## Project structure
 
 | Path                               | Purpose                                                                                             |
