@@ -1,4 +1,4 @@
-Closes #<issue-number>
+Closes #<issue-or-sub-issue-number>
 
 ## Summary
 
@@ -6,7 +6,7 @@ Closes #<issue-number>
 
 ## Scope
 
-<!-- What files were added, changed or deleted, and what is/was the purpose of those files? -->
+<!-- What files were added, changed or deleted, and what is/was the purpose of those files? Include in a markdown table with the following columns: filename|file purpose|plain english update -->
 
 ## Validation
 
