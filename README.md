@@ -80,7 +80,7 @@ Browser coverage:
 
 ## Launch checklist
 
-[LAUNCH-CHECKLIST.md](LAUNCH-CHECKLIST.md) is the version-controlled checklist for external launch and migration work.
+The canonical [site launch checklist](https://github.com/joebaz/web-starter/wiki) lives in this template's GitHub Wiki. After creating a repository from this template, initialize that repository's Wiki and copy the template Wiki into it before tracking project-specific launch work and operating notes.
 
 ## Project structure
 
@@ -91,7 +91,6 @@ Browser coverage:
 | `.nvmrc`                           | Selects the current Node 22 release for this project                                                |
 | `AGENTS.md`                        | General instructions for coding agents working in this repository                                   |
 | `CLAUDE.md`                        | Claude Code-specific repository guidance                                                            |
-| `LAUNCH-CHECKLIST.md`              | External launch, redesign, and migration checklist                                                  |
 | `README.md`                        | Human-facing project reference                                                                      |
 | `astro.config.mjs`                 | Astro configuration                                                                                 |
 | `eslint.config.mjs`                | ESLint configuration                                                                                |
