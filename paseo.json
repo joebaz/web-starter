@@ -10,7 +10,7 @@
     "Playwright Test": {
       "command": "npm test"
     },
-    "Verify Production": {
+    "Build Site": {
       "command": "npm run build"
     }
   },
