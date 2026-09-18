@@ -40,15 +40,17 @@ Playwright starts Astro automatically when you run `npm test`; you do not need t
 
 ## Paseo
 
-This repository supports [Paseo](https://paseo.sh/) for isolated, agent-assisted work. `paseo.json` is committed project configuration. Paseo runs `npm ci` through the configured worktree setup hook when it creates a worktree.
+This repository supports [Paseo](https://paseo.sh/) for isolated, agent-assisted work. [paseo.json](paseo.json) is committed project configuration for worktree setup, scripts, and branch-name generation.
+
+When Paseo creates a worktree, its configured setup hook runs `npm ci` to install dependencies from the lockfile. The manual new-project setup above uses `npm install`.
 
 Configured Paseo scripts:
 
-| Script            | Command         | Purpose                             |
-| ----------------- | --------------- | ----------------------------------- |
-| Dev Server        | `npm run dev`   | Start Astro for local visual review |
-| Playwright Test   | `npm test`      | Run browser smoke tests             |
-| Verify Production | `npm run build` | Build the deployable site           |
+| Script          | Type    | Command         | Purpose                             |
+| --------------- | ------- | --------------- | ----------------------------------- |
+| Dev Server      | Service | `npm run dev`   | Start Astro for local visual review |
+| Playwright Test | Command | `npm test`      | Run browser smoke tests             |
+| Build Site      | Command | `npm run build` | Build the deployable site           |
 
 Worktree branch names follow this format:
 
@@ -59,6 +61,10 @@ Worktree branch names follow this format:
 Four branch types are available. See [CONTRIBUTING.md](CONTRIBUTING.md) for the complete issue, branch, and validation workflow.
 
 Paseo’s local configuration, worktrees, logs, and credentials live in the User/Home folder outside the repo at `~/.paseo/`.
+
+## Pull requests
+
+PRs should always be created by the orchestrating agent using [.github/pull_request_template.md](.github/pull_request_template.md) as the template.
 
 ## Testing
 
@@ -86,6 +92,7 @@ The canonical [site launch checklist](https://github.com/joebaz/web-starter/wiki
 
 | Path                               | Purpose                                                                                             |
 | ---------------------------------- | --------------------------------------------------------------------------------------------------- |
+| `.github/pull_request_template.md` | PR closing Issue or Sub-Issue statement and Summary, Scope, and Validation guidance                 |
 | `.github/workflows/playwright.yml` | GitHub Actions workflow that runs tests for pushes and pull requests to `main`                      |
 | `.gitignore`                       | Prevents generated output, dependencies, environment files, and test artifacts from being committed |
 | `.nvmrc`                           | Selects the current Node 22 release for this project                                                |

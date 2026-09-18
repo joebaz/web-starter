@@ -17,9 +17,6 @@
   "metadataGeneration": {
     "branchName": {
       "instructions": "Format: <type>/<short-kebab-case-description>.\n\nChoose exactly one type:\n- \"content\" for user-facing content, images, shared data, metadata, navigation, or page structure.\n- \"docs\" for repository documentation and instructions only, such as README.md, CONTRIBUTING.md, AGENTS.md, CLAUDE.md, and similar documentation.\n- \"fix\" for broken or incorrect behavior, layout, accessibility, or functionality, including an uncovered design gap in an existing capability.\n- \"feature\" for one cohesive new or expanded capability.\n\nUse a concise, specific, lowercase kebab-case description. Do not use any other prefix."
-    },
-    "pullRequest": {
-      "instructions": "Start every PR body with \"Closes #<issue-number>\" (for example, \"Closes #5\") to automatically link it to the corresponding GitHub Issue. Describe the changes made in plain English after that statement."
     }
   }
 }
