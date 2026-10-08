@@ -1,134 +1,94 @@
 # Astro Web Starter
 
-A private, code-owned starter for small static websites.
+A private template for informational websites for small and medium-sized businesses, built with Astro, React, Tailwind CSS, and TypeScript. Each project establishes its content architecture and hosting; the starter currently builds a static site.
 
 ## Requirements
 
-- Node.js 22.12.0 or later, below 23
+- Node.js 22.22.3 or later, below 23, as declared in [package.json](package.json)
 - npm
 - Playwright browsers
 
-This repository includes `.nvmrc`. With the zsh/nvm auto-switch hook configured, entering this directory selects the declared Node version automatically.
+The repository's `.nvmrc` declares Node 22. A configured zsh/nvm auto-switch hook selects that major version when entering the directory; an older installed Node 22 release may still fall below the required 22.22.3 minimum. The repository's `.npmrc` enables `engine-strict`, so npm rejects Node versions outside the declared range.
 
-## Start a new project
-
-Create a new **private** GitHub repository from this template, clone it, then run:
-
-```sh
-git clone <new-private-repository-url>
-cd <new-project-directory>
-node --version     # Should show Node 22.x
-npm install        # Installs all project dependencies
-npm run dev        # Starts local Astro development
-npm test           # Runs Chromium, Firefox, and WebKit smoke tests
-```
-
-`npm install` reads `package.json` and `package-lock.json` and installs the complete dependency tree. Do not install dependencies individually unless you intentionally add a new package.
-
-Playwright starts Astro automatically when you run `npm test`; you do not need to keep `npm run dev` running for the test command.
+[CONTRIBUTING.md](CONTRIBUTING.md) describes local setup and the contribution workflow.
 
 ## Commands
 
-| Command                  | Manifest       | Tool       | Purpose                                                |
-| ------------------------ | -------------- | ---------- | ------------------------------------------------------ |
-| `npm install`            | `package.json` | npm        | Install all project dependencies locally               |
-| `npm run dev`            | `package.json` | Astro      | Start the local development server                     |
-| `npm test`               | `package.json` | Playwright | Run smoke tests in Chromium, Firefox, and WebKit       |
-| `npm run build`          | `package.json` | Astro      | Build the deployable static site into `dist/`          |
-| `npm run preview`        | `package.json` | Astro      | Preview the completed `dist/` build locally            |
-| `npx playwright install` | Playwright CLI | Playwright | Install browser binaries locally when they are missing |
+| Command                  | Purpose                                                      |
+| ------------------------ | ------------------------------------------------------------ |
+| `npm install`            | Installs project dependencies from the manifest and lockfile |
+| `npm run dev`            | Starts the local Astro development server                    |
+| `npm test`               | Runs browser smoke tests in Chromium, Firefox, and WebKit    |
+| `npm run build`          | Builds the static site into `dist/`                          |
+| `npm run preview`        | Previews the completed `dist/` build locally                 |
+| `npx playwright install` | Installs Playwright browser binaries                         |
+
+Command definitions and dependency versions are in [package.json](package.json).
 
 ## Paseo
 
-This repository supports [Paseo](https://paseo.sh/) for isolated, agent-assisted work. [paseo.json](paseo.json) is committed project configuration for worktree setup, scripts, and branch-name generation.
+This repository supports [Paseo](https://paseo.sh/) for isolated, agent-assisted work. [paseo.json](paseo.json) contains committed configuration for worktree setup, scripts, and branch-name generation.
 
-When Paseo creates a worktree, its configured setup hook runs `npm ci` to install dependencies from the lockfile. The manual new-project setup above uses `npm install`.
+The configured worktree setup hook runs `npm ci` to install dependencies from the lockfile.
 
-Configured Paseo scripts:
+| Script          | Type    | Command         | Purpose                              |
+| --------------- | ------- | --------------- | ------------------------------------ |
+| Dev Server      | Service | `npm run dev`   | Starts Astro for local visual review |
+| Playwright Test | Command | `npm test`      | Runs browser smoke tests             |
+| Build Site      | Command | `npm run build` | Builds the deployable site           |
 
-| Script          | Type    | Command         | Purpose                             |
-| --------------- | ------- | --------------- | ----------------------------------- |
-| Dev Server      | Service | `npm run dev`   | Start Astro for local visual review |
-| Playwright Test | Command | `npm test`      | Run browser smoke tests             |
-| Build Site      | Command | `npm run build` | Build the deployable site           |
+Paseo's local configuration, worktrees, logs, and credentials live outside the repository at `~/.paseo/`.
 
-Worktree branch names follow this format:
-
-```text
-<type>/<short-kebab-case-description>
-```
-
-Four branch types are available. See [CONTRIBUTING.md](CONTRIBUTING.md) for the complete issue, branch, and validation workflow.
-
-Paseo’s local configuration, worktrees, logs, and credentials live in the User/Home folder outside the repo at `~/.paseo/`.
-
-## Pull requests
-
-PRs should always be created by the orchestrating agent using [.github/pull_request_template.md](.github/pull_request_template.md) as the template.
+Paseo is optional. The website can be developed, tested, and built using standard Node.js and npm tooling, directly or through another coding agent or orchestrator. Deployment depends on the hosting provider selected for each project.
 
 ## Testing
 
-Run all browser smoke tests:
+`npm test` removes stale Playwright output, runs the configured browser tests, and removes output after a successful run. Playwright starts Astro when needed or reuses an existing server at its configured URL locally; reuse is disabled in CI.
 
-```sh
-npm test
-```
+If a test fails, the final cleanup does not run. Fresh failure evidence remains in `test-results/` for diagnosis, including a screenshot. Routine successful runs do not create an HTML report. Generated Playwright output is ignored by Git.
 
-The command removes stale Playwright output, starts Astro automatically, runs the configured browser tests, and removes output after a successful run.
-
-If a test fails, the final cleanup does not run. Fresh failure evidence remains in `test-results/` for diagnosis. Failed tests also capture a screenshot. Routine successful test runs do not create an HTML report. Generated Playwright output is ignored by Git.
-
-Browser coverage:
-
-- Chromium
-- Firefox
-- WebKit
+The smoke tests cover Chromium, Firefox, and WebKit.
 
 ## Launch checklist
 
-The canonical [site launch checklist](https://github.com/joebaz/web-starter/wiki) lives in this template's GitHub Wiki. After creating a repository from this template, initialize that repository's Wiki and copy the template Wiki into it before tracking project-specific launch work and operating notes.
+The human-facing [site launch checklist](https://github.com/joebaz/web-starter/wiki) covers project setup, project-specific choices, launch verification, and operating notes. Agent instructions and project-owned agent references live in the repository.
 
 ## Project structure
 
-| Path                               | Purpose                                                                                             |
-| ---------------------------------- | --------------------------------------------------------------------------------------------------- |
-| `.github/pull_request_template.md` | PR closing Issue or Sub-Issue statement and Summary, Scope, and Validation guidance                 |
-| `.github/workflows/playwright.yml` | GitHub Actions workflow that runs tests for pushes and pull requests to `main`                      |
-| `.gitignore`                       | Prevents generated output, dependencies, environment files, and test artifacts from being committed |
-| `.nvmrc`                           | Selects the current Node 22 release for this project                                                |
-| `AGENTS.md`                        | General instructions for coding agents working in this repository                                   |
-| `CLAUDE.md`                        | Claude Code-specific repository guidance                                                            |
-| `README.md`                        | Human-facing project reference                                                                      |
-| `astro.config.mjs`                 | Astro configuration                                                                                 |
-| `eslint.config.mjs`                | ESLint configuration                                                                                |
-| `package.json`                     | Dependency manifest, Node compatibility range, and project command definitions                      |
-| `package-lock.json`                | Locked dependency versions for repeatable installs                                                  |
-| `paseo.json`                       | Paseo worktree setup, scripts, and branch-name generation guidance                                  |
-| `playwright.config.ts`             | Browser projects, server startup, retry, trace, screenshot, and artifact settings                   |
-| `prettier.config.mjs`              | Prettier formatting configuration                                                                   |
-| `public/`                          | Static files copied to the built site unchanged                                                     |
-| `src/`                             | Site source code processed by Astro                                                                 |
-| `src/pages/`                       | File-based routes; `index.astro` provides the `/` homepage                                          |
-| `src/styles/`                      | Shared site styles; `global.css` loads Tailwind                                                     |
-| `tests/smoke/`                     | Browser smoke tests                                                                                 |
-| `tsconfig.json`                    | TypeScript configuration                                                                            |
-| `dist/`                            | Generated deployment output; never committed                                                        |
+| Path                               | Purpose                                                                              |
+| ---------------------------------- | ------------------------------------------------------------------------------------ |
+| `.github/ISSUE_TEMPLATE/`          | Forms for content, documentation, fix, and feature issues                            |
+| `.github/pull_request_template.md` | Pull request summary, scope, and validation fields                                   |
+| `.github/workflows/playwright.yml` | Browser smoke test CI                                                                |
+| `.gitignore`                       | Exclusions for generated output, dependencies, environment files, and test artifacts |
+| `.npmrc`                           | npm configuration enforcing the declared Node version range                          |
+| `.nvmrc`                           | Node major version selection                                                         |
+| `AGENTS.md`                        | Instructions directing agents to repository guidance                                 |
+| `CLAUDE.md`                        | Symlink to `AGENTS.md` for Claude Code                                               |
+| `CONTRIBUTING.md`                  | Local setup and contribution workflow                                                |
+| `README.md`                        | Human-facing repository overview                                                     |
+| `coding-standards.md`              | Implementation conventions scoped to the requested change                            |
+| `astro.config.mjs`                 | Astro configuration                                                                  |
+| `eslint.config.mjs`                | ESLint configuration                                                                 |
+| `package.json`                     | Dependencies, Node compatibility, and commands                                       |
+| `package-lock.json`                | Locked dependency versions                                                           |
+| `paseo.json`                       | Worktree setup, scripts, and branch-name generation                                  |
+| `playwright.config.ts`             | Browser projects, server startup, retries, and failure artifacts                     |
+| `prettier.config.mjs`              | Formatting configuration                                                             |
+| `public/`                          | Static files copied to the build unchanged                                           |
+| `src/`                             | Site source processed by Astro                                                       |
+| `src/pages/`                       | File-based routes; `index.astro` provides the homepage                               |
+| `src/styles/`                      | Shared styles; `global.css` loads Tailwind                                           |
+| `tests/smoke/`                     | Browser smoke tests                                                                  |
+| `tsconfig.json`                    | TypeScript configuration                                                             |
+| `dist/`                            | Generated deployment output, ignored by Git                                          |
 
 ## CI
 
 GitHub Actions runs `npm test` on pushes and pull requests targeting `main`.
 
-- Uses the Node version from `.nvmrc`
-- Stops a stalled job after 15 minutes
-- Uploads `test-results/` only after a failed run
-- Retains CI failure artifacts for 7 days
+The workflow uses the Node version from `.nvmrc`, stops stalled jobs after 15 minutes, and retains failure artifacts for seven days. CI currently runs browser smoke tests only; it does not run the full set of local validation commands documented in CONTRIBUTING.
 
 ## Deployment
 
-The expected deployment target is Cloudflare Pages.
-
-```sh
-npm run build
-```
-
-Astro produces the deployable static site in `dist/`. Configure the deployment platform to publish `dist/`, never the repository root.
+The hosting provider and rendering strategy are project-specific. With the starter's current configuration, `npm run build` produces the deployable static site in `dist/`. The human launch checklist covers the selected platform's setup and production verification.
