@@ -2,9 +2,39 @@
 
 This guide describes the workflow for contributing to this repository.
 
-## Start with an issue
+When editing code or site content in this repository, follow [coding-standards.md](coding-standards.md) for implementation conventions relevant to the task.
 
-Use a GitHub Issue to define the work before making a change. Keep each change focused on one issue or cohesive outcome.
+## Set up a local checkout
+
+Use a Node.js version compatible with [package.json](package.json) and the major version declared in [.nvmrc](.nvmrc). Clone the repository and install its dependencies:
+
+```sh
+git clone <repository-url>
+cd <project-directory>
+node --version
+npm install
+```
+
+`npm install` reads `package.json` and `package-lock.json` and installs the complete dependency tree. Do not install dependencies individually unless you intentionally add a new package.
+
+If Playwright browsers are missing, install them with `npx playwright install`.
+
+## Manage development servers
+
+Use the controls of the tool that started the server. Check for an existing server for this checkout before launching another one.
+
+| Situation                      | Instructions                                                                                                                               |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| Human developing in a terminal | Run `npm run dev` for interactive development.                                                                                             |
+| Agent launching Astro directly | Run `npm run dev -- --background`.                                                                                                         |
+| Paseo Dev Server service       | Start and stop the configured service through Paseo's service controls.                                                                    |
+| Browser tests                  | Run `npm test`; let Playwright start Astro when needed or reuse an existing server at its configured URL locally. Reuse is disabled in CI. |
+
+For a directly launched background server, use `npm run dev -- status`, `npm run dev -- logs`, and `npm run dev -- stop`. See [Astro's background-server documentation](https://docs.astro.build/en/reference/cli-reference/#--background) for details.
+
+## Working with Issues
+
+When contributing to this repository, use a GitHub issue to define the work before making a change. Keep each change focused on one issue or cohesive outcome.
 
 ## Choose an issue type
 
@@ -37,6 +67,8 @@ Use a concise, specific, lowercase kebab-case description. Do not use any other 
 Do not use `docs` if the change affects user-facing content, behavior, tests, builds, deployment, or external services.
 
 ## Validate your change
+
+Run the required checks below locally for your change type. Current CI runs only browser smoke tests; a passing workflow does not confirm that the remaining required checks pass.
 
 ### `content`
 
@@ -89,7 +121,8 @@ Confirm that only intended files are included.
 
 ## Open a pull request
 
-- Link the pull request to its GitHub Issue and use the closing keyword for that issue.
+- Use [.github/pull_request_template.md](.github/pull_request_template.md).
+- Link the pull request to the relevant GitHub Issue or Sub-Issue with `Closes #<number>`.
 - Describe the changed files and validation performed.
 - Ensure CI passes.
 - A maintainer must review the pull request before merge.
@@ -98,4 +131,4 @@ Confirm that only intended files are included.
 ## Safety and non-goals
 
 - Do not commit secrets, credentials, `.env` files, or `~/.paseo/` state.
-- Do not add GitHub settings, templates, labels, services, deployment configuration, production access, or external integrations unless separately approved.
+- Do not add GitHub settings, templates, labels, services, deployment configuration, production access, or external integrations unless approved in writing for the task.
