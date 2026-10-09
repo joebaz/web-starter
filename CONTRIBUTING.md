@@ -36,6 +36,10 @@ For a directly launched background server, use `npm run dev -- status`, `npm run
 
 When contributing to this repository, use a GitHub issue to define the work before making a change. Keep each change focused on one issue or cohesive outcome.
 
+- The pull request that implements an issue updates any project fact the issue changes, in configuration or the README [Project facts](README.md#project-facts) section, and links the issue.
+- When a conversation changes a project fact, the agent opens or updates the decision issue and updates the fact in the same pull request.
+- When a decision is hard to reverse, surprising without context, and the result of a real trade-off, also record it as an architecture decision record (ADR) in `docs/adr/`.
+
 ## Choose an issue type
 
 Select the GitHub Issue form that best matches the work:

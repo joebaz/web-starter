@@ -89,6 +89,12 @@ GitHub Actions runs `npm test` on pushes and pull requests targeting `main`.
 
 The workflow uses the Node version from `.nvmrc`, stops stalled jobs after 15 minutes, and retains failure artifacts for seven days. CI currently runs browser smoke tests only; it does not run the full set of local validation commands documented in CONTRIBUTING.
 
+## Project facts
+
+Project facts are a project's current approved values. A fact with a configuration home lives only in that configuration; business facts without one, such as the hosting provider or approved third-party services, are listed here with a link to the decision issue that set them, when one exists. Leave unknown facts out rather than adding placeholders, and record "not applicable" only where a capability might otherwise be assumed, such as "Forms: none".
+
+This template is never deployed, so it records no business facts.
+
 ## Deployment
 
-The hosting provider and rendering strategy are project-specific. With the starter's current configuration, `npm run build` produces the deployable static site in `dist/`. The human launch checklist covers the selected platform's setup and production verification.
+The hosting provider and rendering strategy are project-specific; each project records its hosting provider in [Project facts](#project-facts). With the starter's current configuration, `npm run build` produces the deployable static site in `dist/`. The human launch checklist covers the selected platform's setup and production verification.

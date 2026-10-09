@@ -9,6 +9,7 @@ A customizable starting point for coding informational websites for small and me
 - If completing the task correctly requires expanding the agreed scope, explain why and obtain the user's authorization.
 - Always flag misalignments, contradictions, safety concerns, missing decisions, and trade-offs in the current conversation before implementing affected behavior. This includes conflicts between security, privacy, accessibility, internationalization, performance, maintainability, and visual polish.
 - Use approved task requirements and repository configuration for architecture, content sources, editing workflow, and rendering choices.
+- Take approved project values from repository configuration and the README [Project facts](README.md#project-facts) section. When a task depends on a fact that is not recorded, flag it before implementing the dependent behavior.
 - Do not introduce or replace systems, frameworks, styling tools, runtimes, dependencies, or services without the user's authorization. Written approval already in the task is sufficient.
 - Reuse the components agreed for the task. If one cannot meet the requirements, explain the gap and agree whether to extend it or create a new component. Choices already approved for the task need no further approval.
 
@@ -94,7 +95,7 @@ Use [WCAG 2.2](https://www.w3.org/TR/WCAG22/) and [ARIA Authoring Practices](htt
 - When implementing `hreflang`, use reciprocal, self-inclusive links for published equivalents, with absolute URLs; see [localized-page guidance](https://developers.google.com/search/docs/specialty/international/localized-versions).
 - When implementing required structured data, keep its values consistent with the approved content visible on the page. See [Google's structured-data guidance](https://developers.google.com/search/docs/appearance/structured-data/sd-policies).
 
-> **Pending reference — [#37](https://github.com/joebaz/web-starter/issues/37):** Repository URL-policy guidance is not yet defined. Use the task's approved URL requirements; flag missing decisions before changing URLs.
+> **Pending reference — [#40](https://github.com/joebaz/web-starter/issues/40):** Repository URL-policy guidance is not yet defined. Use the task's approved URL requirements; flag missing decisions before changing URLs.
 
 ## Media and performance
 
