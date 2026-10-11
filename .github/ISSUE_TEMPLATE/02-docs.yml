@@ -40,6 +40,14 @@ body:
       required: true
 
   - type: textarea
+    id: project_facts_affected
+    attributes:
+      label: Project facts affected
+      description: List changes to current approved values in configuration or the README `Project facts` section. Leave empty if none change.
+    validations:
+      required: false
+
+  - type: textarea
     id: source_material
     attributes:
       label: Source material and examples
@@ -62,9 +70,9 @@ body:
   - type: textarea
     id: out_of_scope
     attributes:
-      label: Out of scope for this document
-      description: List anything this document should not cover.
+      label: Issue Scope
+      description: List what is in scope and out of scope for this issue, including documentation, code, and tool dependencies.
       value: |
-        <!-- Add anything this document should not cover. -->
+        <!-- Add included and excluded work, including dependencies. -->
     validations:
       required: false
