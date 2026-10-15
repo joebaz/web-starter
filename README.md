@@ -97,4 +97,8 @@ This template is never deployed, so it records no business facts.
 
 ## Deployment
 
-The hosting provider and rendering strategy are project-specific; each project records its hosting provider in [Project facts](#project-facts). With the starter's current configuration, `npm run build` produces the deployable static site in `dist/`. The human launch checklist covers the selected platform's setup and production verification.
+`npm run build` creates a static site in `dist/`. The template has no hosting-specific code or configuration, so projects can choose or change hosts without code changes.
+
+Projects can add server-side features or hosting-specific code as needed; explain why in the project's README.
+
+Record the chosen host in [Project facts](#project-facts). Use the human launch checklist to set up hosting and check the live site.
