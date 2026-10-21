@@ -59,7 +59,7 @@ The human-facing [site launch checklist](https://github.com/joebaz/web-starter/w
 | ---------------------------------- | ------------------------------------------------------------------------------------ |
 | `.github/ISSUE_TEMPLATE/`          | Forms for content, documentation, fix, and feature issues                            |
 | `.github/pull_request_template.md` | Pull request summary, scope, and validation fields                                   |
-| `.github/workflows/playwright.yml` | Browser smoke test CI                                                                |
+| `.github/workflows/ci.yml`         | Validation CI: formatting for documentation-only changes, full baseline otherwise    |
 | `.gitignore`                       | Exclusions for generated output, dependencies, environment files, and test artifacts |
 | `.npmrc`                           | npm configuration enforcing the declared Node version range                          |
 | `.nvmrc`                           | Node major version selection                                                         |
@@ -85,9 +85,16 @@ The human-facing [site launch checklist](https://github.com/joebaz/web-starter/w
 
 ## CI
 
-GitHub Actions runs `npm test` on pushes and pull requests targeting `main`.
+Validation tools:
 
-The workflow uses the Node version from `.nvmrc`, stops stalled jobs after 15 minutes, and retains failure artifacts for seven days. CI currently runs browser smoke tests only; it does not run the full set of local validation commands documented in CONTRIBUTING.
+- GitHub Actions runs the checks on pushes and pull requests targeting `main`
+- Prettier for formatting
+- ESLint for linting
+- Astro's checker for type checking
+- Playwright for browser smoke tests in Chromium, Firefox, and WebKit
+- Astro for the production build
+
+See [CONTRIBUTING](CONTRIBUTING.md#validate-your-change) for which checks run and when.
 
 ## Project facts
 

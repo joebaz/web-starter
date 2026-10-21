@@ -72,30 +72,9 @@ Do not use `docs` if the change affects user-facing content, behavior, tests, bu
 
 ## Validate your change
 
-Run the required checks below locally for your change type. Current CI runs only browser smoke tests; a passing workflow does not confirm that the remaining required checks pass.
+Run the required checks below locally for your change type. CI runs these same checks automatically, choosing them from the changed files: see the documentation path list in [`.github/workflows/ci.yml`](.github/workflows/ci.yml).
 
-### `content`
-
-Run:
-
-```sh
-npm run format:check
-npm test
-```
-
-Also review content for accuracy, links, meaningful alt text, and affected pages at relevant responsive sizes.
-
-### `docs`
-
-Run:
-
-```sh
-npm run format:check
-```
-
-Also review the final text for accuracy, clarity, and unintended scope.
-
-### `fix` and `feature`
+### `content`, `fix`, and `feature`
 
 Run:
 
@@ -107,9 +86,21 @@ npm test
 npm run build
 ```
 
+Also review content for accuracy, links, meaningful alt text, and affected pages at relevant responsive sizes.
+
 For a `fix`, reproduce the issue or document verification and add regression coverage where practical.
 
 For a `feature`, define acceptance criteria, add relevant tests, and include visual evidence when the interface changes.
+
+### `docs`
+
+Run:
+
+```sh
+npm run format:check
+```
+
+Also review the final text for accuracy, clarity, and unintended scope.
 
 ### Every change
 
