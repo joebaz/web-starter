@@ -109,6 +109,15 @@ test("build without a production URL allows crawling and omits the sitemap", asy
   );
 });
 
+test("template build includes the custom 404 page", async ({ page }) => {
+  const { outDir } = await build();
+
+  await openBuiltPage(page, outDir, "404.html");
+  await expect(
+    page.getByRole("heading", { name: "Page not found", level: 1 }),
+  ).toBeVisible();
+});
+
 const configuredBuildArgs = [
   "--config",
   "tests/fixtures/named-site/astro.config.mjs",
