@@ -36,6 +36,14 @@ async function build(args: string[] = []) {
   return { outDir, output: stdout + stderr };
 }
 
+// Tests of the template's own configuration share one build.
+let templateBuild: ReturnType<typeof build> | undefined;
+
+function buildTemplate() {
+  templateBuild ??= build();
+  return templateBuild;
+}
+
 async function openBuiltPage(page: Page, outDir: string, file: string) {
   await page.setContent(await readFile(path.join(outDir, file), "utf8"));
 }
@@ -43,7 +51,7 @@ async function openBuiltPage(page: Page, outDir: string, file: string) {
 test("build without a production URL or site name warns and omits dependent tags", async ({
   page,
 }) => {
-  const { outDir, output } = await build();
+  const { outDir, output } = await buildTemplate();
 
   expect(output).toContain("Production URL is not set");
   expect(output).toContain("Site name is not set");
@@ -57,6 +65,15 @@ test("build without a production URL or site name warns and omits dependent tags
   await expect(page.locator('link[rel="canonical"]')).toHaveCount(0);
   await expect(page.locator('meta[property="og:url"]')).toHaveCount(0);
   await expect(page.locator('meta[property="og:site_name"]')).toHaveCount(0);
+});
+
+test("template build includes the custom 404 page", async ({ page }) => {
+  const { outDir } = await buildTemplate();
+
+  await openBuiltPage(page, outDir, "404.html");
+  await expect(
+    page.getByRole("heading", { name: "Page not found", level: 1 }),
+  ).toBeVisible();
 });
 
 // The fixture config builds the homepage and the fixture pages with a
