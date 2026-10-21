@@ -44,7 +44,7 @@ Replace the example copy with the approved page content. The layout owns the HTM
 | `image`       | No       | `{ src: string; alt: string }` for the social-sharing image; see below |
 | Default slot  | Yes      | Rendered page content                                                  |
 
-The canonical and `og:url` values combine the configured production URL with the page path in its no-trailing-slash form, such as `/about`, with `/` for the homepage; they exclude query parameters and fragments. Follow the URL policy in [#40](https://github.com/joebaz/web-starter/issues/40).
+The canonical and `og:url` values combine the configured production URL with the page path in its no-trailing-slash form, such as `/about`, with `/` for the homepage; they exclude query parameters and fragments. Follow the repository [URL conventions](../coding-standards.md#urls-and-metadata).
 
 ### Social-sharing images
 
