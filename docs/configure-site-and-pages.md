@@ -11,7 +11,9 @@ Use this guide when implementing shared site values, shared metadata, or a new p
 
 The template leaves the production URL and site name unset. A build still succeeds and logs warnings for missing values. Without a production URL, canonical and `og:url` tags are omitted. Without a site name, the title contains only the page title and `og:site_name` is omitted. Use approved project facts rather than adding placeholder business values.
 
-When these values change, update the homepage smoke expectations and the build test that asserts the template's unset site values to match the new configuration and content.
+When these values change, update the homepage smoke expectations and the build tests that assert the template's unset site values to match the new configuration and content.
+
+The same production URL supplies the generated sitemap and robots.txt sitemap reference. See [Configure the sitemap and robots.txt](configure-sitemap-and-robots.md) for build behavior and page exclusions.
 
 ## Add a page
 
