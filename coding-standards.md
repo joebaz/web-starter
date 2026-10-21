@@ -28,7 +28,7 @@ A customizable starting point for coding informational websites for small and me
 - Use TypeScript for application logic and component props.
 - Preserve strict TypeScript checking. Fix type errors rather than hiding them with `any`, unjustified type assertions, or comments that disable type checking. See [TypeScript types and assertions](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html).
 - Use the existing Node.js runtime for repository scripts; plain JavaScript ES modules suit directly executable tooling.
-- Use PascalCase for component files and types, camelCase for functions and variables, and lowercase kebab-case for other new filenames and route segments, except framework-required names and agreed public URLs.
+- Use PascalCase for component files and types, camelCase for functions and variables, and lowercase kebab-case for other new filenames, except framework-required names and agreed public URLs. Name route segments by the [URL conventions](#urls-and-metadata).
 - Follow the repository's [Prettier](prettier.config.mjs) and [ESLint](eslint.config.mjs) configurations for formatting and linting.
 - Write comments to explain constraints or decisions rather than restating the code.
 - Prefer native APIs and installed capabilities when they meet the need; a maintained library can be justified for complex behavior.
@@ -83,20 +83,20 @@ Use [WCAG 2.2](https://www.w3.org/TR/WCAG22/) and [ARIA Authoring Practices](htt
 - When implementing custom keyboard actions, respect input-method editor (IME) composition so Enter can confirm a character selection without accidentally submitting. Use composition handling compatible with the task's approved browsers; see [MDN's IME event guidance](https://developer.mozilla.org/en-US/docs/Web/API/Element/keydown_event#keydown_events_with_ime).
 - Load only the font families, weights, and styles required by the approved design. See [Astro font handling](https://docs.astro.build/en/guides/fonts/).
 - Flag requested weights or styles that a font does not provide rather than silently substituting or [synthesizing them](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/font-synthesis).
-- When implementing multilingual routes, follow the agreed locale, URL, and fallback requirements; use [Astro's i18n helpers](https://docs.astro.build/en/guides/internationalization/) when its i18n routing is configured.
+- When implementing multilingual routes, follow the [localized URL pattern](#urls-and-metadata) and the agreed locale and fallback requirements; use [Astro's i18n helpers](https://docs.astro.build/en/guides/internationalization/) when its i18n routing is configured.
 - When implementing a required language switcher, link to published equivalent pages and follow the agreed behavior for unavailable translations.
 - Keep translated messages intact rather than assembling sentences from independently translated fragments.
 
 ## URLs and metadata
 
-- When changing URLs or URL-generating code, keep canonical URLs, internal links, sitemap entries, and trailing-slash behavior consistent with the project's agreed URL policy.
+- Use clean page URLs, as configured by `trailingSlash` and `build.format` in [astro.config.mjs](astro.config.mjs): `/` for the homepage and no trailing slash or `.html` suffix for other pages, such as `/about`. Use this form for canonical and `og:url` values, internal page links, and sitemap entries. During builds, `Astro.url.pathname` ends in `.html`, such as `/about.html` or `/index.html`; reuse the path normalization in [BaseLayout](src/layouts/BaseLayout.astro) when deriving page URLs from it.
+- Name new path segments and slugs with lowercase letters and hyphens between words where the script has case and word spacing. Approved slugs may use native-language characters, non-Latin scripts, or translated words; English or transliterated versions are not required. Framework-required names and agreed public URLs keep their required or agreed form.
 - Reuse [BaseLayout and the shared site configuration](docs/configure-site-and-pages.md) to render the approved copy and configured site values. Consult that guide when configuring a site, changing shared metadata, or adding a page.
-- Derive canonical and social URLs from the configured production URL, not the preview host.
+- Derive canonical and social URLs from the production URL set as Astro's `site` in [astro.config.mjs](astro.config.mjs), not the preview host.
 - Use the [sitemap and robots.txt configuration](docs/configure-sitemap-and-robots.md) for generated crawl-discovery files and explicit sitemap exclusions.
+- When a project publishes more than one language, serve every language from the same origin. Default-language pages keep unprefixed paths, such as `/` and `/about`; other languages use `/<locale>` for their homepage and `/<locale>/<path>` for other pages, in the clean form above, where `<locale>` is the locale's path in `i18n.locales`. Configure published languages in `i18n.locales` and the default language in `i18n.defaultLocale` in [astro.config.mjs](astro.config.mjs), and set `i18n.routing.prefixDefaultLocale: false` when enabling i18n routing. `siteConfig.language` sets only the HTML `lang` attribute.
 - When implementing `hreflang`, use reciprocal, self-inclusive links for published equivalents, with absolute URLs; see [localized-page guidance](https://developers.google.com/search/docs/specialty/international/localized-versions).
 - When implementing required structured data, keep its values consistent with the approved content visible on the page. See [Google's structured-data guidance](https://developers.google.com/search/docs/appearance/structured-data/sd-policies).
-
-> **Pending reference — [#40](https://github.com/joebaz/web-starter/issues/40):** Repository URL-policy guidance is not yet defined. Use the task's approved URL requirements; flag missing decisions before changing URLs.
 
 ## Media and performance
 
