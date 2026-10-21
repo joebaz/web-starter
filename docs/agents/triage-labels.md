@@ -8,4 +8,13 @@
 | `ready-for-human` | `ready-for-human`  | Requires human implementation          |
 | `wontfix`         | `wontfix`          | Will not be actioned                   |
 
+## Category labels
+
+| Canonical role | Label in this repo | Meaning                                                  |
+| -------------- | ------------------ | -------------------------------------------------------- |
+| `bug`          | `fix`              | Broken behavior, layout, accessibility, or functionality |
+| `enhancement`  | `feature`          | New or expanded capability                               |
+
+This repo also uses `content` (user-facing content changes) and `docs` (repository documentation and instructions) as categories with no canonical equivalent. Each triaged issue carries exactly one category label.
+
 When a skill names a canonical role, use its label in this table.
