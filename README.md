@@ -14,14 +14,15 @@ The repository's `.nvmrc` declares Node 22. A configured zsh/nvm auto-switch hoo
 
 ## Commands
 
-| Command                  | Purpose                                                      |
-| ------------------------ | ------------------------------------------------------------ |
-| `npm install`            | Installs project dependencies from the manifest and lockfile |
-| `npm run dev`            | Starts the local Astro development server                    |
-| `npm test`               | Runs browser smoke tests in Chromium, Firefox, and WebKit    |
-| `npm run build`          | Builds the static site into `dist/`                          |
-| `npm run preview`        | Previews the completed `dist/` build locally                 |
-| `npx playwright install` | Installs Playwright browser binaries                         |
+| Command                  | Purpose                                                                                  |
+| ------------------------ | ---------------------------------------------------------------------------------------- |
+| `npm install`            | Installs project dependencies from the manifest and lockfile                             |
+| `npm run dev`            | Starts the local Astro development server                                                |
+| `npm test`               | Runs lint configuration tests, then browser smoke tests in Chromium, Firefox, and WebKit |
+| `npm run test:lint`      | Runs only the lint configuration tests                                                   |
+| `npm run build`          | Builds the static site into `dist/`                                                      |
+| `npm run preview`        | Previews the completed `dist/` build locally                                             |
+| `npx playwright install` | Installs Playwright browser binaries                                                     |
 
 Command definitions and dependency versions are in [package.json](package.json).
 
@@ -31,11 +32,11 @@ This repository supports [Paseo](https://paseo.sh/) for isolated, agent-assisted
 
 The configured worktree setup hook runs `npm ci` to install dependencies from the lockfile.
 
-| Script          | Type    | Command         | Purpose                              |
-| --------------- | ------- | --------------- | ------------------------------------ |
-| Dev Server      | Service | `npm run dev`   | Starts Astro for local visual review |
-| Playwright Test | Command | `npm test`      | Runs browser smoke tests             |
-| Build Site      | Command | `npm run build` | Builds the deployable site           |
+| Script          | Type    | Command         | Purpose                                         |
+| --------------- | ------- | --------------- | ----------------------------------------------- |
+| Dev Server      | Service | `npm run dev`   | Starts Astro for local visual review            |
+| Playwright Test | Command | `npm test`      | Runs lint configuration and browser smoke tests |
+| Build Site      | Command | `npm run build` | Builds the deployable site                      |
 
 Paseo's local configuration, worktrees, logs, and credentials live outside the repository at `~/.paseo/`.
 
@@ -43,7 +44,7 @@ Paseo is optional. The website can be developed, tested, and built using standar
 
 ## Testing
 
-`npm test` removes stale Playwright output, runs the configured browser tests, and removes output after a successful run. Playwright manages a dedicated Astro test server with the reserved test domain passed through `--site`; see [playwright.config.ts](playwright.config.ts) for its command and port. The test domain is separate from the production configuration.
+`npm test` first runs the lint configuration tests in `tests/lint/` with Node's test runner. It then removes stale Playwright output, runs the configured browser tests, and removes output after a successful run. Playwright manages a dedicated Astro test server with the reserved test domain passed through `--site`; see [playwright.config.ts](playwright.config.ts) for its command and port. The test domain is separate from the production configuration.
 
 If a test fails, the final cleanup does not run. Fresh failure evidence remains in `test-results/` for diagnosis, including a screenshot. Routine successful runs do not create an HTML report. Generated Playwright output is ignored by Git.
 
@@ -83,6 +84,7 @@ The human-facing [site launch checklist](https://github.com/joebaz/web-starter/w
 | `src/`                             | Site source processed by Astro                                                       |
 | `src/pages/`                       | File-based routes; `index.astro` provides the homepage                               |
 | `src/styles/`                      | Shared styles; `global.css` loads Tailwind                                           |
+| `tests/lint/`                      | Node tests for the ESLint accessibility configuration                                |
 | `tests/smoke/`                     | Browser smoke tests                                                                  |
 | `tsconfig.json`                    | TypeScript configuration                                                             |
 | `dist/`                            | Generated deployment output, ignored by Git                                          |
@@ -93,8 +95,9 @@ Validation tools:
 
 - GitHub Actions runs the checks on pushes and pull requests targeting `main`
 - Prettier for formatting
-- ESLint for linting
+- ESLint for linting, including [accessibility rules](docs/accessibility-linting.md) for Astro and React components
 - Astro's checker for type checking
+- Node's test runner for lint configuration tests
 - Playwright for browser smoke tests in Chromium, Firefox, and WebKit
 - Astro for the production build
 
