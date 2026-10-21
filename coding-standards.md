@@ -90,7 +90,7 @@ Use [WCAG 2.2](https://www.w3.org/TR/WCAG22/) and [ARIA Authoring Practices](htt
 ## URLs and metadata
 
 - When changing URLs or URL-generating code, keep canonical URLs, internal links, sitemap entries, and trailing-slash behavior consistent with the project's agreed URL policy.
-- Reuse existing layout and metadata mechanisms to render the approved copy and configured site values.
+- Reuse [BaseLayout and the shared site configuration](docs/configure-site-and-pages.md) to render the approved copy and configured site values. Consult that guide when configuring a site, changing shared metadata, or adding a page.
 - Derive canonical and social URLs from the configured production URL, not the preview host.
 - When implementing `hreflang`, use reciprocal, self-inclusive links for published equivalents, with absolute URLs; see [localized-page guidance](https://developers.google.com/search/docs/specialty/international/localized-versions).
 - When implementing required structured data, keep its values consistent with the approved content visible on the page. See [Google's structured-data guidance](https://developers.google.com/search/docs/appearance/structured-data/sd-policies).

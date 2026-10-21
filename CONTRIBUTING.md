@@ -23,14 +23,16 @@ If Playwright browsers are missing, install them with `npx playwright install`.
 
 Use the controls of the tool that started the server. Check for an existing server for this checkout before launching another one.
 
-| Situation                      | Instructions                                                                                                                               |
-| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| Human developing in a terminal | Run `npm run dev` for interactive development.                                                                                             |
-| Agent launching Astro directly | Run `npm run dev -- --background`.                                                                                                         |
-| Paseo Dev Server service       | Start and stop the configured service through Paseo's service controls.                                                                    |
-| Browser tests                  | Run `npm test`; let Playwright start Astro when needed or reuse an existing server at its configured URL locally. Reuse is disabled in CI. |
+| Situation                      | Instructions                                                                                                                     |
+| ------------------------------ | -------------------------------------------------------------------------------------------------------------------------------- |
+| Human developing in a terminal | Run `npm run dev` for interactive development.                                                                                   |
+| Agent launching Astro directly | Run `npm run dev -- --background`.                                                                                               |
+| Paseo Dev Server service       | Start and stop the configured service through Paseo's service controls.                                                          |
+| Browser tests                  | Run `npm test`; let Playwright manage its dedicated Astro test server with the metadata test inputs from `playwright.config.ts`. |
 
 For a directly launched background server, use `npm run dev -- status`, `npm run dev -- logs`, and `npm run dev -- stop`. See [Astro's background-server documentation](https://docs.astro.build/en/reference/cli-reference/#--background) for details.
+
+The test server uses a separate port and `--ignore-lock` so it can run alongside this checkout's development server. Playwright owns its startup and shutdown; manage ordinary development servers through the controls above.
 
 ## Working with Issues
 
@@ -121,7 +123,7 @@ Confirm that only intended files are included.
 - Describe the changed files and validation performed.
 - Ensure CI passes.
 - A maintainer must review the pull request before merge.
-- After review approval and successful CI, use squash auto-merge and delete the head branch after merge.
+- After review approval and successful CI, the maintainer squash-merges the pull request; GitHub deletes the head branch automatically. Agents do not merge pull requests or enable auto-merge.
 
 ## Safety and non-goals
 

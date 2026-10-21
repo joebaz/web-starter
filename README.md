@@ -43,13 +43,15 @@ Paseo is optional. The website can be developed, tested, and built using standar
 
 ## Testing
 
-`npm test` removes stale Playwright output, runs the configured browser tests, and removes output after a successful run. Playwright starts Astro when needed or reuses an existing server at its configured URL locally; reuse is disabled in CI.
+`npm test` removes stale Playwright output, runs the configured browser tests, and removes output after a successful run. Playwright manages a dedicated Astro test server with the reserved test domain passed through `--site`; see [playwright.config.ts](playwright.config.ts) for its command and port. The test domain is separate from the production configuration.
 
 If a test fails, the final cleanup does not run. Fresh failure evidence remains in `test-results/` for diagnosis, including a screenshot. Routine successful runs do not create an HTML report. Generated Playwright output is ignored by Git.
 
 The smoke tests cover Chromium, Firefox, and WebKit.
 
 ## Launch checklist
+
+For repository setup and page implementation, follow [Configure a site and add pages](docs/configure-site-and-pages.md).
 
 The human-facing [site launch checklist](https://github.com/joebaz/web-starter/wiki) covers project setup, project-specific choices, launch verification, and operating notes. Agent instructions and project-owned agent references live in the repository.
 
@@ -98,7 +100,7 @@ See [CONTRIBUTING](CONTRIBUTING.md#validate-your-change) for which checks run an
 
 ## Project facts
 
-Project facts are a project's current approved values. A fact with a configuration home lives only in that configuration; business facts without one, such as the hosting provider or approved third-party services, are listed here with a link to the decision issue that set them, when one exists. Leave unknown facts out rather than adding placeholders, and record "not applicable" only where a capability might otherwise be assumed, such as "Forms: none".
+Project facts are a project's current approved values. A fact with a configuration home lives only in that configuration; business facts without one, such as the hosting provider or approved third-party services, are listed here with a link to the decision issue that set them, when one exists. Leave unknown facts out rather than adding placeholders (except `example.com` in tests, which is a test input, not a project fact), and record "not applicable" only where a capability might otherwise be assumed, such as "Forms: none".
 
 This template is never deployed, so it records no business facts.
 
