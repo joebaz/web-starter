@@ -1,0 +1,11 @@
+import type { APIRoute } from "astro";
+
+// Allows all crawling. The sitemap reference needs the production URL, so it
+// is omitted until `site` is set, as is the sitemap itself.
+export const GET: APIRoute = ({ site }) => {
+  const lines = ["User-agent: *", "Allow: /"];
+  if (site) {
+    lines.push("", `Sitemap: ${new URL("sitemap-index.xml", site).href}`);
+  }
+  return new Response(`${lines.join("\n")}\n`);
+};

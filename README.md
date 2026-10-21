@@ -53,6 +53,8 @@ The smoke tests cover Chromium, Firefox, and WebKit.
 
 For repository setup and page implementation, follow [Configure a site and add pages](docs/configure-site-and-pages.md).
 
+For generated crawl-discovery files and page exclusions, follow [Configure the sitemap and robots.txt](docs/configure-sitemap-and-robots.md).
+
 The human-facing [site launch checklist](https://github.com/joebaz/web-starter/wiki) covers project setup, project-specific choices, launch verification, and operating notes. Agent instructions and project-owned agent references live in the repository.
 
 ## Project structure
