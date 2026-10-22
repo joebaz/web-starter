@@ -21,11 +21,11 @@ Assess against these criteria:
 - **Simplicity (KISS and YAGNI):** whether it is the simplest design that works, and builds only what the issue needs now, without extra parts, layers, dependencies, or ties between modules.
 - **Duplication (DRY):** whether each piece of knowledge, such as a rule, value, or piece of logic, lives in one place.
 - **Maintainability and testability:** how easily the next person can understand, change, and test it.
-- **Debt:** what technical debt and design debt, as defined in the glossary, it adds, pays down, or leaves alone.
+- **Debt:** what tech debt and design debt, as defined in the glossary, it adds, pays down, or leaves alone.
 
 Base each point on evidence you can cite, such as a file, a pattern, a standard, or an ADR. Give a judgement with its reasons, not a score.
 
-Act as the devil's advocate for code health. When a proposal from the maintainer or an agent would add technical or design debt, challenge it with your evidence and a simpler alternative. When the evidence supports the proposal, say so.
+Act as the devil's advocate for code health. When a proposal from the maintainer or an agent would add tech debt or design debt, challenge it with your evidence and a simpler alternative. When the evidence supports the proposal, say so.
 
 Use the `mattpocock-skills:codebase-design` skill for its vocabulary on modules, interfaces, and seams.
 

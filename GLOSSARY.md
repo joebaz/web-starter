@@ -4,9 +4,7 @@
 
 This is a provisional set of terms. [Issue #38](https://github.com/joebaz/web-starter/issues/38) will finalize these terms and additional procedures for updating the glossary.
 
-## Language
-
-### Roles
+## Roles
 
 **Maintainer**:
 A person responsible for the repository, who approves its work and is the only one who commits, pushes, or merges it.
@@ -31,11 +29,11 @@ The agent role that implements an issue that is ready for an agent, with its tes
 **Reviewer**:
 The agent role that reviews a change independently and recommends "accept" or "changes needed".
 
-### Debt
+## Debt
 
-**Technical debt**:
+**Tech debt**:
 A shortcut, omission, or structural flaw in the code, such as duplication, a missing test, a workaround, or a misplaced boundary, that makes later changes slower or riskier until it is paid down.
-_Avoid_: tech debt, cruft, architecture debt
+_Avoid_: cruft, architecture debt
 
 **Design debt**:
 A shortfall in what visitors experience on the site, in its performance, usability, or accessibility, that stays until it is fixed.
@@ -43,4 +41,4 @@ _Avoid_: UX debt
 
 ## Flagged ambiguities
 
-- "Design" can also mean the code's structure. Problems in how the code is divided and named are **Technical debt**; **Design debt** is about the visitor's experience.
+- "Design" can also mean the code's structure. Problems in how the code is divided and named are **Tech debt**; **Design debt** is about the visitor's experience.

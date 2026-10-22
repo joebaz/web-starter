@@ -42,7 +42,7 @@ Paseo's local configuration, worktrees, logs, and credentials live outside the r
 
 Agents follow [role SOPs](docs/agents/roles/) in any tool. The Wiki's [Agent setup](https://github.com/joebaz/web-starter/wiki/Agent-Setup) covers the skills and tool settings that go with them.
 
-Paseo, an agent orchestration tool (https://paseo.sh), is optional. The website can be developed, tested, and built using standard Node.js and npm tooling, directly or through another coding agent or orchestrator. Deployment depends on the hosting provider selected for each project.
+Paseo, an agent orchestration tool (https://paseo.sh), is optional. The Wiki's [Paseo setup](https://github.com/joebaz/web-starter/wiki/Paseo-Setup) covers its system prompt and agent profiles. The website can be developed, tested, and built using standard Node.js and npm tooling, directly or through another coding agent or orchestrator. Deployment depends on the hosting provider selected for each project.
 
 ## Testing
 
