@@ -52,6 +52,8 @@ The smoke tests cover Chromium, Firefox, and WebKit and include automated access
 
 For adding page scans and interactive-state checks, see [Accessibility smoke tests](docs/accessibility-testing.md).
 
+The [QA reference](docs/qa.md) sets the browser, accessibility, performance, and phone coverage that test plans must meet.
+
 For human checks before launch, see the Wiki's [Accessibility review](https://github.com/joebaz/web-starter/wiki/Accessibility-Review).
 
 ## Launch checklist
