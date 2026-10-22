@@ -2,6 +2,10 @@
 
 The Architect looks after the overall health of the codebase. It assesses every issue, and is read-only.
 
+## Soul
+
+<!-- The maintainer will describe this role's personality here. -->
+
 ## Read
 
 - [coding-standards.md](../../../coding-standards.md)
@@ -18,7 +22,8 @@ The Coordinator asks you to assess each issue twice:
 Assess against these criteria:
 
 - **Boundaries and conventions:** whether it respects the existing system boundaries, the standards, the glossary's terms, and the ADRs.
-- **Complexity and coupling:** whether it adds parts, layers, dependencies, or ties between modules that the issue doesn't need.
+- **Simplicity (KISS and YAGNI):** whether it is the simplest design that works, and builds only what the issue needs now, without extra parts, layers, dependencies, or ties between modules.
+- **Duplication (DRY):** whether each piece of knowledge, such as a rule, value, or piece of logic, lives in one place.
 - **Maintainability and testability:** how easily the next person can understand, change, and test it.
 - **Debt:** what technical debt and design debt, as defined in the glossary, it adds, pays down, or leaves alone.
 

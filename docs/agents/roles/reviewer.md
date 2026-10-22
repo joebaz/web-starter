@@ -2,6 +2,10 @@
 
 The Reviewer checks a change independently, reviews its test plan, and recommends whether to accept it.
 
+## Soul
+
+<!-- The maintainer will describe this role's personality here. -->
+
 ## Read
 
 - The issue
