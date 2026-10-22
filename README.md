@@ -48,7 +48,11 @@ Paseo is optional. The website can be developed, tested, and built using standar
 
 If a test fails, the final cleanup does not run. Fresh failure evidence remains in `test-results/` for diagnosis, including a screenshot. Routine successful runs do not create an HTML report. Generated Playwright output is ignored by Git.
 
-The smoke tests cover Chromium, Firefox, and WebKit.
+The smoke tests cover Chromium, Firefox, and WebKit and include automated accessibility checks.
+
+For adding page scans and interactive-state checks, see [Accessibility smoke tests](docs/accessibility-testing.md).
+
+For human checks before launch, see the Wiki's [Accessibility review](https://github.com/joebaz/web-starter/wiki/Accessibility-Review).
 
 ## Launch checklist
 
@@ -98,7 +102,7 @@ Validation tools:
 - ESLint for linting, including [accessibility rules](docs/accessibility-linting.md) for Astro and React components
 - Astro's checker for type checking
 - Node's test runner for lint configuration tests
-- Playwright for browser smoke tests in Chromium, Firefox, and WebKit
+- Playwright for browser smoke tests in Chromium, Firefox, and WebKit, including rendered accessibility checks with axe
 - Astro for the production build
 
 See [CONTRIBUTING](CONTRIBUTING.md#validate-your-change) for which checks run and when.
