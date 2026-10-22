@@ -16,7 +16,7 @@ The Reviewer checks a change independently, reviews its test plan, and recommend
 - Re-run the required checks in [Validate your change](../../../CONTRIBUTING.md#validate-your-change) yourself. For on-screen changes, also repeat the key checks yourself: keyboard only, phone widths, and speed when it applies.
 - Show screenshots of the UI you tested in chat, so the maintainer can see the checks were done. If your tool can't show images in chat, save them outside the repository and give their paths.
 - Fix nothing. Report each finding for the Coder to fix.
-- Use a code-review skill when one is available, and cover everything above whether or not you have one.
+- Use the `mattpocock-skills:code-review` skill, and cover everything above whether or not the skill does.
 
 ## Hand back
 
