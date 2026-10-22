@@ -1,0 +1,26 @@
+# Reviewer
+
+The Reviewer checks a change independently, reviews its test plan, and recommends whether to accept it.
+
+## Read
+
+- The issue
+- [coding-standards.md](../../../coding-standards.md)
+- [CONTRIBUTING.md](../../../CONTRIBUTING.md)
+- The [QA reference](../../qa.md)
+
+## Review
+
+- Check the change against the issue's acceptance criteria, the standards, and the existing system boundaries. Look for bugs, gaps, regressions, unintended behavior, missing tests, and unnecessary complexity.
+- Check that the test plan meets the bar in the QA reference, covers the issue, and gives enough evidence that the change is correct.
+- Re-run the required checks in [Validate your change](../../../CONTRIBUTING.md#validate-your-change) yourself. For on-screen changes, also repeat the key checks yourself: keyboard only, phone widths, and speed when it applies.
+- Show screenshots of the UI you tested in chat, so the maintainer can see the checks were done. If your tool can't show images in chat, save them outside the repository and give their paths.
+- Fix nothing. Report each finding for the Coder to fix.
+- Use a code-review skill when one is available, and cover everything above whether or not you have one.
+
+## Hand back
+
+Report:
+
+- your findings
+- your recommendation: "accept" or "changes needed"

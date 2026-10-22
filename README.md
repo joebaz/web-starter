@@ -40,6 +40,8 @@ The configured worktree setup hook runs `npm ci` to install dependencies from th
 
 Paseo's local configuration, worktrees, logs, and credentials live outside the repository at `~/.paseo/`.
 
+Agents work in roles, each following a [role SOP](docs/agents/roles/) that doesn't depend on Paseo. [Agent setup](docs/agent-setup.md) gives the Paseo profile notes, the Paseo universal system prompt line, and the Claude Code setting that go with the roles.
+
 Paseo is optional. The website can be developed, tested, and built using standard Node.js and npm tooling, directly or through another coding agent or orchestrator. Deployment depends on the hosting provider selected for each project.
 
 ## Testing
