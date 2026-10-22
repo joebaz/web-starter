@@ -42,6 +42,8 @@ When contributing to this repository, use a GitHub issue to define the work befo
 - When a conversation changes a project fact, the agent opens or updates the decision issue and updates the fact in the same pull request.
 - When a decision is hard to reverse, surprising without context, and the result of a real trade-off, also record it as an architecture decision record (ADR) in `docs/adr/`.
 
+For shared terminology, glossary entry format, and approval of term changes, follow [Domain docs](docs/agents/domain.md).
+
 ## Choose an issue type
 
 Select the GitHub Issue form that best matches the work:
@@ -67,6 +69,8 @@ Choose exactly one of these types:
 - `docs`: Repository documentation and instructions only, such as `README.md`, `CONTRIBUTING.md`, `AGENTS.md`, `CLAUDE.md`, and similar documentation.
 - `fix`: Broken or incorrect behavior, layout, accessibility, or functionality, including an uncovered design gap in an existing capability.
 - `feature`: One cohesive new or expanded capability.
+
+> **Pending reference — [#63](https://github.com/joebaz/web-starter/issues/63):** The current `content` issue and branch category also covers Page Structure. Retain this classification until #63 settles how Page Structure work aligns with the glossary, then replace or remove this note.
 
 Use a concise, specific, lowercase kebab-case description. Do not use any other prefix.
 
