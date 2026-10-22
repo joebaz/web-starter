@@ -47,14 +47,13 @@ A customizable starting point for coding informational websites for small and me
 - Preserve browser zoom, including pinch-to-zoom, when configuring the viewport and touch-interaction styles. See [MDN's viewport guidance](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/meta/name/viewport) and [Tailwind's touch utilities](https://tailwindcss.com/docs/touch-action).
 - Allow text to wrap and grow without clipping; avoid fixed text-container heights and manual spacing or line breaks used for layout.
 - Use CSS properties that follow the text's writing direction, such as `margin-inline-start` instead of `margin-left`. Use fixed sides only when the design requires them. See [logical properties](https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Logical_properties_and_values).
-- Choose platform features that meet the task's approved browser requirements, using [Baseline](https://web.dev/baseline) and feature-specific compatibility data; account for [Tailwind's browser requirements](https://tailwindcss.com/docs/compatibility).
-- Keep essential content and controls usable when an enhancement is unsupported; use feature detection when dependent behavior needs guarding.
-
-> **Pending reference — [#32](https://github.com/joebaz/web-starter/issues/32):** Repository browser-support guidance is not yet defined. Use the task's approved browser requirements; flag a missing requirement when it affects the implementation.
+- Support the current stable versions of Chrome, Edge, Firefox, and Safari on desktop, Safari on iPhone, and Chrome on Android.
+- Choose platform features that are [Baseline Widely available](https://web.dev/baseline), using feature-specific compatibility data, and account for [Tailwind's browser requirements](https://tailwindcss.com/docs/compatibility).
+- Older browsers need not match the design. Keep essential content and controls usable when an enhancement is unsupported; use feature detection when dependent behavior needs guarding.
 
 ## Semantic HTML and interactions
 
-Use [WCAG 2.2](https://www.w3.org/TR/WCAG22/) and [ARIA Authoring Practices](https://www.w3.org/WAI/ARIA/apg/practices/) for implementation details and examples.
+Meet [WCAG 2.2](https://www.w3.org/TR/WCAG22/) level AA. Use [ARIA Authoring Practices](https://www.w3.org/WAI/ARIA/apg/practices/) for implementation details and examples.
 
 - When implementing a page, use appropriate landmarks, one page-level `h1`, and a logical heading hierarchy.
 - Choose HTML elements by the meaning and purpose of the content; use generic `div` or `span` elements when no semantic element fits. If the intended meaning is unclear, flag it in the current conversation. See [HTML elements guidance](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements).
@@ -80,7 +79,7 @@ Use [WCAG 2.2](https://www.w3.org/TR/WCAG22/) and [ARIA Authoring Practices](htt
 - Implement the approved typography with language-appropriate fallback fonts and line-breaking behavior; avoid blanket `word-break: break-all` and Latin-specific spacing applied across scripts.
 - When pronunciation annotations are required, use native `ruby` and `rt` elements. See [W3C examples](https://www.w3.org/International/articles/ruby/markup.en.html).
 - When vertical text is required, implement it with CSS `writing-mode`. See [W3C guidance](https://www.w3.org/International/articles/vertical-text/).
-- When implementing custom keyboard actions, respect input-method editor (IME) composition so Enter can confirm a character selection without accidentally submitting. Use composition handling compatible with the task's approved browsers; see [MDN's IME event guidance](https://developer.mozilla.org/en-US/docs/Web/API/Element/keydown_event#keydown_events_with_ime).
+- When implementing custom keyboard actions, respect input-method editor (IME) composition so Enter can confirm a character selection without accidentally submitting. Use composition handling compatible with the [supported browsers](#styling-and-browser-support); see [MDN's IME event guidance](https://developer.mozilla.org/en-US/docs/Web/API/Element/keydown_event#keydown_events_with_ime).
 - Load only the font families, weights, and styles required by the approved design. See [Astro font handling](https://docs.astro.build/en/guides/fonts/).
 - Flag requested weights or styles that a font does not provide rather than silently substituting or [synthesizing them](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/font-synthesis).
 - When implementing multilingual routes, follow the [localized URL pattern](#urls-and-metadata) and the agreed locale and fallback requirements; use [Astro's i18n helpers](https://docs.astro.build/en/guides/internationalization/) when its i18n routing is configured.

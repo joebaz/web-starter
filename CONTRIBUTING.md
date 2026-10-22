@@ -76,6 +76,8 @@ Do not use `docs` if the change affects user-facing content, behavior, tests, bu
 
 Run the required checks below locally for your change type. CI runs these same checks automatically, choosing them from the changed files: see the documentation path list in [`.github/workflows/ci.yml`](.github/workflows/ci.yml).
 
+Beyond these commands, plan checks from the issue's intent and meet the bar in the [QA reference](docs/qa.md).
+
 ### `content`, `fix`, and `feature`
 
 Run:
@@ -92,7 +94,7 @@ Also review content for accuracy, links, meaningful alt text, and affected pages
 
 For a `fix`, reproduce the issue or document verification and add regression coverage where practical.
 
-For a `feature`, define acceptance criteria, add relevant tests, and include visual evidence when the interface changes.
+For a `feature`, define acceptance criteria and add relevant tests. When the interface changes, screenshots go in chat.
 
 ### `docs`
 
