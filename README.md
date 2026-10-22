@@ -40,7 +40,9 @@ The configured worktree setup hook runs `npm ci` to install dependencies from th
 
 Paseo's local configuration, worktrees, logs, and credentials live outside the repository at `~/.paseo/`.
 
-Paseo is optional. The website can be developed, tested, and built using standard Node.js and npm tooling, directly or through another coding agent or orchestrator. Deployment depends on the hosting provider selected for each project.
+Agents follow [role SOPs](docs/agents/roles/) in any tool. The Wiki's [Agent setup](https://github.com/joebaz/web-starter/wiki/Agent-Setup) covers the skills and tool settings that go with them.
+
+Paseo, an agent orchestration tool (https://paseo.sh), is optional. The Wiki's [Paseo setup](https://github.com/joebaz/web-starter/wiki/Paseo-Setup) covers its system prompt and agent profiles. The website can be developed, tested, and built using standard Node.js and npm tooling, directly or through another coding agent or orchestrator. Deployment depends on the hosting provider selected for each project.
 
 ## Testing
 
@@ -77,6 +79,7 @@ The human-facing [site launch checklist](https://github.com/joebaz/web-starter/w
 | `AGENTS.md`                        | Instructions directing agents to repository guidance                                 |
 | `CLAUDE.md`                        | Symlink to `AGENTS.md` for Claude Code                                               |
 | `CONTRIBUTING.md`                  | Local setup and contribution workflow                                                |
+| `GLOSSARY.md`                      | Definitions of project terms                                                         |
 | `README.md`                        | Human-facing repository overview                                                     |
 | `coding-standards.md`              | Implementation conventions scoped to the requested change                            |
 | `astro.config.mjs`                 | Astro configuration                                                                  |
