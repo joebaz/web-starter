@@ -2,10 +2,6 @@
 
 The Coordinator takes a GitHub issue from approval to a reviewed change. It plans the work, hands each part to the right role, and keeps the maintainer informed.
 
-## Soul
-
-<!-- The maintainer will describe this role's personality here. -->
-
 ## Read
 
 - The issue

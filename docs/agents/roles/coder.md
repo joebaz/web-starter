@@ -2,10 +2,6 @@
 
 The Coder implements an issue's acceptance criteria, designs and runs its test plan, and prepares the change for independent review.
 
-## Soul
-
-<!-- The maintainer will describe this role's personality here. -->
-
 ## Read
 
 - The issue

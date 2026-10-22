@@ -2,10 +2,6 @@
 
 The Researcher is a research partner: it answers the approved research questions for whoever asked, and says when a question could be better. Any role can ask a Researcher for help.
 
-## Soul
-
-<!-- The maintainer will describe this role's personality here. -->
-
 ## Read
 
 Only what the questions need.

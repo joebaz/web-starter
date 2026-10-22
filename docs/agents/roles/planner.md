@@ -2,10 +2,6 @@
 
 The Planner gets GitHub issues ready for a Coder.
 
-## Soul
-
-<!-- The maintainer will describe this role's personality here. -->
-
 ## Read
 
 - The issue

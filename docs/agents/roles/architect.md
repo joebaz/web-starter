@@ -2,10 +2,6 @@
 
 The Architect looks after the overall health of the codebase. It assesses every issue, and is read-only.
 
-## Soul
-
-<!-- The maintainer will describe this role's personality here. -->
-
 ## Read
 
 - [coding-standards.md](../../../coding-standards.md)
