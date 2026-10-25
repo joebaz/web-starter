@@ -146,7 +146,7 @@ Each affected file and the direction of its change. Role SOP changes apply to Do
 
 - **`docs/agents/roles/coordinator.md`:** describe the role as orchestrating work on an issue between the Maintainer and a team of agents. Keep its methods: workspace preparation and its stop-if-dirty safety, the readiness criteria, task tracking, one editor at a time, a separate Reviewer, agent check-ins, milestone updates, and the changed-requirements protocol. For Docs issues, leave timing to the lifecycle: the readiness handoff, the status change, the Architect's assessments, and the review-cycle policy. Keep the current sequencing for other issue types in its own section. Add the oversight duties for every issue and, in a Docs-only section, the lifecycle methods: the `/retro` skill, reporting at the lifecycle's handoffs, the execution checkpoint, and the stage readout.
 - **`docs/agents/roles/planner.md`:** describe the role as capturing the Maintainer's intent and, for Docs issues, planning the implementation. Group its work into capturing requirements, planning the implementation of Docs issues, and limits. The plan's contents and the slicing guidance from the Coordinator SOP live here, and the Planner keeps the plan current with authorized feedback, taking scope questions to the Maintainer. For a Docs issue, it may create and update an issue-linked spec at `docs/specs/<issue>-<slug>.md`, when that helps align requirements with the Maintainer, and its plan at `docs/plans/<issue>-<slug>.md`. These are the only repository files it edits, one editor at a time; for other issue types it edits none. Remove Docs dispatch and handoff timing from it, keeping the "Stop when the issue is ready for a Coder" stop point only for other issue types, and add no trigger on the Coordinator's briefing: the lifecycle owns dispatch and handoffs, and the Planner SOP describes the Planner's responsibilities and methods.
-- **`docs/agents/roles/architect.md`:** add the System Design as a whole to its remit. It assesses what the Coordinator sends, a plan or a commit; the lifecycle sets the timing for Docs issues, and the Coordinator SOP for others. It stays read-only and advisory; out-of-scope recommendations become suggested issues unless the Maintainer approves a change to the requirements.
+- **`docs/agents/roles/architect.md`:** assess plans and signed-off commits against approved goals, prior decisions, and any vision documents, then consider future adaptability. The Template aims to make website redesign, coding, and deployment fast; flag Project-specific values or examples made into Template-wide rules and dependencies that make change harder. Include codebase health and System Design. The lifecycle sets timing for Docs issues, and the Coordinator SOP for others. Keep the role read-only and advisory; out-of-scope work needs Maintainer-approved requirements.
 - **`docs/agents/roles/coder.md`:** point to its Docs lifecycle steps in Implement. For Docs issues, write for the intended reader with minimal jargon, give each section a clear question or purpose, use terms consistently, and surface open questions. Its own validation doesn't replace the independent review, and it makes a fix only when assigned, since no fix is authorized automatically. Its methods and checks stay.
 - **`docs/agents/roles/reviewer.md`:** point to its Docs lifecycle steps in Implement. For documentation changes, check for contradictions, unsupported assumptions, and unclear wording. Its acceptance doesn't complete the change. Its methods and checks stay.
 - **`docs/agents/issue-tracker.md`:** specs live at `docs/specs/<issue>-<slug>.md`, linked from their issue. Distinguish the issue's status, the shared workflow, and the issue's checkpoint.
@@ -249,10 +249,13 @@ Each entry names the file, the section, and the From, To, or Add text. In the su
 
 - **Introduction**
   - From: "The Architect looks after the overall health of the codebase. It assesses every issue, and is read-only."
-  - To: "The Architect looks after the overall health of the codebase and the System Design as a whole. It assesses every issue, and is read-only."
+  - To: "The Architect looks after the overall health of the codebase and the System Design as a whole, keeping both consistent with the approved intent of the Template or Project. It assesses every issue, and is read-only."
+- **Read**
+  - Add after "The issue and the code it touches": "The approved intent of the Template or Project, and any vision documents"
 - **Work**
   - From: "The Coordinator asks you to assess each issue twice:" and its two bullets, "Before coding: assess the plan." and "After the change's last review: compare the codebase before and after the change."
   - To: "Assess what the Coordinator sends you:" with the bullets "A plan: assess the plan." and "A commit: compare the codebase before and after the change."
+  - Add as the first criterion: "**Design intent:** whether the plan or change fits the Template's purpose of fast website redesign, coding, and deployment or the Project's approved goals, preserves prior design decisions, and keeps future changes easy. Flag Project-specific values or examples made into Template-wide rules and unnecessary dependencies."
   - From: "Anything outside the current issue becomes a suggested new issue for the Planner and the maintainer, never extra work in the current change."
   - To: "Anything outside the current issue goes to the maintainer as a suggested new issue. It becomes current work only when the maintainer approves a change to the requirements."
 
@@ -293,7 +296,7 @@ Each entry names the file, the section, and the From, To, or Add text. In the su
   - Planner, from: "The agent role that gets GitHub issues ready for a Coder through triage, maintainer interviews, and issue writing."
   - Planner, to: "The agent role that captures the Maintainer's intent and plans the implementation of a GitHub issue."
   - Architect, from: "The read-only agent role that assesses every issue for code health: the plan before coding, and the change after its last review."
-  - Architect, to: "The agent role responsible for the overall health of the codebase and the System Design as a whole."
+  - Architect, to: "The agent role responsible for the overall health of the codebase and the System Design as a whole, consistent with the approved intent of the Template or Project."
 
 ### `AGENTS.md` (`CLAUDE.md` is a symlink to it)
 
