@@ -1,6 +1,6 @@
-# Docs lifecycle spec (draft)
+# Docs lifecycle spec
 
-> **Status:** Draft for Maintainer review. [#15] tracks requirements, decisions, and status. Everything here is agreed direction except sections and items labeled **Proposed**. The current role SOPs govern all work until an approved implementation changes them.
+> **Status:** Approved design for [#66] to implement. [#15] stays open for the implementation and trial findings. The current role SOPs govern work until the implementation changes them.
 
 ## Problem
 
@@ -14,7 +14,7 @@ No single definition says how agents should sequence work or collaborate on an i
 
 Define, implement, and test the lifecycle for Docs work as one thin vertical slice, so any role can tell where an issue stands, what comes next, and what evidence completes each step.
 
-This spec defines the lifecycle in [#15]; once it's approved, [#66] implements it and merges it into `main`, a fresh agent [trials it on #63](#test-approach-proposed), and the Retros and observations from #66 and #63 return to #15 for a final spec revision before #15 closes.
+This spec defines the lifecycle in [#15]. [#66] implements it and merges it into `main`, a fresh agent [trials it on #63](#test-approach), and the Retros and observations from #66 and #63 return to #15 for a final spec revision before #15 closes.
 
 Out of scope:
 
@@ -33,7 +33,7 @@ Out of scope:
 - **Evidence:** PR and CI evidence stays in GitHub. Detailed reports go in chat, following the [QA reference](../qa.md).
 - **Issue state:** each issue's current stage, next action, and waits are kept apart from the shared definition, in its [execution checkpoint](#execution-checkpoint). YAML could hold either; the split keeps one issue's progress out of the workflow every Docs issue shares.
 - **Task tracking:** native task tools (`update_plan` in Codex; `TaskCreate` and `TaskUpdate` in Claude Code) show the active stage's applicable steps as descriptive tasks, and the lifecycle stays open until the Coordinator closes Retro (5.3). The Coordinator starts each response to the Maintainer with a one-line readout of the stage and its applicable steps, such as `Stage: Implement 3 of 7 done`.
-- **Artifacts:** create task artifacts only when the work needs them. Specs live at `docs/specs/<issue>-<slug>.md`, linked from their issue, and plans at `docs/plans/<issue>-<slug>.md`. This spec moves to `docs/specs/` once this review settles. Agent-facing instructions and project-owned references stay in the repository; the Wiki stays the Maintainer's checklist.
+- **Artifacts:** create task artifacts only when the work needs them. Specs live at `docs/specs/<issue>-<slug>.md`, linked from their issue, and plans at `docs/plans/<issue>-<slug>.md`. Agent-facing instructions and project-owned references stay in the repository; the Wiki stays the Maintainer's checklist.
 
 ## Authorization rules
 
@@ -108,7 +108,7 @@ Purpose: review the work and file approved follow-up issues.
 
 ## Lifecycle definition
 
-One YAML file under `docs/` holds the lifecycle. The [#66] Coder chooses its filename, exact schema, and step names; the step numbers in this spec are for draft discussion only.
+One YAML file under `docs/` holds the lifecycle. The [#66] Coder chooses its filename, exact schema, and step names; the step numbers in this spec are design references only.
 
 Required content:
 
@@ -123,12 +123,11 @@ Required content:
 
 The file is documentation only. No schema validator, hook, or workflow engine reads or enforces it.
 
-**Proposed** direction:
+Definition guidance:
 
 - **Readers:** agents and the Maintainer read it for the allowed steps, their order, and what completes each stage. An issue's actual progress is in its execution checkpoint.
 - **Shape:** the five stages in order, each listing its steps.
 - **Steps:** each names its role, its action, any conditional next step, and where its evidence lives, following the evidence rule.
-- **Status:** each item carries the same agreed or proposed status as this spec.
 - **Pointers, not copies:** steps link to the role SOPs, CONTRIBUTING.md, and the QA reference for methods and checks, without restating them.
 
 ## Execution checkpoint
@@ -140,7 +139,7 @@ One YAML file per issue under `/tmp/issues/` records where the issue stands, sep
 - **Recovery:** a fresh or compacted Coordinator loads it and reconciles it with the current repository and issue before advancing.
 - **Durability:** files under `/tmp` can disappear; the lasting copy is the one uploaded to the GitHub issue after the lifecycle completes (5.4).
 
-## Affected documents (Proposed)
+## Affected documents
 
 Each affected file and the direction of its change. Role SOP changes apply to Docs issues and keep the current sequencing for other issue types, as [Lifecycle rules](#lifecycle-rules) states. [Appendix: Suggested edits](#appendix-suggested-edits) suggests exact wording.
 
@@ -156,19 +155,19 @@ Each affected file and the direction of its change. Role SOP changes apply to Do
 - **`CONTRIBUTING.md` and `.github/pull_request_template.md`:** allow `Refs #<number>` for a PR whose issue stays open after the merge, such as #15's spec PR. Other PRs, such as #66's, keep `Closes`.
 - **New lifecycle definition:** a YAML file under `docs/`, holding the [lifecycle definition](#lifecycle-definition).
 
-## Acceptance criteria (Proposed)
+## Acceptance criteria
 
 - **AC1** The lifecycle definition exists and holds its [required content](#lifecycle-definition) for the five stages.
-- **AC2** Each affected document follows its direction in [Affected documents](#affected-documents-proposed).
+- **AC2** Each affected document follows its direction in [Affected documents](#affected-documents).
 - **AC3** For Docs issues, the definition is the authoritative operational sequence: role SOPs point to it and keep their guidance for other issue types, and this spec stays the design record.
 - **AC4** Native task lists show the active stage's applicable steps and keep the lifecycle open until the Coordinator closes Retro (5.3).
 - **AC5** Implement can't complete on the Reviewer's acceptance alone; it needs the Maintainer's final sign-off and the Architect's assessment of the signed-off commit.
 - **AC6** A trial issue runs through Publish and Retro, and the Maintainer decides the follow-ups.
 - **AC7** The checks in [Validate your change](../../CONTRIBUTING.md#validate-your-change) pass for the changed files.
 
-## Test approach (Proposed)
+## Test approach
 
-- **Implementation ([#66]):** the Coder runs the checks in [Validate your change](../../CONTRIBUTING.md#validate-your-change) for the changed files. A YAML file is outside CI's documentation path list, so CI runs its full checks. The Reviewer checks the definition against its [required content](#lifecycle-definition) and each affected document against its direction in [Affected documents](#affected-documents-proposed). No schema validator is added.
+- **Implementation ([#66]):** the Coder runs the checks in [Validate your change](../../CONTRIBUTING.md#validate-your-change) for the changed files. A YAML file is outside CI's documentation path list, so CI runs its full checks. The Reviewer checks the definition against its [required content](#lifecycle-definition) and each affected document against its direction in [Affected documents](#affected-documents). No schema validator is added.
 - **Trial ([#63]):** after #66 merges, a fresh agent runs #63 through the lifecycle in its own workspace. #63 still has the `needs-triage` label, so it enters at Define. #15's spec PR links with `Refs #15`, so #15 stays open: the Maintainer brings the #66 and #63 Retros and observations to the #15 Coordinator, the spec is revised, and #15 then closes. #15's own Retro (5.3) follows that revision.
 
 ## Sources
@@ -177,7 +176,7 @@ Issues: [#15], [#35], [#38], [#48], [#63], [#65], and [#66]. Repository document
 
 ## Appendix: Suggested edits
 
-These are suggestions for the [#66] implementation agent, not verbatim acceptance requirements. Reconcile them with this spec's direction and the repository as it stands then. Where a suggestion conflicts with [Affected documents](#affected-documents-proposed), the direction there governs.
+These are suggestions for the [#66] implementation agent, not verbatim acceptance requirements. Reconcile them with this spec's direction and the repository as it stands then. Where a suggestion conflicts with [Affected documents](#affected-documents), the direction there governs.
 
 Each entry names the file, the section, and the From, To, or Add text. In the suggested text, "the lifecycle" links to the definition, and existing links stay as they are. Headings in To text are proposals; no repository links point to the headings they replace.
 
@@ -197,7 +196,7 @@ Each entry names the file, the section, and the From, To, or Add text. In the su
   - Move "Hand an issue that isn't ready to a Planner, saying what's missing." to Other issue types. The criteria stay; for Docs issues, Define makes the handoff (1.2).
 - **Plan the work and Run the work**
   - From: both sections in full, headings included.
-  - To, four sections. The oversight duties are agreed; this wording is proposed.
+  - To, four sections. The oversight duties are approved; this wording is suggested.
     - "## Orchestrate the work"
       - "Brief each role with the inputs it needs."
       - The existing "Hand the implementation to a Coder and the review to a separate Reviewer …" bullet, unchanged.
