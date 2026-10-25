@@ -32,7 +32,7 @@ Out of scope:
 - **When versus how:** the lifecycle owns when work happens: sequence, handoffs, approval gates, and loops. Role SOPs own how each role works: responsibilities, authority, methods, inputs, outputs, quality, and references. [CONTRIBUTING.md](../../CONTRIBUTING.md) keeps contribution mechanics and checks; the coding standards and the [QA reference](../qa.md) keep their subjects.
 - **Evidence:** PR and CI evidence stays in GitHub. Detailed reports go in chat, following the [QA reference](../qa.md).
 - **Issue state:** each issue's current stage, next action, and waits are kept apart from the shared definition, in its [execution checkpoint](#execution-checkpoint). YAML could hold either; the split keeps one issue's progress out of the workflow every issue shares.
-- **Task tracking:** native task tools (`update_plan` in Codex; `TaskCreate` and `TaskUpdate` in Claude Code) show the active stage's applicable steps as descriptive tasks, and the lifecycle stays open until the Coordinator closes Retro (5.3). **Proposed:** the Coordinator starts each response to the Maintainer with a one-line readout of the stage and its applicable steps, such as `Stage: Implement 3/7`.
+- **Task tracking:** native task tools (`update_plan` in Codex; `TaskCreate` and `TaskUpdate` in Claude Code) show the active stage's applicable steps as descriptive tasks, and the lifecycle stays open until the Coordinator closes Retro (5.3). The Coordinator starts each response to the Maintainer with a one-line readout of the stage and its applicable steps, such as `Stage: Implement 3 of 7 done`.
 - **Artifacts:** create task artifacts only when the work needs them. Specs live at `docs/specs/<issue>-<slug>.md`, linked from their issue, and plans at `docs/plans/<issue>-<slug>.md`. This spec moves to `docs/specs/` once this review settles. Agent-facing instructions and project-owned references stay in the repository; the Wiki stays the Maintainer's checklist.
 
 ## Authorization rules
@@ -52,7 +52,7 @@ Stages run in order: Define, Plan, Implement, Publish, Retro. Each stage's last 
 
 Purpose: turn the issue into approved requirements that are ready to plan.
 
-Entry (**Proposed**): the Maintainer starts a Coordinator on an issue.
+Entry: the Maintainer starts a Coordinator on an issue.
 
 1. **1.1** The Coordinator runs the [Start](../agents/roles/coordinator.md#start) checks and [Check that the issue is ready](../agents/roles/coordinator.md#check-that-the-issue-is-ready). Already approved and ready: go straight to the readiness confirmation (1.5), with no repeat interview or approval. Otherwise: go to the Planner handoff (1.2).
 2. **1.2** The Coordinator sends the `needs-triage` or otherwise unready issue to the Planner, naming the gaps.
@@ -63,8 +63,6 @@ Entry (**Proposed**): the Maintainer starts a Coordinator on an issue.
 ### 2. Plan
 
 Purpose: decide how the change will be built, checked, and handed off before anyone edits files.
-
-Steps 2.1–2.3 are **Proposed**.
 
 1. **2.1** The Coordinator briefs the Planner on the approved requirements, artifacts, and constraints.
 2. **2.2** The Planner builds the implementation plan in `docs/plans/`.
@@ -109,12 +107,13 @@ Purpose: analyze what worked and what didn't, and identify improvements, includi
 
 ## Lifecycle definition
 
-One YAML file under `docs/` holds the lifecycle. The [#66] Coder chooses its filename, exact schema, and whether and how to represent IDs; the step numbers in this spec are design references, not an operational display.
+One YAML file under `docs/` holds the lifecycle. The [#66] Coder chooses its filename, exact schema, and step names; the step numbers in this spec are for draft discussion only.
 
 Required content:
 
 - **Stage order:** the sequence, Define through Retro.
-- **Transitions:** the conditional jumps, each naming its target step unambiguously, such as "Reviewer findings: return to the Coder briefing (3.1)". Otherwise the next listed step follows.
+- **Step keys:** each step has a stable semantic name, such as `coder-briefing`, independent of its position, so a step can move within or across stages without being renamed. Keys needn't be UUIDs, and other documents needn't cite them.
+- **Transitions:** the conditional jumps, each targeting a step key, such as "Reviewer findings: return to `coder-briefing`". Otherwise the next listed step follows.
 - **Entry:** what must happen before a stage starts.
 - **Exit:** the step that ends a stage.
 - **Completion:** what must be true before that exit is allowed.
@@ -138,14 +137,14 @@ One YAML file per issue under `/tmp/issues/` records where the issue stands, sep
 - **Contents:** the current stage and next step; completed stages and active waits; requirement and plan references with their revisions; the assessed revision and its evidence; the cycle count and recorded approvals; outstanding decisions.
 - **Updates:** at each stage close and each key Maintainer decision.
 - **Recovery:** a fresh or compacted Coordinator loads it and reconciles it with the current repository and issue before advancing.
-- **Durability:** files under `/tmp` can disappear, so Retro attaches the final checkpoint to the GitHub issue before the worktree is archived (5.3).
+- **Durability:** files under `/tmp` can disappear; the lasting copy is the one attached to the GitHub issue in Retro (5.3).
 
 ## Affected documents (Proposed)
 
 Each affected file and the direction of its change. [Appendix: Suggested edits](#appendix-suggested-edits) suggests exact wording.
 
-- **`docs/agents/roles/coordinator.md`:** describe the role as orchestrating work on an issue between the Maintainer and a team of agents. Keep its methods: workspace preparation and its stop-if-dirty safety, the readiness criteria, task tracking, one editor at a time, a separate Reviewer, agent check-ins, milestone updates, and the changed-requirements protocol. Leave timing to the lifecycle: the readiness handoff, the status change, the Architect's assessments, and the review-cycle policy. Add the oversight duties, the `/retro` skill, reporting at the lifecycle's handoffs, and keeping, reconciling, and attaching the execution checkpoint. **Proposed:** the stage readout.
-- **`docs/agents/roles/planner.md`:** describe the role as capturing the Maintainer's intent and planning the implementation. Group its work into capturing requirements, planning the implementation, and limits. The plan's contents and the slicing guidance from the Coordinator SOP live here, and the Planner keeps the plan current with authorized feedback, taking scope questions to the Maintainer. Its plan files in `docs/plans/` are the only repository files it creates or edits, one editor at a time. Drop trigger and stop timing.
+- **`docs/agents/roles/coordinator.md`:** describe the role as orchestrating work on an issue between the Maintainer and a team of agents. Keep its methods: workspace preparation and its stop-if-dirty safety, the readiness criteria, task tracking, one editor at a time, a separate Reviewer, agent check-ins, milestone updates, and the changed-requirements protocol. Leave timing to the lifecycle: the readiness handoff, the status change, the Architect's assessments, and the review-cycle policy. Add the oversight duties, the `/retro` skill, reporting at the lifecycle's handoffs, keeping, reconciling, and attaching the execution checkpoint, and the stage readout.
+- **`docs/agents/roles/planner.md`:** describe the role as capturing the Maintainer's intent and planning the implementation. Group its work into capturing requirements, planning the implementation, and limits. The plan's contents and the slicing guidance from the Coordinator SOP live here, and the Planner keeps the plan current with authorized feedback, taking scope questions to the Maintainer. Its plan files in `docs/plans/` are the only repository files it creates or edits, one editor at a time. Remove dispatch and handoff timing from it, such as the "Stop when the issue is ready for a Coder" stop-and-report line, and add no trigger on the Coordinator's briefing: the lifecycle owns dispatch and handoffs, and the Planner SOP describes the Planner's responsibilities and methods.
 - **`docs/agents/roles/architect.md`:** add the System Design as a whole to its remit. It assesses what the Coordinator sends, a plan or a commit, and the lifecycle sets the timing. It stays read-only and advisory; out-of-scope recommendations become suggested issues unless the Maintainer approves a change to the requirements.
 - **`docs/agents/roles/coder.md`:** point to its steps in Implement. Its own validation doesn't replace the independent review, and it makes a fix only when assigned, since no fix is authorized automatically. Its methods and checks stay.
 - **`docs/agents/roles/reviewer.md`:** point to its steps in Implement. Its acceptance doesn't complete the change. Its methods and checks stay.
@@ -207,7 +206,7 @@ Each entry names the file, the section, and the From, To, or Add text. In the su
       - "Keep the issue's execution checkpoint current at each stage close and each key maintainer decision. At the Retro, attach it to a comment on the issue, and hold the archive notice if the upload fails."
       - "Run the Retro with `/retro`, the `mattpocock-skills:retro` skill."
       - The existing "Check on the agents you started every 15 minutes …" bullet, unchanged.
-      - **Proposed:** "Start each response to the maintainer with a stage readout, such as `Stage: Implement 3/7`."
+      - "Start each response to the maintainer with a stage readout, such as `Stage: Implement 3 of 7 done`."
     - "## Oversee the work"
       - "Compare the work with the lifecycle, the approved requirements, and the plan throughout the issue. Check readiness and plan adherence before closing each stage."
       - "Resolve omissions, deviations, and conflicts between requirements, plans, code, and reviews directly with the agents when the approved materials already answer them."
