@@ -46,7 +46,7 @@ These boundaries apply at every stage; each stage names its own decisions at the
 
 ## Stages
 
-Stages run in order: Define, Plan, Implement, Publish, Retro. Each stage's last step closes it and opens the next stage; closing Retro (5.3) completes the lifecycle.
+Stages run in order: Define, Plan, Implement, Publish, Retro. Closing Define, Plan, Implement, or Publish opens the next stage. Closing Retro (5.3) completes the lifecycle, and the checkpoint upload (5.4) follows after completion.
 
 ### 1. Define
 
@@ -99,11 +99,12 @@ Purpose: get the signed-off revision through CI and merged into `main`.
 
 ### 5. Retro
 
-Purpose: analyze what worked and what didn't, and identify improvements, including chances for mechanical enforcement the trial actually showed.
+Purpose: review the work and file approved follow-up issues.
 
-1. **5.1** The Coordinator runs `/retro`, the `mattpocock-skills:retro` skill.
-2. **5.2** The Maintainer reviews the recommendations. For each approved one, the Coordinator drafts a GitHub issue, and creates it after the Maintainer approves the exact draft.
-3. **5.3** Once the approved issues are filed, or none are approved, the Coordinator finalizes the [execution checkpoint](#execution-checkpoint) and attaches it to a comment on the GitHub issue. After the upload succeeds, the Coordinator closes the stage and tells the Maintainer the worktree is ready to archive; if the upload fails, the Coordinator reports it and holds that notice. The Coordinator doesn't clean up or wait for the archive.
+1. **5.1** The Coordinator runs `/retro` (`mattpocock-skills:retro`) and presents candidate issue drafts.
+2. **5.2** The Maintainer reviews each draft. Comments: the Coordinator revises it for another review. Approved: the Coordinator files it exactly as approved. Declined: it's dropped.
+3. **5.3** With every draft filed or dropped, the Coordinator confirms all stage obligations are met and closes Retro, completing the lifecycle.
+4. **5.4** The Coordinator uploads the final [execution checkpoint](#execution-checkpoint) to an issue comment. Success: the Coordinator tells the Maintainer, who archives the worktree. Failure: the Coordinator reports it and holds that notice until an upload succeeds.
 
 ## Lifecycle definition
 
@@ -137,13 +138,13 @@ One YAML file per issue under `/tmp/issues/` records where the issue stands, sep
 - **Contents:** the current stage and next step; completed stages and active waits; requirement and plan references with their revisions; the assessed revision and its evidence; the cycle count and recorded approvals; outstanding decisions.
 - **Updates:** at each stage close and each key Maintainer decision.
 - **Recovery:** a fresh or compacted Coordinator loads it and reconciles it with the current repository and issue before advancing.
-- **Durability:** files under `/tmp` can disappear; the lasting copy is the one attached to the GitHub issue in Retro (5.3).
+- **Durability:** files under `/tmp` can disappear; the lasting copy is the one uploaded to the GitHub issue after the lifecycle completes (5.4).
 
 ## Affected documents (Proposed)
 
 Each affected file and the direction of its change. [Appendix: Suggested edits](#appendix-suggested-edits) suggests exact wording.
 
-- **`docs/agents/roles/coordinator.md`:** describe the role as orchestrating work on an issue between the Maintainer and a team of agents. Keep its methods: workspace preparation and its stop-if-dirty safety, the readiness criteria, task tracking, one editor at a time, a separate Reviewer, agent check-ins, milestone updates, and the changed-requirements protocol. Leave timing to the lifecycle: the readiness handoff, the status change, the Architect's assessments, and the review-cycle policy. Add the oversight duties, the `/retro` skill, reporting at the lifecycle's handoffs, keeping, reconciling, and attaching the execution checkpoint, and the stage readout.
+- **`docs/agents/roles/coordinator.md`:** describe the role as orchestrating work on an issue between the Maintainer and a team of agents. Keep its methods: workspace preparation and its stop-if-dirty safety, the readiness criteria, task tracking, one editor at a time, a separate Reviewer, agent check-ins, milestone updates, and the changed-requirements protocol. Leave timing to the lifecycle: the readiness handoff, the status change, the Architect's assessments, and the review-cycle policy. Add the oversight duties, the `/retro` skill, reporting at the lifecycle's handoffs, keeping, reconciling, and uploading the execution checkpoint, and the stage readout.
 - **`docs/agents/roles/planner.md`:** describe the role as capturing the Maintainer's intent and planning the implementation. Group its work into capturing requirements, planning the implementation, and limits. The plan's contents and the slicing guidance from the Coordinator SOP live here, and the Planner keeps the plan current with authorized feedback, taking scope questions to the Maintainer. Its plan files in `docs/plans/` are the only repository files it creates or edits, one editor at a time. Remove dispatch and handoff timing from it, such as the "Stop when the issue is ready for a Coder" stop-and-report line, and add no trigger on the Coordinator's briefing: the lifecycle owns dispatch and handoffs, and the Planner SOP describes the Planner's responsibilities and methods.
 - **`docs/agents/roles/architect.md`:** add the System Design as a whole to its remit. It assesses what the Coordinator sends, a plan or a commit, and the lifecycle sets the timing. It stays read-only and advisory; out-of-scope recommendations become suggested issues unless the Maintainer approves a change to the requirements.
 - **`docs/agents/roles/coder.md`:** point to its steps in Implement. Its own validation doesn't replace the independent review, and it makes a fix only when assigned, since no fix is authorized automatically. Its methods and checks stay.
@@ -203,7 +204,7 @@ Each entry names the file, the section, and the From, To, or Add text. In the su
       - The existing "Hand the implementation to a Coder and the review to a separate Reviewer …" bullet, unchanged.
       - The existing "Let one agent edit files at a time …" and "Track which agent owns what …" bullets, unchanged.
       - "Run review cycles as the lifecycle's Implement stage sets out."
-      - "Keep the issue's execution checkpoint current at each stage close and each key maintainer decision. At the Retro, attach it to a comment on the issue, and hold the archive notice if the upload fails."
+      - "Keep the issue's execution checkpoint current at each stage close and each key maintainer decision. After the lifecycle completes, upload it to a comment on the issue, and give the archive notice only once an upload succeeds."
       - "Run the Retro with `/retro`, the `mattpocock-skills:retro` skill."
       - The existing "Check on the agents you started every 15 minutes …" bullet, unchanged.
       - "Start each response to the maintainer with a stage readout, such as `Stage: Implement 3 of 7 done`."
