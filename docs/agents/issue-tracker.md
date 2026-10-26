@@ -1,6 +1,6 @@
 # Issue tracker: GitHub
 
-Issues and specs live in this code repository's GitHub Issues, not in its wiki. Run `gh` from this repository so it targets the `origin` remote; do not pass a hard-coded `--repo`.
+Issues live in this code repository's GitHub Issues, not in its wiki. Specs live at `docs/specs/<issue>-<slug>.md`, linked from their issue; plans live at `docs/plans/<issue>-<slug>.md`. The issue tracks its status, the [Docs lifecycle](../docs-lifecycle.yaml) holds the shared workflow, and the issue's execution checkpoint records its progress. Run `gh` from this repository so it targets the `origin` remote; do not pass a hard-coded `--repo`.
 
 ## Issue operations
 

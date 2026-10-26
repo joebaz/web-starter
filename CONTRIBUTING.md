@@ -125,7 +125,7 @@ Confirm that only intended files are included.
 ## Open a pull request
 
 - Use [.github/pull_request_template.md](.github/pull_request_template.md).
-- Link the pull request to the relevant GitHub Issue or Sub-Issue with `Closes #<number>`.
+- Link the pull request to the relevant GitHub Issue or Sub-Issue with `Closes #<number>`. Use `Refs #<number>` when the issue stays open after the merge, such as a spec issue awaiting implementation and trial findings.
 - Describe the changed files and validation performed.
 - Ensure CI passes.
 - A maintainer must review the pull request before merge.

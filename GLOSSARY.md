@@ -91,17 +91,17 @@ A person responsible for the repository, who approves its work and is the only o
 _Avoid_: owner
 
 **Coordinator**:
-The agent role that takes a GitHub issue from approval to a reviewed change, handing each part to the right role.
-_Avoid_: orchestrator
+The agent role that coordinates work on a GitHub issue between the Maintainer and a team of agents.
+_Avoid_: orchestrator, orchestrate
 
 **Planner**:
-The agent role that gets GitHub issues ready for a Coder through triage, maintainer interviews, and issue writing.
+The agent role that captures the Maintainer's intent and plans the implementation of a GitHub issue.
 
 **Researcher**:
 The read-only agent role that answers approved research questions with checked facts and sources.
 
 **Architect**:
-The read-only agent role that assesses every issue for code health: the plan before coding, and the change after its last review.
+The agent role responsible for the overall health of the codebase and the System Design as a whole, consistent with the approved intent of the Template or Project.
 
 **Coder**:
 The agent role that implements an issue that is ready for an agent, with its test plan, for independent review.
