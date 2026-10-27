@@ -61,6 +61,11 @@ Documents intended to guide agents working on the Template or a Project. They he
 **Maintainer Docs**:
 Documents intended to guide the Maintainer working on the Template or a Project.
 
+## Planning
+
+**Milestone**:
+A point in a plan at which stated criteria are met, usually when a planned output is complete.
+
 ## Changes and debt
 
 **Defect**:

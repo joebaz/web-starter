@@ -24,8 +24,8 @@ An issue is ready for an agent when a Coder can build and check it without guess
 
 ## Coordinate the work
 
-- Brief each role with the inputs it needs.
-- Hand the implementation to a Coder and the review to a separate Reviewer. You may make a tiny change yourself, but it still gets a Reviewer.
+- Brief each agent with the inputs it needs.
+- Hand the implementation to a Coder and the review to a separate Reviewer, subject to the shared `review_exception` policy in the [Docs lifecycle](../../docs-lifecycle.yaml). Apply that same policy to any change you make yourself; treat direct assignment as separate from review authorization.
 - Let one agent edit files at a time. Read-only work can run alongside it, such as a Researcher answering a question while the Coder works.
 - Track which agent owns what, and which work depends on other work.
 - Check on the agents you started every 15 minutes. If one has made no progress since the last check, find out why. Resume it when it can continue, for example after a usage limit resets, and tell the maintainer if it can't.
@@ -35,19 +35,19 @@ An issue is ready for an agent when a Coder can build and check it without guess
 - Compare the work with the approved requirements and the plan throughout every issue.
 - Resolve omissions, deviations, and conflicts between requirements, plans, code, and reviews directly with agents when the approved materials already answer them.
 - Pause affected work and take anything that needs a new approach, or would change scope, an acceptance criterion, or a recorded decision, to the maintainer. Send every affected agent the resulting change as [When approved requirements change](#when-approved-requirements-change) describes.
-- Leave correctness review to the Reviewer. Oversight adds no approval gate.
-- Update the maintainer at each design and implementation milestone, so they can check the work against the issue's intent while it's still cheap to change. A milestone is a piece they can judge on its own, such as one button's interactive states, then the compiled desktop and mobile navigation. Choose milestones that suit the change; for a docs change they are drafts, not screens. Say what each milestone shows, how it serves the intent, and any risks.
+- Leave correctness review to the Reviewer unless the shared review policy applies. Keep oversight advisory; add no approval gate.
+- Report to the maintainer against the plan's milestones, showing whether the stated criteria are met and citing the planned evidence. Explain how the result serves the issue's intent and identify any risks while the work can still be adjusted.
 
 ## Docs issues
 
-The [Docs lifecycle](../../docs-lifecycle.yaml) owns sequence, handoffs, approval gates, and loops. Role SOPs describe methods and authority; CONTRIBUTING.md, the standards, and QA keep their subjects.
+Follow the [Docs lifecycle](../../docs-lifecycle.yaml).
 
-- Brief each role at its lifecycle step, and check readiness and plan adherence before closing each stage.
-- When the lifecycle changes issue status, make the change and confirm it, or describe the error encountered.
+- Brief each agent at its lifecycle step, and check readiness and plan adherence before closing each stage.
+- Apply the [GitHub Project status method](#change-github-project-status) when the lifecycle calls for a status change.
 - Run review cycles under the lifecycle's Implement authorization and counting rules.
 - Keep one YAML execution checkpoint per issue at `/tmp/issues/<issue>.yaml`, separate from the shared definition. Record current stage and next step, completed stages, active waits, requirement and plan references with revisions, the assessed revision and its evidence, cycle count and recorded approvals, and outstanding decisions. Update it at every stage close and key maintainer decision. `/tmp` can disappear; reconcile recovered state with the repository and issue rather than treating the record as approval.
-- After completion, upload the final checkpoint to an issue comment. Give the archive notice only after a successful upload; report failures and retry.
-- The Coordinator asks the maintainer to start `/retro` (`mattpocock-skills:retro`) and follows it.
+- Publish the complete checkpoint as an issue comment. Verify the published contents against the checkpoint, retain the comment URL as evidence, and report any upload or verification error accurately. Follow the lifecycle for timing, retries, and the archive notice.
+- Ask the maintainer to start `/retro` (`mattpocock-skills:retro`) and follow it.
 - Start each response to the maintainer with a one-line readout of the active stage and applicable steps, such as `Stage: Implement 3 of 7 done`.
 - Create artifacts only as needed: issue-linked specs at `docs/specs/<issue>-<slug>.md` and implementation plans at `docs/plans/<issue>-<slug>.md`. Agent-facing instructions and project-owned references stay in the repository; the Wiki stays the maintainer's checklist.
 
@@ -56,14 +56,23 @@ The [Docs lifecycle](../../docs-lifecycle.yaml) owns sequence, handoffs, approva
 Until their own lifecycles are defined, Content, Fix, and Feature issues keep this sequence:
 
 1. If the issue has the `needs-triage` label, review it with the `mattpocock-skills:grilling` skill, asking the maintainer your questions one at a time, and wait for the go-ahead. Otherwise, skip this step.
-2. Change the status of the selected issue from "To do" to "In progress". Confirm the status change or describe the error encountered.
+2. Change the selected issue from "To do" to "In progress" using the [GitHub Project status method](#change-github-project-status).
 3. Hand an issue that isn't ready to a Planner, saying what's missing.
 
-- Look for work that can run in parallel, and break large work into coherent pieces. Prefer small vertical slices, each working end to end, to building one layer at a time. Run slices one after another when the next depends on checking the last against the issue's intent.
+- Plan the work yourself using the shared [Planning method](planner.md#planning-method); retain responsibility for planning Content, Fix, and Feature issues.
 - For every issue, ask an Architect to assess the plan before coding and the change after its last review.
-- Work in review cycles. A cycle is one round of changes, by the Coder or by you, followed by one independent review of those changes. Each cycle needs the maintainer's approval before it starts: starting you on the issue approves the first, after the go-ahead for a `needs-triage` issue, and a maintainer's request for changes approves the cycle that makes them. When a Reviewer recommends "changes needed", give the maintainer the findings and wait. Run at most five cycles per issue; additional cycles require the maintainer's approval.
+- Work in review cycles. A cycle is one round of changes, by the Coder or by you, followed by one independent review of those changes, subject to the shared `review_exception` policy in the [Docs lifecycle](../../docs-lifecycle.yaml). Count an exempt round as a cycle. Each cycle needs the maintainer's approval before it starts: starting you on the issue approves the first, after the go-ahead for a `needs-triage` issue, and a maintainer's request for changes approves the cycle that makes them. When a Reviewer recommends "changes needed", give the maintainer the findings and wait. Run at most five cycles per issue; additional cycles require the maintainer's approval.
 
 After the maintainer commits, pushes, and says so, open the pull request using the [pull request template](../../../.github/pull_request_template.md) with `Closes #N`, then stop.
+
+## Change GitHub Project status
+
+Use this method for an authorized issue-status change:
+
+1. Inspect the repository-linked GitHub Projects and the issue's project memberships. Treat an empty `projectItems` result as incomplete evidence; check the repository's linked projects before concluding that no project applies.
+2. Establish the intended Project and its Status field and option mapping from the repository and issue context. Ask the maintainer when multiple plausible projects or mappings remain, or access prevents establishing them. Report the exact access error; do not select an arbitrary Project or create one.
+3. If the issue is not a member of the established Project, attach it as part of the authorized status change. Set the mapped Status option.
+4. Read back the issue's membership and Status to verify the result. Confirm the Project and status in chat, or report the exact error encountered.
 
 ## When approved requirements change
 

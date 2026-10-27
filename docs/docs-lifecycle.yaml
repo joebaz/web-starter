@@ -39,8 +39,21 @@ rules:
     linked from their issue, and plans at docs/plans/<issue>-<slug>.md. Agent-facing
     instructions and project-owned references stay in the repository; the Wiki
     stays the Maintainer's checklist.
+  review_exception: >-
+    Omit a separate Reviewer only with the Maintainer's explicit waiver for a
+    particular isolated one- or two-line change. Record the waiver and exact
+    revision in chat and, for Docs issues, the execution checkpoint. Count the whole logical
+    unreviewed delta, not individual hunks; never split a larger change to qualify.
+    Re-evaluate eligibility for every revision; a waiver does not carry to unrelated
+    changes or later revisions. Direct Maintainer assignment does not imply a waiver.
+    Retain validation, final Maintainer sign-off, final Architect assessment, cycle
+    authorization, count and limits, and evidence matching the current revision.
+    Record the eligible exception honestly instead of claiming a Reviewer pass.
+    Coordinator and Coder SOPs also reference this shared policy for other issue
+    types; their existing sequencing otherwise remains unchanged.
   cycles: >-
-    One cycle is one round of changes followed by one independent review. Each
+    One cycle is one round of changes followed by one independent review or a
+    recorded eligible review_exception. Count exempt rounds too. Each cycle
     needs Maintainer authorization. Starting the Coordinator authorizes the first
     cycle, after the go-ahead for a needs-triage issue. Each later cycle requires
     a Maintainer request for changes or an authorized fix. At most five cycles
@@ -54,7 +67,7 @@ checkpoint:
     - Completed stages and active waits
     - Requirement and plan references with their revisions
     - Assessed revision and its evidence
-    - Cycle count and recorded approvals
+    - Cycle count and recorded approvals, including any review waiver and its exact revision
     - Outstanding decisions
   updates: At every stage close and key Maintainer decision.
   recovery: >-
@@ -100,7 +113,8 @@ stages:
       - key: readiness-confirmation
         role: Coordinator
         action: >-
-          Confirm readiness, change To do to In progress, and close Define.
+          Confirm readiness, change To do to In progress using the Coordinator SOP's
+          status method, and close Define.
           Plan needs no further approval.
         evidence: Issue status and chat confirmation; updated checkpoint.
   - name: Plan
@@ -149,16 +163,22 @@ stages:
       cycle meets the authorization and extension rules before changes start.
     exit: implementation-evidence
     completion: >-
-      The current revision has independent review, the Maintainer's final sign-off,
-      and the final Architect assessment of the signed-off commit. Review and
-      evidence match that revision; no authorized changes remain.
+      The current revision has independent review or a recorded eligible
+      review_exception, the Maintainer's final sign-off, and the final Architect
+      assessment of the signed-off commit. Review or waiver and all other evidence
+      match that revision; no authorized changes remain.
     steps:
       - key: coder-briefing
-        role: Coordinator
+        role: Coordinator, or Maintainer and Coder for a confirmed direct assignment while the Coordinator is unavailable
         action: >-
           Check cycle authorization and count, including an explicit extension for
           cycle six or later. Brief the Coder on requirements, plan, references,
           and assignment. Record the cycle without resetting earlier cycles.
+          For a confirmed direct Maintainer assignment while the Coordinator is
+          unavailable, confirm the same briefing, scope, one-editor ownership, and
+          authorization checks directly with the Maintainer. Record the assignment
+          and cycle evidence for reconciliation with the Coordinator on return;
+          preserve all later validation and review gates.
         evidence: Chat assignment; checkpoint cycle count and Maintainer authorization.
       - key: implementation-validation
         role: Coder and Coordinator
@@ -167,11 +187,22 @@ stages:
           Coder SOP, contribution requirements, and QA reference. For a new or
           substantially revised document, first send a short outline to the
           Coordinator, who gets the Maintainer's approval; expand it only then.
+          For a confirmed direct assignment while the Coordinator is unavailable,
+          obtain that outline approval directly from the Maintainer.
         evidence: Repository diff; chat outline approval when applicable and validation report.
       - key: reviewer-dispatch
         role: Coordinator
-        action: Dispatch a separate Reviewer on the whole changed revision.
-        evidence: Chat assignment naming the revision and approved requirements.
+        action: >-
+          Re-evaluate review_exception eligibility for the current revision. With
+          a recorded eligible waiver, proceed to Maintainer review. Otherwise
+          dispatch a separate Reviewer on the whole changed issue revision,
+          including earlier changes, not just the latest round.
+        evidence: Chat assignment or eligible waiver naming the exact revision; checkpoint record.
+        transitions:
+          - when: A recorded eligible review_exception applies to this revision.
+            to: maintainer-review
+          - when: No eligible recorded waiver applies.
+            to: independent-review
       - key: independent-review
         role: Reviewer
         action: Check the change, run applicable checks, and report findings and a recommendation.
@@ -186,8 +217,9 @@ stages:
         action: >-
           The Maintainer reviews file diffs, comments, and commits. If changes
           are needed, the Coordinator reconciles feedback with the commit and
-          briefs remaining changes; the next independent review covers the whole
-          changed revision. Otherwise the Maintainer gives final sign-off.
+          briefs remaining changes; re-evaluate the review policy on the next revision,
+          and any independent review covers the whole changed issue revision.
+          Otherwise the Maintainer gives final sign-off.
         evidence: Maintainer feedback or final sign-off naming the commit; checkpoint decision.
         transitions:
           - when: Maintainer requests changes.
@@ -208,7 +240,7 @@ stages:
       - key: implementation-evidence
         role: Coordinator
         action: Confirm all Implement completion conditions and close the stage.
-        evidence: Matching sign-off, assessment, review, and validation references; updated checkpoint.
+        evidence: Matching sign-off, assessment, review or eligible waiver, and validation references; updated checkpoint.
   - name: Publish
     entry: Implement is closed for the revision to publish.
     exit: merge-confirmation
@@ -299,10 +331,11 @@ stages:
       - key: checkpoint-upload
         role: Coordinator
         action: >-
-          After completion, upload the final execution checkpoint to an issue comment.
+          After completion, upload and verify the final execution checkpoint as an issue
+          comment using the Coordinator SOP method.
           On success tell the Maintainer, who archives the worktree. On failure
-          report it and withhold the archive notice until upload succeeds.
+          report it and withhold the archive notice until upload and verification succeed.
         evidence: GitHub issue comment containing the checkpoint; chat success or failure report.
         transitions:
-          - when: Upload fails; retry without reopening the completed lifecycle.
+          - when: Upload or content verification fails; retry without reopening the completed lifecycle.
             to: checkpoint-upload

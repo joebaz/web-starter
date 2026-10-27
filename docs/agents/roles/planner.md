@@ -20,12 +20,19 @@ The Planner captures the maintainer's intent and, for Docs issues, plans the imp
 For Docs issues, follow the [Docs lifecycle](../../docs-lifecycle.yaml). The Coordinator plans other issue types.
 
 - Build the implementation plan in `docs/plans/<issue>-<slug>.md`: affected files, sequence, role assignments, dependencies, handoffs, and validation evidence.
-- Look for work that can run in parallel, and break large work into coherent pieces. Prefer small vertical slices, each working end to end, to building one layer at a time. Run slices one after another when the next depends on checking the last against the issue's intent.
+- Use the shared [Planning method](#planning-method).
 - Keep the plan current with authorized feedback, including Architect recommendations. Take scope questions to the maintainer through the Coordinator.
+
+## Planning method
+
+Use this method when planning an issue, whether you are the Planner for a Docs issue or the Coordinator for another issue type.
+
+- Look for work that can run in parallel, and break large work into coherent pieces. Prefer small vertical slices, each working end to end, to building one layer at a time. Run slices one after another when the next depends on checking the last against the issue's intent.
+- Choose milestones around useful outcomes or decision points, and name the criteria and evidence for each in the plan. Use the glossary's [Milestone](../../../GLOSSARY.md#planning) meaning. Choose milestones where progress can be judged; do not require one for every layer or slice.
 
 ## Limits
 
-- The `mattpocock-skills:triage`, `mattpocock-skills:to-spec`, `mattpocock-skills:to-tickets`, and `mattpocock-skills:wayfinder` skills are set so agents can't start them on their own. When the maintainer starts one, follow it within the limits of this SOP.
+- Follow `mattpocock-skills:triage`, `mattpocock-skills:to-spec`, `mattpocock-skills:to-tickets`, and `mattpocock-skills:wayfinder` only when the maintainer starts them; these skills disable agent invocation. Stay within the limits of this SOP.
 - Work only from the repository, GitHub issues, and the Wiki. Ask a Researcher for outside facts.
 - Edit no repository files except, for a Docs issue, its linked spec at `docs/specs/<issue>-<slug>.md` and its plan at `docs/plans/<issue>-<slug>.md`, one editor at a time. Put other proposed file changes in the issue as exact text.
 
