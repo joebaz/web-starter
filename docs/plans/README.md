@@ -4,7 +4,7 @@ This directory holds the implementation plan for each issue that has one, for ev
 
 Name each plan `<issue>-<slug>.md`: the issue number, then a short lowercase kebab-case description, such as `123-update-contact-guide.md`. Link the plan from its issue.
 
-A plan is an ordered list of operations for one issue, which is one Vertical Slice. Operations are numbered pieces of work inside the plan; they are not Vertical Slices or lifecycle steps. Link the approved requirements instead of copying them, and scale the plan to the issue: a small change may need only one or two operations.
+A plan is an ordered list of operations for one issue, which is one Vertical Slice. Operations are numbered pieces of work inside the plan; they are not Vertical Slices or Lifecycle steps. Link the approved requirements instead of copying them, and scale the plan to the issue: a small change may need only one or two operations.
 
 ```markdown
 # <Issue title>: implementation plan
@@ -38,6 +38,10 @@ Issue: #<issue>
 
 - Checks: <required commands and reviews>, expecting <evidence>
 - Hand back: <what goes to whom>
+
+## Maintainer feedback and decisions
+
+- <Feedback or decision> (<link to the original>): <disposition>; affects <operation or requirement>
 
 ## Architect recommendations
 

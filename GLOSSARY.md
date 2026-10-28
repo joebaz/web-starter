@@ -69,6 +69,17 @@ A cohesive outcome, one GitHub Issue or Sub-Issue, delivered through every Layer
 **Layer**:
 A part of the Template or Project that owns one kind of responsibility for many outcomes, such as site configuration, page layouts, or the lifecycle's sequencing.
 
+## Workflow
+
+**Lifecycle**:
+The stages and permitted transitions through which an issue progresses from definition to completion.
+
+**Agent Brief**:
+A concise description of an agent’s assigned work, including its expected outcome, scope and acceptance criteria.
+
+**Task Artifact**:
+A document or record produced or used while carrying out an issue, such as a specification, implementation plan or review report.
+
 ## Changes and debt
 
 **Defect**:

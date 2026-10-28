@@ -1,6 +1,6 @@
 # Human-readable documentation only; no validator, hook, or workflow engine reads this file.
 name: Lifecycle
-applies_to: Every issue type, until evidence justifies a separately agreed variation.
+applies_to: All issue types
 authority:
   - This file owns the sequence, handoffs, approval gates, loops, and update timing.
   - Each step's method links to the role SOP or guide that says how to do it.
@@ -9,9 +9,9 @@ reading:
   - Stages run in order. Steps run in listed order unless a transition names another step.
   - Transitions target unique step keys, independent of position.
   - Wait at a gate until its condition is met.
-  - Closing a stage opens the next. Closing Retro completes the lifecycle.
-  - The final checkpoint update follows completion; until it succeeds, that obligation stays open.
+  - Closing a stage opens the next. Closing Retro completes the Lifecycle.
   - A Coordinator resuming work enters at the step its reconciled state establishes, not at Define.
+  - State that stays unknown waits at the gate it affects.
 rules:
   authorization:
     - The Maintainer approves requirements, scope, and changes to either.
@@ -27,26 +27,21 @@ rules:
     - Record the artifact, a revision of its approved content, and the Maintainer's approval.
     - A tracker artifact's revision is its own edit snapshot or a digest of the approved content, not a bare URL or the issue's last update time.
     - A repository file's revision is a commit or blob.
-    - An agent brief, a skill-applied label, or a checkpoint is not approval.
-    - A brief governs only when the Maintainer approves it.
+    - An Agent Brief summarizes and links the approved requirements; it is neither a second contract nor an approval.
+    - A skill-applied label or a checkpoint is not approval.
     - An already approved, ready issue needs no further approval and no second spec.
   artifacts:
-    - Create artifacts only when needed, at the locations in agents/issue-tracker.md.
+    - Create Task Artifacts only when needed, at the locations in agents/issue-tracker.md.
   state:
     - Dispatching an agent, invoking a skill, or starting a step does not complete it.
     - Record the observed outcome and its evidence, check the step's completion condition, then take the matching transition.
     - A running or waiting step, or one with an unresolved failure, stays current with its wait, error, or partial output recorded.
     - Kept output satisfies a later transition only through the evidence that transition names, such as a Maintainer direction.
-    - Never record a failure as a success.
   tracking:
-    - On every stage entry, including a return to Implement, first record completed stages, waits, decisions, and later obligations in the checkpoint.
-    - Then replace the native task list with only the entered stage's applicable steps.
-    - After recovery, build the list for the reconciled active stage.
-    - Re-entering a stage keeps cycle counts, approvals, and step status; it resets nothing.
-    - A finished stage list is not a finished lifecycle. Retro close and the final checkpoint update are separate obligations.
-    - 'Start every response to the Maintainer with a one-line readout of the reconciled state, such as "Stage: Implement 3 of 7 done".'
-    - Tasks and the readout follow the reconciled state under rules.state.
-    - The task tool and readout methods are in agents/roles/coordinator.md#start.
+    - On every stage entry, including a return to Implement, refresh the native task list to that stage's steps.
+    - At every transition, update the task list's step status.
+    - Start every response to the Maintainer with the one-line readout.
+    - Follow agents/roles/coordinator.md#track-the-stage.
   review_exception:
     - Omit a separate Reviewer only with the Maintainer's explicit waiver for one isolated one- or two-line change.
     - Count the whole logical unreviewed change, not individual hunks; never split a larger change to qualify.
@@ -67,26 +62,12 @@ rules:
 checkpoint:
   format: execution-checkpoint.md
   method: agents/roles/coordinator.md#keep-the-execution-checkpoint
-  local_updates:
+  updates:
     - Whenever a step starts, waits, fails, or completes, and at every transition.
-    - Whenever a decision, handoff, or other recorded field changes.
-  durable_updates:
-    - After every local update, sync the issue's checkpoint comment and verify it.
-    - The final verified update happens at checkpoint-upload.
-  recovery:
-    - Reconcile the checkpoint with newer evidence under agents/roles/coordinator.md#start before advancing.
-    - A checkpoint records progress, not approval; unknown state waits at its affected gate.
+    - Whenever a decision, handoff, or recorded field changes.
 scenarios:
-  about: Optional routes through Define and Plan, not required sequences. Skill outputs and caveats are in agents/roles/planner.md#choose-a-skill.
-  routes:
-    - when: An issue holds one outcome and already has approved requirements.
-      route: readiness-check goes straight to readiness-confirmation, with no repeat interview, spec, or split.
-    - when: A small issue is unready.
-      route: Triage and an interview settle an approved requirements contract, then Plan follows.
-    - when: Settled requirements hold more than one outcome that could be demoed or reviewed on its own, too much for one session.
-      route: The Maintainer may run to-spec, then to-tickets; once the Maintainer approves the split, each Sub-Issue runs its own lifecycle.
-    - when: A large effort still has many open decisions.
-      route: wayfinder settles the decisions, then approved requirements and Plan follow.
+  about: Optional routes through Define into the Plan stage; the steps below still govern readiness and approval.
+  method: agents/roles/planner.md#choose-a-route
 stages:
   - name: Define
     entry: The Maintainer starts a Coordinator on an issue.
@@ -130,7 +111,7 @@ stages:
         action:
           - Confirm readiness.
           - Change the issue's status from To do to In progress.
-          - Close Define; Plan needs no further approval.
+          - Close Define; the Plan stage needs no further approval.
         method:
           - agents/roles/coordinator.md#change-github-project-status
         evidence: Issue status and chat confirmation; updated checkpoint.
@@ -180,7 +161,7 @@ stages:
         evidence: Maintainer decisions in chat or the issue; updated plan and checkpoint.
       - key: plan-close
         role: Coordinator
-        action: Confirm Plan's obligations and close the stage.
+        action: Confirm the Plan stage's obligations and close it.
         evidence: Chat confirmation and updated checkpoint.
   - name: Implement
     entry:
@@ -335,12 +316,9 @@ stages:
         role: Coordinator and Maintainer
         action:
           - This step is optional until session capture exists.
-          - The Coordinator asks the Maintainer to start /retro (mattpocock-skills:retro) or skip it.
-          - If the Maintainer starts it, the Coordinator follows it and presents its candidate issue drafts.
-          - Starting /retro does not complete this step.
-          - Record a failed or partial run as failed, not as a completed run, a skip, or zero candidates. Keep its partial drafts and error, report them, and wait for the Maintainer's direction.
-          - Never restart /retro without the Maintainer.
-          - Skip only while no drafts, including kept partial drafts, exist. A skip never discards drafts or other obligations.
+          - The Maintainer starts /retro (mattpocock-skills:retro) or skips it; the Coordinator records the outcome and presents any drafts.
+        method:
+          - agents/roles/coordinator.md#run-retro-drafts
         evidence:
           - The Maintainer's run-or-skip answer in chat.
           - For a run, the skill invocation, then its drafts, zero-candidate result, or error and partial output, in chat and the checkpoint.
@@ -371,17 +349,6 @@ stages:
         role: Coordinator
         action:
           - Confirm every stage obligation is met, including the recorded skip, the recorded zero-candidate result, or every draft filed or dropped.
-          - Close Retro, completing the lifecycle.
-        evidence: Chat completion confirmation; final checkpoint with Retro closed.
-      - key: checkpoint-upload
-        role: Coordinator
-        action:
-          - After completion, make the final update to the issue's durable checkpoint comment and verify it.
-          - On success, tell the Maintainer, who archives the worktree; only then remove the issue's local checkpoint.
-          - On failure, report it, keep the local checkpoint, and withhold the archive notice until the update and its verification succeed.
-        method:
-          - agents/roles/coordinator.md#keep-the-execution-checkpoint
-        evidence: The verified checkpoint comment and its URL; chat success or failure report and archive notice.
-        transitions:
-          - when: The update or its verification fails; retry without reopening the completed lifecycle.
-            to: checkpoint-upload
+          - Close Retro, completing the Lifecycle.
+          - Hand back to the Maintainer and tell them the worktree can be archived.
+        evidence: Chat completion confirmation, hand back, and archive notice; checkpoint with Retro closed.

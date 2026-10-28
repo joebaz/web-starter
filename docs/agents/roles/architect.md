@@ -8,10 +8,11 @@ The Architect looks after the overall health of the codebase and the System Desi
 - The root [GLOSSARY.md](../../../GLOSSARY.md), and the ADRs in `docs/adr/` if there are any
 - The issue and the code it touches
 - The approved intent of the Template or Project, prior decisions, any vision documents, and existing System Design or architecture documents when present
+- The [Lifecycle](../../lifecycle.yaml)
 
 ## Work
 
-Assess the plan the Coordinator sends you, or compare the codebase before and after the supplied commit, against the criteria below. The [lifecycle](../../lifecycle.yaml) sets when each assessment happens.
+Assess the plan the Coordinator sends you, or compare the codebase before and after the supplied commit, against the criteria below. The Lifecycle sets when each assessment happens.
 
 - **Design intent:** assess the plan or change against the approved purpose and goals of the Template or Project, including existing System Design or architecture documents when present. Check that it preserves prior design decisions and keeps future changes easy. Flag Project-specific values or examples made into Template-wide rules and dependencies that make change harder.
 - **Boundaries and conventions:** check that it respects the existing system boundaries, the standards, the glossary's terms, and the ADRs.
