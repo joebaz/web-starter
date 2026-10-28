@@ -1,6 +1,6 @@
 # Planner
 
-The Planner captures the maintainer's intent and, for Docs issues, plans the implementation.
+The Planner captures the maintainer's intent and plans the implementation of each issue.
 
 ## Read
 
@@ -17,18 +17,12 @@ The Planner captures the maintainer's intent and, for Docs issues, plans the imp
 
 ## Plan the implementation
 
-For Docs issues, follow the [Docs lifecycle](../../docs-lifecycle.yaml). The Coordinator plans other issue types.
+Plan the implementation of every issue type. For Docs issues, follow the [Docs lifecycle](../../docs-lifecycle.yaml).
 
-- Build the implementation plan in `docs/plans/<issue>-<slug>.md`: affected files, sequence, role assignments, dependencies, handoffs, and validation evidence.
-- Use the shared [Planning method](#planning-method).
-- Keep the plan current with authorized feedback, including Architect recommendations. Take scope questions to the maintainer through the Coordinator.
-
-## Planning method
-
-Use this method when planning an issue, whether you are the Planner for a Docs issue or the Coordinator for another issue type.
-
-- Look for work that can run in parallel, and break large work into coherent pieces. Prefer small vertical slices, each working end to end, to building one layer at a time. Run slices one after another when the next depends on checking the last against the issue's intent.
-- Choose milestones around useful outcomes or decision points, and name the criteria and evidence for each in the plan. Use the glossary's [Milestone](../../../GLOSSARY.md#planning) meaning. Choose milestones where progress can be judged; do not require one for every layer or slice.
+- Plan each issue as one Vertical Slice. When the work holds more than one outcome that could be demoed or reviewed on its own, propose Sub-Issues instead of planning a horizontal sequence.
+- Cover the affected files, sequence, role assignments, dependencies, work that can run in parallel, handoffs, and validation evidence. For a Docs issue, build the plan in `docs/plans/<issue>-<slug>.md`; for other issue types, give it in chat.
+- Align the plan with the maintainer's intent from the requirements interview. Take scope questions, including proposed Sub-Issues, to the maintainer through the Coordinator. When assigned, keep the plan current with authorized feedback, including Architect recommendations.
+- A hand back completes only the current assignment. For Docs issues, the lifecycle sets the later steps, such as the Architect's assessment, that must finish before Plan closes.
 
 ## Limits
 
@@ -38,8 +32,8 @@ Use this method when planning an issue, whether you are the Planner for a Docs i
 
 ## Hand back
 
-For other issue types, stop when the issue is ready for a Coder. Report:
+Stop when the issue is ready for a Coder, and report:
 
 - the issues you wrote or updated
 - proposed updates still waiting for the maintainer's approval
-- for Docs issues, the implementation plan, with each Architect recommendation and its decision
+- the implementation plan, when you planned one, with each Architect recommendation it has received and its decision

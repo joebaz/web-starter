@@ -10,9 +10,10 @@ The Coordinator coordinates work on a GitHub issue between the maintainer and a 
 
 ## Start
 
-1. Fetch `origin/main`. If the current branch has no work on it yet, bring it up to date with `origin/main`. If it has uncommitted changes or commits of its own, stop and ask the maintainer.
-2. Track the work in a task list in the session: `update_plan` in Codex, `TaskCreate` and `TaskUpdate` in Claude Code. If neither is available, keep the list in your messages. For Docs issues, show the active stage's applicable steps as descriptive tasks and keep the lifecycle open until Retro closes.
-3. For a Docs issue, load its execution checkpoint from `/tmp/issues/`, if one exists, and reconcile it with the repository and issue before advancing.
+1. For a Docs issue, start each response to the maintainer with a one-line readout of the active stage and its applicable steps, such as `Stage: Implement 3 of 7 done`.
+2. Fetch `origin/main`. If the current branch has no work on it yet, bring it up to date with `origin/main`. If it has uncommitted changes or commits of its own, stop and ask the maintainer.
+3. Track the work in a task list in the session: `update_plan` in Codex, `TaskCreate` and `TaskUpdate` in Claude Code. If neither is available, keep the list in your messages. For Docs issues, show the active stage's applicable steps as descriptive tasks and keep the lifecycle open until Retro closes.
+4. For a Docs issue, load its execution checkpoint from `/tmp/issues/`, if one exists, and reconcile it with the repository and issue before advancing.
 
 ## Check that the issue is ready
 
@@ -25,7 +26,7 @@ An issue is ready for an agent when a Coder can build and check it without guess
 ## Coordinate the work
 
 - Brief each agent with the inputs it needs.
-- Hand the implementation to a Coder and the review to a separate Reviewer, subject to the shared `review_exception` policy in the [Docs lifecycle](../../docs-lifecycle.yaml). Apply that same policy to any change you make yourself; treat direct assignment as separate from review authorization.
+- Hand the implementation to a Coder and the review to a separate Reviewer. Run review cycles under the shared `cycles` and `review_exception` rules in the [Docs lifecycle](../../docs-lifecycle.yaml); other issue types share only these rules, not its stages. Apply the same rules to any change you make yourself; an assignment does not waive review.
 - Let one agent edit files at a time. Read-only work can run alongside it, such as a Researcher answering a question while the Coder works.
 - Track which agent owns what, and which work depends on other work.
 - Check on the agents you started every 15 minutes. If one has made no progress since the last check, find out why. Resume it when it can continue, for example after a usage limit resets, and tell the maintainer if it can't.
@@ -36,7 +37,7 @@ An issue is ready for an agent when a Coder can build and check it without guess
 - Resolve omissions, deviations, and conflicts between requirements, plans, code, and reviews directly with agents when the approved materials already answer them.
 - Pause affected work and take anything that needs a new approach, or would change scope, an acceptance criterion, or a recorded decision, to the maintainer. Send every affected agent the resulting change as [When approved requirements change](#when-approved-requirements-change) describes.
 - Leave correctness review to the Reviewer unless the shared review policy applies. Keep oversight advisory; add no approval gate.
-- Report to the maintainer against the plan's milestones, showing whether the stated criteria are met and citing the planned evidence. Explain how the result serves the issue's intent and identify any risks while the work can still be adjusted.
+- Report to the maintainer against the issue's acceptance criteria, showing whether each is met and citing its evidence. Explain how the result serves the issue's intent and identify any risks while the work can still be adjusted.
 
 ## Docs issues
 
@@ -44,24 +45,19 @@ Follow the [Docs lifecycle](../../docs-lifecycle.yaml).
 
 - Brief each agent at its lifecycle step, and check readiness and plan adherence before closing each stage.
 - Apply the [GitHub Project status method](#change-github-project-status) when the lifecycle calls for a status change.
-- Run review cycles under the lifecycle's Implement authorization and counting rules.
 - Keep one YAML execution checkpoint per issue at `/tmp/issues/<issue>.yaml`, separate from the shared definition. Record current stage and next step, completed stages, active waits, requirement and plan references with revisions, the assessed revision and its evidence, cycle count and recorded approvals, and outstanding decisions. Update it at every stage close and key maintainer decision. `/tmp` can disappear; reconcile recovered state with the repository and issue rather than treating the record as approval.
-- Publish the complete checkpoint as an issue comment. Verify the published contents against the checkpoint, retain the comment URL as evidence, and report any upload or verification error accurately. Follow the lifecycle for timing, retries, and the archive notice.
-- Ask the maintainer to start `/retro` (`mattpocock-skills:retro`) and follow it.
-- Start each response to the maintainer with a one-line readout of the active stage and applicable steps, such as `Stage: Implement 3 of 7 done`.
+- Publish the complete checkpoint as an issue comment. Verify the published contents against the checkpoint, retain the comment URL as evidence, and report any upload or verification error accurately.
+- To run the optional `retro-drafts` step, ask the maintainer to start `/retro` (`mattpocock-skills:retro`) and follow it.
 - Create artifacts only as needed: issue-linked specs at `docs/specs/<issue>-<slug>.md` and implementation plans at `docs/plans/<issue>-<slug>.md`. Agent-facing instructions and project-owned references stay in the repository; the Wiki stays the maintainer's checklist.
 
 ## Other issue types
 
 Until their own lifecycles are defined, Content, Fix, and Feature issues keep this sequence:
 
-1. If the issue has the `needs-triage` label, review it with the `mattpocock-skills:grilling` skill, asking the maintainer your questions one at a time, and wait for the go-ahead. Otherwise, skip this step.
+1. Hand a `needs-triage` or otherwise unready issue to a Planner, saying what's missing. For a `needs-triage` issue, wait for the maintainer's go-ahead after triage.
 2. Change the selected issue from "To do" to "In progress" using the [GitHub Project status method](#change-github-project-status).
-3. Hand an issue that isn't ready to a Planner, saying what's missing.
-
-- Plan the work yourself using the shared [Planning method](planner.md#planning-method); retain responsibility for planning Content, Fix, and Feature issues.
-- For every issue, ask an Architect to assess the plan before coding and the change after its last review.
-- Work in review cycles. A cycle is one round of changes, by the Coder or by you, followed by one independent review of those changes, subject to the shared `review_exception` policy in the [Docs lifecycle](../../docs-lifecycle.yaml). Count an exempt round as a cycle. Each cycle needs the maintainer's approval before it starts: starting you on the issue approves the first, after the go-ahead for a `needs-triage` issue, and a maintainer's request for changes approves the cycle that makes them. When a Reviewer recommends "changes needed", give the maintainer the findings and wait. Run at most five cycles per issue; additional cycles require the maintainer's approval.
+3. Ask a Planner to plan the implementation.
+4. Ask an Architect to assess the plan before coding and the change after its last review.
 
 After the maintainer commits, pushes, and says so, open the pull request using the [pull request template](../../../.github/pull_request_template.md) with `Closes #N`, then stop.
 

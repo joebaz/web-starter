@@ -4,7 +4,9 @@ scope: Repository documentation and instructions only.
 authority: >-
   This file owns the operational sequence, handoffs, approval gates, and loops for
   Docs issues. specs/15-docs-lifecycle.md is the historical design record.
-  Content, Fix, and Feature issues retain the Coordinator SOP and ../CONTRIBUTING.md sequence.
+  Content, Fix, and Feature issues keep the sequence in the Coordinator SOP and
+  ../CONTRIBUTING.md, with the Planner owning their triage and planning. They share
+  only rules.cycles and rules.review_exception, not these stages.
 reading: >-
   Stages and their steps run in listed order unless a condition selects a named
   destination. All transition destinations are globally unique semantic step keys,
@@ -45,20 +47,20 @@ rules:
     revision in chat and, for Docs issues, the execution checkpoint. Count the whole logical
     unreviewed delta, not individual hunks; never split a larger change to qualify.
     Re-evaluate eligibility for every revision; a waiver does not carry to unrelated
-    changes or later revisions. Direct Maintainer assignment does not imply a waiver.
+    changes or later revisions. An assignment does not imply a waiver.
     Retain validation, final Maintainer sign-off, final Architect assessment, cycle
     authorization, count and limits, and evidence matching the current revision.
     Record the eligible exception honestly instead of claiming a Reviewer pass.
-    Coordinator and Coder SOPs also reference this shared policy for other issue
-    types; their existing sequencing otherwise remains unchanged.
   cycles: >-
     One cycle is one round of changes followed by one independent review or a
     recorded eligible review_exception. Count exempt rounds too. Each cycle
     needs Maintainer authorization. Starting the Coordinator authorizes the first
     cycle, after the go-ahead for a needs-triage issue. Each later cycle requires
-    a Maintainer request for changes or an authorized fix. At most five cycles
-    per issue; a sixth or later requires an explicit Maintainer extension.
-    Returning to coder-briefing from Implement or Publish never resets the count.
+    a Maintainer request for changes or an authorized fix. When a Reviewer reports
+    findings, the Coordinator gives them to the Maintainer and waits for the
+    go-ahead before another cycle. At most five cycles per issue; a sixth or later
+    requires an explicit Maintainer extension. Returning for further changes,
+    including to coder-briefing from Implement or Publish, never resets the count.
 checkpoint:
   location: /tmp/issues/<issue>.yaml
   purpose: One working record per issue, separate from this shared definition.
@@ -139,8 +141,9 @@ stages:
       - key: recommendations-review
         role: Planner and Coordinator
         action: >-
-          The Planner reviews recommendations and revises the plan for in-scope
-          ones. Refer out-of-scope recommendations through the Coordinator to the Maintainer.
+          The Coordinator sends the Architect's recommendations to the Planner, who
+          reviews them and revises the plan for in-scope ones. Refer out-of-scope
+          recommendations through the Coordinator to the Maintainer.
         evidence: Recommendations and disposition in chat; revised plan.
         transitions:
           - when: Out-of-scope recommendations need decisions.
@@ -169,16 +172,12 @@ stages:
       match that revision; no authorized changes remain.
     steps:
       - key: coder-briefing
-        role: Coordinator, or Maintainer and Coder for a confirmed direct assignment while the Coordinator is unavailable
+        role: Coordinator
         action: >-
           Check cycle authorization and count, including an explicit extension for
           cycle six or later. Brief the Coder on requirements, plan, references,
-          and assignment. Record the cycle without resetting earlier cycles.
-          For a confirmed direct Maintainer assignment while the Coordinator is
-          unavailable, confirm the same briefing, scope, one-editor ownership, and
-          authorization checks directly with the Maintainer. Record the assignment
-          and cycle evidence for reconciliation with the Coordinator on return;
-          preserve all later validation and review gates.
+          scope, and assignment, with the Coder as the one editor. Record the cycle
+          without resetting earlier cycles.
         evidence: Chat assignment; checkpoint cycle count and Maintainer authorization.
       - key: implementation-validation
         role: Coder and Coordinator
@@ -187,8 +186,6 @@ stages:
           Coder SOP, contribution requirements, and QA reference. For a new or
           substantially revised document, first send a short outline to the
           Coordinator, who gets the Maintainer's approval; expand it only then.
-          For a confirmed direct assignment while the Coordinator is unavailable,
-          obtain that outline approval directly from the Maintainer.
         evidence: Repository diff; chat outline approval when applicable and validation report.
       - key: reviewer-dispatch
         role: Coordinator
@@ -304,14 +301,27 @@ stages:
   - name: Retro
     entry: Publish is closed.
     exit: retro-close
-    completion: Every candidate draft is filed exactly as approved or dropped; all stage obligations are met.
+    completion: >-
+      Either retro-drafts was skipped before any drafts existed and the skip is
+      recorded, or every draft it produced is filed exactly as approved or dropped.
+      All other stage obligations are met.
     steps:
       - key: retro-drafts
         role: Coordinator and Maintainer
         action: >-
-          The Coordinator asks the maintainer to start /retro (mattpocock-skills:retro)
-          and follows it. Present candidate issue drafts.
-        evidence: Chat skill invocation and drafts.
+          Optional until session capture exists. The Coordinator asks the Maintainer
+          to start /retro (mattpocock-skills:retro) or skip it. If the Maintainer
+          starts it, the Coordinator follows it and presents any candidate issue
+          drafts. A skip is allowed only while no drafts exist; the Coordinator
+          records it with no drafts. A skip never discards drafts or other obligations.
+        evidence: >-
+          Chat run-or-skip answer. Run: skill invocation and drafts. Skip: the
+          no-draft skip record in chat and the checkpoint.
+        transitions:
+          - when: Skipped before any drafts exist; skip recorded.
+            to: retro-close
+          - when: The Maintainer started /retro.
+            to: retro-draft-decisions
       - key: retro-draft-decisions
         role: Maintainer and Coordinator
         action: >-
@@ -322,11 +332,13 @@ stages:
         transitions:
           - when: Any draft still needs revision, review, or filing.
             to: retro-draft-decisions
-          - when: Every draft filed or dropped, including when no candidates exist.
+          - when: Every draft filed or dropped, including when the run produced no candidates.
             to: retro-close
       - key: retro-close
         role: Coordinator
-        action: Confirm every stage obligation is met and close Retro, completing the lifecycle.
+        action: >-
+          Confirm every stage obligation is met, including the recorded skip or
+          every draft filed or dropped, and close Retro, completing the lifecycle.
         evidence: Chat completion confirmation; final checkpoint with Retro closed.
       - key: checkpoint-upload
         role: Coordinator

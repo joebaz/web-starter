@@ -63,8 +63,11 @@ Documents intended to guide the Maintainer working on the Template or a Project.
 
 ## Planning
 
-**Milestone**:
-A point in a plan at which stated criteria are met, usually when a planned output is complete.
+**Vertical Slice**:
+A cohesive outcome, one GitHub Issue or Sub-Issue, delivered through every Layer it needs so it can be checked end to end on its own, such as the Docs lifecycle working for Docs issues before other issue types adopt it.
+
+**Layer**:
+A part of the Template or Project that owns one kind of responsibility for many outcomes, such as site configuration, page layouts, or the lifecycle's sequencing.
 
 ## Changes and debt
 
