@@ -103,7 +103,7 @@ The agent role that coordinates work on a GitHub issue between the Maintainer an
 _Avoid_: orchestrator, orchestrate
 
 **Planner**:
-The agent role that captures the Maintainer's intent and plans the implementation of a GitHub issue.
+The agent role that captures the Maintainer's intent and plans the implementation of a GitHub Issue or Sub-Issue.
 
 **Researcher**:
 The read-only agent role that answers approved research questions with checked facts and sources.

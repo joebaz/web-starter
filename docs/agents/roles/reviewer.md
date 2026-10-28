@@ -8,7 +8,7 @@ The Reviewer checks a change independently, reviews its test plan, and recommend
 - [coding-standards.md](../../../coding-standards.md)
 - [CONTRIBUTING.md](../../../CONTRIBUTING.md)
 - The [QA reference](../../qa.md)
-- The review steps in Implement in the [Docs lifecycle](../../docs-lifecycle.yaml), for Docs issues
+- The review steps in the Implement stage of the [lifecycle](../../lifecycle.yaml)
 
 ## Review
 

@@ -1,6 +1,6 @@
 # Issue tracker: GitHub
 
-Issues live in this code repository's GitHub Issues, not in its wiki. Specs live at `docs/specs/<issue>-<slug>.md`, linked from their issue; plans live at `docs/plans/<issue>-<slug>.md`. The issue tracks its status, the [Docs lifecycle](../docs-lifecycle.yaml) holds the shared workflow, and the issue's execution checkpoint records its progress. Run `gh` from this repository so it targets the `origin` remote; do not pass a hard-coded `--repo`.
+Issues live in this code repository's GitHub Issues, not in its wiki. Repository specs live at `docs/specs/<issue>-<slug>.md`, linked from their issue. A specification may instead live in a linked GitHub Issue. Keep one approved requirements contract rather than duplicate specs. Plans for every issue type live at `docs/plans/<issue>-<slug>.md`, as the [plans guide](../plans/README.md) describes. Agent-facing instructions and project-owned references stay in the repository; the Wiki stays the maintainer's checklist. The issue tracks its status, the [lifecycle](../lifecycle.yaml) holds the shared workflow, and the issue's [execution checkpoint](../execution-checkpoint.md) records its progress. Run `gh` from this repository so it targets the `origin` remote; do not pass a hard-coded `--repo`.
 
 ## Issue operations
 
@@ -8,6 +8,9 @@ Issues live in this code repository's GitHub Issues, not in its wiki. Specs live
 - Read: `gh issue view <number> --json number,title,body,labels,comments`
 - List: `gh issue list --state open --json number,title,body,labels,comments`, with appropriate filters
 - Comment: `gh issue comment <number> --body "..."`
+- Find a comment by its first line: `gh api repos/{owner}/{repo}/issues/<number>/comments --paginate --jq '.[] | select(.body | startswith("<first line>")) | {id, html_url}'`
+- Update a comment by ID: `gh api --method PATCH repos/{owner}/{repo}/issues/comments/<id> -F body=@<file>`
+- Read a comment by ID: `gh api repos/{owner}/{repo}/issues/comments/<id> --jq .body`
 - Label: `gh issue edit <number> --add-label "..."` or `--remove-label "..."`
 - Close: `gh issue close <number> --comment "..."`
 
