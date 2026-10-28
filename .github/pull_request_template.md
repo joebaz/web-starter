@@ -1,4 +1,4 @@
-Closes #<issue-or-sub-issue-number>
+Closes #<issue-or-sub-issue-number> <!-- or Refs #<number> when the issue stays open after the merge -->
 
 ## Summary
 

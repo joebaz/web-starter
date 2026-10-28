@@ -44,7 +44,7 @@ Consult these guides before working on related tasks:
 
 ### Issue tracker
 
-Issues and specs live in this code repository's GitHub Issues, not its wiki. See `docs/agents/issue-tracker.md`.
+For issues and specs, see `docs/agents/issue-tracker.md`.
 
 ### Triage labels
 
