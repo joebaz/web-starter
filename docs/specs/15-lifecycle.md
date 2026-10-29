@@ -1,6 +1,6 @@
 # Issue lifecycle design record
 
-> **Status:** Reconciliation draft for [#15], following the implementation of [#66] in [PR #71]. The common Lifecycle is operational for all issue types. The first live trial, on the Docs issue [#63], remains outstanding; this is not #15's final revision.
+> **Status:** Reconciliation draft for [#15], following the implementation of [#66] in [PR #71]. The common Lifecycle is operational for all issue types. The Docs trial on [#63] remains outstanding; the Maintainer selected open Feature issue [#45] as the next trial candidate after it. Neither trial is complete; this is not #15's final revision.
 
 ## Problem and goal
 
@@ -12,11 +12,11 @@ The original design addressed three gaps:
 
 The goal is one Lifecycle that makes an issue's current stage, next action, approval boundaries, and completion evidence clear. It applies to Content, Docs, Fix, and Feature issues. Docs is the first trial, not a restriction on applicability; validation remains specific to the change type and affected capabilities.
 
-The learning loop is deliberate: design in #15, implement and learn in #66, return those findings to #15, trial the reconciled design on #63, and return its observations and Retro outcomes for further revision. #15 stays open until that work reaches its agreed completion boundary. A common definition does not establish that every issue type has been trialled.
+The learning loop is deliberate: design in #15, implement and learn in #66, return those findings to #15, trial the reconciled design on Docs #63 and then Feature #45, and return both trials' observations and Retro outcomes for further revision. #15 stays open until both planned trials and the agreed refinements reach their completion boundaries. Selecting #45 does not establish its readiness or authorize implementation. A common definition does not establish that every issue type has been trialled.
 
 ## Scope and authority
 
-The [Lifecycle](../lifecycle.yaml) is the authoritative operational sequence. This spec records the design and its evolution; it does not duplicate every step or replace the live definition.
+The [Lifecycle](../lifecycle.yaml) is the authoritative operational sequence. This #15 spec is its design record. Each trial issue's own approved issue/spec artifact defines that issue's substantive work; this design record does not replace it or the live Lifecycle.
 
 The Maintainer-approved cycle-6 amendment in [#66] supersedes #15's original Docs-only direction. One common Lifecycle applies to all issue types, with Docs as the first live trial; later type-specific variations require concrete evidence and Maintainer approval.
 
@@ -34,9 +34,11 @@ The Maintainer-approved cycle-6 amendment in [#66] supersedes #15's original Doc
 
 Each issue has one Maintainer-approved requirements contract containing scope, acceptance criteria, exclusions, and validation. It can be the issue's requirements, a linked specification issue, or a linked repository spec. Record the artifact, the revision of its approved content, and the Maintainer's approval. A tracker revision is its edit snapshot or a digest of the approved content; a bare URL or last-update time is insufficient. A repository spec revision is a commit or blob.
 
+For each trial, that issue's approved issue/spec artifact is its substantive requirements contract. Examples and assumptions in #15 do not become another contract for the trial. A trial issue cannot silently override canonical Lifecycle rules; surface any conflict for Maintainer decision.
+
 An Agent Brief summarizes and links the contract. A plan, skill-applied label, checkpoint, status readout, agent finding, or recommendation is neither an alternative contract nor approval. An already-approved, ready issue needs no repeat interview, second spec, or repeat approval. Requirements changes follow the [Coordinator's changed-requirements protocol](../agents/roles/coordinator.md#when-approved-requirements-change).
 
-Create Task Artifacts only when needed. Repository specs live at `docs/specs/<issue>-<slug>.md` and plans at `docs/plans/<issue>-<slug>.md`, linked from the issue. Do not create an issue merely to hold a plan or a copy of a spec. Agent instructions and required project references remain in the repository; the Wiki is the Maintainer's human reference, not an operational dependency.
+Create Task Artifacts only when needed. This design record uses the Maintainer-selected `docs/specs/15-lifecycle.md`; other repository specs follow `docs/specs/<issue>-<slug>.md`, and plans use `docs/plans/<issue>-<slug>.md`, linked from the issue. Do not create an issue merely to hold a plan or a copy of a spec. Agent instructions and required project references remain in the repository; the Wiki is the Maintainer's human reference, not an operational dependency.
 
 ## Design decisions
 
@@ -108,7 +110,7 @@ Completed candidate drafts proceed to Maintainer decisions. Kept partial drafts 
 
 A skip does not discard outstanding obligations. Once all drafts are filed or dropped, or an eligible no-draft outcome is recorded, and all other obligations are met, `retro-close` completes the Lifecycle and hands back to the Maintainer with the archive notice. There is no post-completion checkpoint-upload step or receipt condition.
 
-## Acceptance, evidence, and remaining trial
+## Acceptance, evidence, and remaining trials
 
 These criteria retain the original implementation-and-trial distinction while reflecting approved amendments:
 
@@ -117,17 +119,18 @@ These criteria retain the original implementation-and-trial distinction while re
 - **AC3:** The Lifecycle is the authoritative operational sequence for all issue types; this spec is its design record, with Docs as the first live trial.
 - **AC4:** Native tasks and readouts reflect the reconciled active stage, including waits and re-entry, and stay distinct from whole-Lifecycle completion.
 - **AC5:** Independent acceptance alone cannot complete Implement. Current-revision validation, review or eligible waiver, final Maintainer sign-off, and subsequent Architect assessment are required.
-- **AC6:** A live trial runs through Publish and Retro, returns its observations and outcomes to #15, and receives Maintainer decisions on follow-ups before final revision and closure.
+- **AC6:** The planned Docs #63 trial and intended second live trial on Feature #45 run through Publish and Retro under their own approved requirements. Both return observations and outcomes to #15 for Maintainer decisions on follow-ups before final revision and closure.
 - **AC7:** The checks in [Validate your change](../../CONTRIBUTING.md#validate-your-change) pass for the changed files, alongside review for accuracy, clarity, links, and scope.
 
 ### Delivery evidence and remaining work
 
 1. **Implementation, #66:** [PR #71] merged as `d2cbd09`. Its validation report records full local checks repeated independently, whole-issue review, and final sign-off and Architect assessment for `4a4b60a`. Documentary walkthroughs and task-tracking wording establish implementation evidence, not a live trial.
-2. **Current reconciliation, #15:** reconcile the frozen design with approved #66 amendments and merged sources. Validate this Markdown-only change with `npm run format:check`, `git diff --check`, diff/scope review, and link checks. It remains subject to independent review and Maintainer acceptance.
+2. **Current reconciliation, #15:** reconcile the frozen design with approved #66 amendments and merged sources. Validate these documentation changes with `npm run format:check`, `git diff --check`, diff/scope review, and link checks. They remain subject to independent review and Maintainer acceptance.
 3. **First live trial, #63:** outstanding. A fresh agent in its own workspace takes the Docs classification issue through the Lifecycle, starting at Define while it remains unready. Before execution, establish the trial's evidence and completion boundary. Keep #63's classification decisions distinct from workflow observations.
-4. **Final refinement, #15:** bring #63 observations and Retro outcomes back to the #15 Coordinator, together with #66 findings. The Maintainer decides follow-ups; revise again as needed before finalizing #15 and its in-scope work. #15's own Retro follows its revision and Publish stages.
+4. **Intended second live trial, #45:** the Maintainer selected this open Feature issue as the next trial candidate after Docs #63. This selection establishes neither readiness nor implementation authorization. Establish #45's own investigation, proposal, and approval, and its trial execution, evidence, and completion boundaries, within its workflow before running it.
+5. **Final refinement, #15:** bring observations and Retro outcomes from both planned trials back to the #15 Coordinator, together with #66 findings. The Maintainer decides follow-ups; revise again as needed before finalizing #15 and its in-scope work. #15's own Retro follows its revision and Publish stages.
 
-No #63 plan or trial was produced in #66. No trial of Content, Fix, or Feature work is claimed. Future variations need concrete evidence and Maintainer approval.
+No #63 plan or trial was produced in #66. Neither planned trial is complete, and no trial of Content, Fix, or Feature work is claimed. Content and Fix trials are not required by this planned sequence; the two selected trials will not prove all issue types. Future variations need concrete evidence and Maintainer approval.
 
 ## Approval lineage and boundaries
 
@@ -145,6 +148,7 @@ Out of scope remain new skills, runtime consumers, validators, hooks, workflow e
 [#15]: https://github.com/joebaz/web-starter/issues/15
 [#35]: https://github.com/joebaz/web-starter/issues/35
 [#38]: https://github.com/joebaz/web-starter/issues/38
+[#45]: https://github.com/joebaz/web-starter/issues/45
 [#48]: https://github.com/joebaz/web-starter/issues/48
 [#63]: https://github.com/joebaz/web-starter/issues/63
 [#65]: https://github.com/joebaz/web-starter/issues/65
