@@ -1,323 +1,146 @@
-# Docs lifecycle spec
+# Issue lifecycle design record
 
-> **Status:** Approved design for [#66] to implement. [#15] stays open for the implementation and trial findings. The current role SOPs govern work until the implementation changes them.
+> **Status:** Reconciliation draft for [#15], following the implementation of [#66] in [PR #71]. The common Lifecycle is operational for all issue types. The first live trial, on the Docs issue [#63], remains outstanding; this is not #15's final revision.
 
-## Problem
+## Problem and goal
 
-No single definition says how agents should sequence work or collaborate on an issue, where each stage starts and ends, or what evidence completes it. As a result:
+The original design addressed three gaps:
 
-- **Review boundaries blur.** In [#38], the Coordinator treated the Reviewer's acceptance as the last review and closed its task plan before the Maintainer's final acceptance and the final Architect assessment. The Architect SOP's "after the change's last review" doesn't say which review.
-- **Requirements have no route to approval.** [coding-standards.md](../../coding-standards.md#scope-and-project-choices) asks agents to flag missing decisions and scope changes, but nothing turns those discussions into approved requirements.
-- **Oversight is implicit.** Nothing asks the Coordinator to check ongoing work against the approved requirements and plan.
+- **Review boundaries blurred.** In [#38], the Coordinator treated the Reviewer's acceptance as completion before the Maintainer's final sign-off and final Architect assessment.
+- **Requirements lacked an approval route.** The coding standards required agents to flag missing decisions and scope changes, but did not establish how those discussions became approved requirements.
+- **Oversight was implicit.** The Coordinator needed to compare ongoing work with the approved requirements and plan.
 
-## Goal and scope
+The goal is one Lifecycle that makes an issue's current stage, next action, approval boundaries, and completion evidence clear. It applies to Content, Docs, Fix, and Feature issues. Docs is the first trial, not a restriction on applicability; validation remains specific to the change type and affected capabilities.
 
-Define, implement, and test the lifecycle for Docs work as one thin vertical slice, so any role can tell where an issue stands, what comes next, and what evidence completes each step.
+The learning loop is deliberate: design in #15, implement and learn in #66, return those findings to #15, trial the reconciled design on #63, and return its observations and Retro outcomes for further revision. #15 stays open until that work reaches its agreed completion boundary. A common definition does not establish that every issue type has been trialled.
 
-This spec defines the lifecycle in [#15]. [#66] implements it and merges it into `main`, a fresh agent [trials it on #63](#test-approach), and the Retros and observations from #66 and #63 return to #15 for a final spec revision before #15 closes.
+## Scope and authority
 
-Out of scope:
+The [Lifecycle](../lifecycle.yaml) is the authoritative operational sequence. This spec records the design and its evolution; it does not duplicate every step or replace the live definition.
 
-- Content, Fix, and Feature variations.
-- New skills.
-- GitHub Actions, hooks, schema validators, workflow engines, or other enforcement automation.
-- Enforcement issues, unless a trial or Retro shows the need and the Maintainer decides. [#65], a display test the Maintainer requested and blocked by #15, is separate.
-- A separate audit record.
-- A central project-reference catalogue, or turning Wiki checklist items into agent workflows automatically.
-- The decisions for [#35] (reporting), [#48] (enforcement), and [#63] (classification).
+The Maintainer-approved cycle-6 amendment in [#66] supersedes #15's original Docs-only direction. One common Lifecycle applies to all issue types, with Docs as the first live trial; later type-specific variations require concrete evidence and Maintainer approval.
 
-## Lifecycle rules
+| Source                                                                                                                | Owns                                                                                                           |
+| --------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| [Lifecycle](../lifecycle.yaml)                                                                                        | Stages, actors, actions, handoffs, transitions, approval gates, evidence conditions, loops, and update timing. |
+| [Role SOPs](../../AGENTS.md#roles)                                                                                    | Each role's responsibilities, authority, inputs, methods, outputs, and quality.                                |
+| [Issue tracker guide](../agents/issue-tracker.md)                                                                     | Requirements, spec, and plan locations and links.                                                              |
+| [Execution checkpoint reference](../execution-checkpoint.md)                                                          | Local record fields, values, and revision notation.                                                            |
+| [Plans guide](../plans/README.md)                                                                                     | Markdown implementation-plan format and concrete operations.                                                   |
+| [Glossary](../../GLOSSARY.md)                                                                                         | Shared meanings, including roles, Vertical Slice, Layer, Lifecycle, Agent Brief, and Task Artifact.            |
+| [CONTRIBUTING.md](../../CONTRIBUTING.md), [coding standards](../../coding-standards.md), and [QA reference](../qa.md) | Contribution mechanics, implementation conventions, and applicable validation.                                 |
 
-- **Definition:** one YAML file under `docs/` holds the lifecycle, the authoritative operational sequence for Docs issues; this spec stays its design record. Content, Fix, and Feature issues keep the current SOP and CONTRIBUTING.md sequencing until their own lifecycles are defined. See [Lifecycle definition](#lifecycle-definition).
-- **When versus how:** for Docs issues, the lifecycle owns when work happens: sequence, handoffs, approval gates, and loops. Role SOPs own how each role works: responsibilities, authority, methods, inputs, outputs, quality, and references. [CONTRIBUTING.md](../../CONTRIBUTING.md) keeps contribution mechanics and checks; the coding standards and the [QA reference](../qa.md) keep their subjects.
-- **Evidence:** PR and CI evidence stays in GitHub. Detailed reports go in chat, following the [QA reference](../qa.md).
-- **Issue state:** each issue's current stage, next action, and waits are kept apart from the shared definition, in its [execution checkpoint](#execution-checkpoint). YAML could hold either; the split keeps one issue's progress out of the workflow every Docs issue shares.
-- **Task tracking:** native task tools (`update_plan` in Codex; `TaskCreate` and `TaskUpdate` in Claude Code) show the active stage's applicable steps as descriptive tasks, and the lifecycle stays open until the Coordinator closes Retro (5.3). The Coordinator starts each response to the Maintainer with a one-line readout of the stage and its applicable steps, such as `Stage: Implement 3 of 7 done`.
-- **Artifacts:** create task artifacts only when the work needs them. Specs live at `docs/specs/<issue>-<slug>.md`, linked from their issue, and plans at `docs/plans/<issue>-<slug>.md`. Agent-facing instructions and project-owned references stay in the repository; the Wiki stays the Maintainer's checklist.
+### One approved requirements contract
 
-## Authorization rules
+Each issue has one Maintainer-approved requirements contract containing scope, acceptance criteria, exclusions, and validation. It can be the issue's requirements, a linked specification issue, or a linked repository spec. Record the artifact, the revision of its approved content, and the Maintainer's approval. A tracker revision is its edit snapshot or a digest of the approved content; a bare URL or last-update time is insufficient. A repository spec revision is a commit or blob.
 
-These boundaries apply at every stage; each stage names its own decisions at the step where they happen.
+An Agent Brief summarizes and links the contract. A plan, skill-applied label, checkpoint, status readout, agent finding, or recommendation is neither an alternative contract nor approval. An already-approved, ready issue needs no repeat interview, second spec, or repeat approval. Requirements changes follow the [Coordinator's changed-requirements protocol](../agents/roles/coordinator.md#when-approved-requirements-change).
 
-- **Decisions:** the Maintainer approves requirements, scope, and any change to them.
-- **Findings:** agent findings, recommendations, and reports authorize nothing on their own.
-- **Records:** the execution checkpoint and status readouts record progress; neither counts as approval.
-- **Changed requirements:** follow [When approved requirements change](../agents/roles/coordinator.md#when-approved-requirements-change) and the matching rule in AGENTS.md.
+Create Task Artifacts only when needed. Repository specs live at `docs/specs/<issue>-<slug>.md` and plans at `docs/plans/<issue>-<slug>.md`, linked from the issue. Do not create an issue merely to hold a plan or a copy of a spec. Agent instructions and required project references remain in the repository; the Wiki is the Maintainer's human reference, not an operational dependency.
 
-## Stages
+## Design decisions
 
-Stages run in order: Define, Plan, Implement, Publish, Retro. Closing Define, Plan, Implement, or Publish opens the next stage. Closing Retro (5.3) completes the lifecycle, and the checkpoint upload (5.4) follows after completion.
+### Roles and planning
 
-### 1. Define
+The Coordinator coordinates: it establishes state, briefs agents, oversees alignment with approved requirements and the plan, and reports against the issue's acceptance criteria. The [Planner](../agents/roles/planner.md) triages, captures intent, interviews the Maintainer, and plans implementation for every issue type. The Planner may edit only the issue's linked spec and plan. There is one editor at a time; read-only assignments can run alongside editing.
 
-Purpose: turn the issue into approved requirements that are ready to plan.
+A plan is an ordered list of concrete operations, scaled to the issue. Each operation names its owner, affected files and actions, prerequisites, output and handoff, and expected validation evidence. The plan identifies dependencies and parallel read-only work, links requirements rather than copying them, and records sourced Maintainer feedback and Architect recommendation dispositions. A Planner hand back ends its assignment, not the Plan stage's remaining obligations.
 
-Entry: the Maintainer starts a Coordinator on an issue.
+One Issue or Sub-Issue is one [Vertical Slice](../../GLOSSARY.md#planning), delivered through every Layer it needs. A Layer is a responsibility boundary serving many outcomes. Propose Sub-Issues when there are multiple independently demoable or reviewable outcomes. Plan operations are pieces within an issue; they are not additional Vertical Slices or Lifecycle steps. Completion follows the issue's acceptance criteria, without a separate Milestone planning or reporting requirement.
 
-1. **1.1** The Coordinator runs the [Start](../agents/roles/coordinator.md#start) checks and [Check that the issue is ready](../agents/roles/coordinator.md#check-that-the-issue-is-ready). Already approved and ready: go straight to the readiness confirmation (1.5), with no repeat interview or approval. Otherwise: go to the Planner handoff (1.2).
-2. **1.2** The Coordinator sends the `needs-triage` or otherwise unready issue to the Planner, naming the gaps.
-3. **1.3** The Planner interviews the Maintainer and records the agreed requirements in the issue, or in an issue-linked spec when that helps align them with the Maintainer, following the [Planner SOP](../agents/roles/planner.md) and the [triage labels](../agents/triage-labels.md).
-4. **1.4** The Maintainer reviews the requirements. Changes needed: back to the interview (1.3). Accepted: go to the readiness confirmation (1.5).
-5. **1.5** The Coordinator confirms the issue is ready, moves it from "To do" to "In progress", and closes the stage. Plan needs no further approval.
+The [Architect](../agents/roles/architect.md) assesses plans and signed-off commits against the approved intent of the Template or Project, prior decisions, existing System Design or architecture documents, and future adaptability. Code health, boundaries, simplicity, duplication, maintainability, testability, and debt remain part of that assessment. The role is read-only and advisory; its purpose is not tied to a hard-coded website use case, and its advice does not authorize scope changes.
 
-### 2. Plan
+The [Coder](../agents/roles/coder.md) implements assigned work within its scope and authorized cycle, validates it, and records assignment, changes, results, and evidence. The separate [Reviewer](../agents/roles/reviewer.md) checks correctness independently and recommends acceptance or changes. For documentation, both roles check clarity, supported assumptions, consistent terminology, language, and writing style, and surface unresolved questions.
 
-Purpose: decide how the change will be built, checked, and handed off before implementation begins.
+### Planning routes and skills
 
-1. **2.1** The Coordinator briefs the Planner on the approved requirements, artifacts, and constraints.
-2. **2.2** The Planner builds the implementation plan in `docs/plans/`.
-3. **2.3** The Coordinator asks the Architect to assess the plan.
-4. **2.4** The Planner reviews the Architect's recommendations. In scope: the Planner revises the plan. Out of scope: the Planner refers them to the Coordinator, who brings them to the Maintainer.
-5. **2.5** The Maintainer decides each pending out-of-scope recommendation once. The Planner revises the plan for approved ones, and the changed-requirements protocol applies.
-6. **2.6** The Coordinator closes the stage.
+The [Planner's scenario routes](../agents/roles/planner.md#choose-a-route) fit the unresolved work: approved atomic requirements go straight to planning; a small unresolved request may need triage and an interview; settled multi-session or multi-outcome work may need a spec and approved decomposition; a large uncertain effort may need a wayfinding decision map. No route or universal skill chain is mandatory.
 
-### 3. Implement
+Under local policy the Maintainer starts the five entry skills: `triage`, `grilling`, `to-spec`, `to-tickets`, and `wayfinder`. The Planner recommends the relevant skill and explains its expected output. Once an entry skill starts, its required nested calls run within repository role, file-editing, and approval limits. Skill outputs retain their actual purposes: a tracker spec or dependency-linked tickets do not replace the repository implementation plan, and a generated brief or ready label does not approve requirements. No new skills or changes to installed skills are part of this design.
 
-Purpose: produce the change and carry it through independent review, the Maintainer's sign-off, and the final Architect assessment.
+### Local state, recovery, and progress
 
-A review cycle is one round of changes followed by one independent review. Each cycle needs the Maintainer's authorization: starting the Coordinator on the issue authorizes the first, after the go-ahead for a `needs-triage` issue, and each later cycle starts only from a Maintainer request for changes or an authorized fix. An issue runs at most five cycles; a sixth or later needs an explicit extension from the Maintainer. Returning to the Coder briefing (3.1), from within Implement or from Publish, doesn't reset the count.
+The checkpoint is a small, Git-ignored worktree-local record at `.agent-state/<issue>.yaml`, retained until the Maintainer archives the worktree. It points to evidence instead of copying reports: stage and step status, next action, revision, waits and errors, partial-output locations, cycle and approval pointers, sign-off, and outstanding obligations. The [reference](../execution-checkpoint.md) defines the format; the [Coordinator SOP](../agents/roles/coordinator.md#keep-the-execution-checkpoint) defines setup and recovery.
 
-1. **3.1** The Coordinator briefs the Coder on the requirements, plan, references, and assignment.
-2. **3.2** The Coder implements the Maintainer's change and validates it as the plan and the repository's [validation requirements](../../CONTRIBUTING.md#validate-your-change) require. New or substantially revised document: the Coder first sends a short outline to the Coordinator, who gets the Maintainer's approval; the Coder expands it only then.
-3. **3.3** The Coordinator dispatches the Reviewer.
-4. **3.4** The Reviewer checks the change, runs the applicable checks, and reports findings and a recommendation. Findings: after the Maintainer's go-ahead, return to the Coder briefing (3.1). No findings: go to the Maintainer's review (3.5).
-5. **3.5** The Maintainer reviews the file diffs, comments, and commits. Changes needed: the Coordinator reconciles the feedback with the commit and returns to briefing the remaining changes (3.1); the next review (3.3) covers the whole changed revision. No changes: the Maintainer gives final sign-off; go to the Architect's assessment (3.6).
-6. **3.6** The Coordinator dispatches the Architect to assess the signed-off commit and takes the recommendations to the Maintainer. Authorized changes: return to the Coder briefing (3.1). None: go to the evidence check (3.7).
-7. **3.7** The Coordinator confirms that the current revision has the Maintainer's final sign-off and the final Architect assessment, and that the review and evidence match it, then closes the stage.
+The Lifecycle requires updates when a step starts, waits, fails, or completes; at every transition; and when decisions, handoffs, or recorded fields change. Dispatching an agent or invoking a skill establishes neither completion nor success. Observed results, evidence, and completion conditions determine the next transition. Running work, unresolved errors, and kept partial outputs remain visible.
 
-### 4. Publish
+A replacement Coordinator reconciles the checkpoint with primary evidence before advancing. If it is lost, reconstruct state from the issue, linked specs and plans, Git, handoffs, reviews, approvals, PR, and CI. Preserve identified edits and commits on resumed work. Confirm recorded sign-off, cycle authorizations, extensions, and waivers against their original evidence. Unknown count is not zero; unknown approval is not granted. Only affected uncertain or unsafe work waits.
 
-Purpose: get the signed-off revision through CI and merged into `main`.
+The checkpoint is a convenience record that can be lost with the workspace. It is not stored under `/tmp`, synchronized remotely, uploaded at completion, or used as an additional approval or archive gate. PR and CI evidence stays in GitHub; detailed reports stay in chat under the QA reference.
 
-1. **4.1** The Maintainer pushes to the remote.
-2. **4.2** The Coordinator opens the PR, following [Open a pull request](../../CONTRIBUTING.md#open-a-pull-request), or reuses the issue's open PR for a new revision.
-3. **4.3** GitHub runs CI. Passes: go to the merge (4.5). Fails: go to the diagnosis (4.4).
-4. **4.4** The Coordinator diagnoses the failure. A file change is needed: with the Maintainer's authorization, return to the Coder briefing (3.1) and complete Implement through the evidence check (3.7), then push the new revision to the same PR (4.1). A transient failure with no file change: CI runs again on the same commit (4.3).
-5. **4.5** The Maintainer merges into `main`. Pending PR feedback, or a pushed revision that differs from the signed-off commit, blocks the merge even when CI passes: the Coordinator reports the blocker in chat and waits for the Maintainer's direction, and any file change takes the file-change path in the diagnosis (4.4).
-6. **4.6** GitHub deletes the remote branch.
-7. **4.7** The Maintainer confirms the merge, and the Coordinator closes the stage.
+The Coordinator refreshes its native task list on each stage entry or re-entry to show only that stage's applicable steps, and updates task statuses at transitions. Re-entry preserves cycle counts, approvals, and established step state. Each response to the Maintainer starts with a one-line readout from reconciled state, such as `Stage: Implement 3 of 7 done`, or `Stage: reconciling` until state is established. A completed stage task list does not complete the Lifecycle.
 
-### 5. Retro
+## Five-stage overview
 
-Purpose: review the work and file approved follow-up issues.
+Stages run in order: Define, Plan, Implement, Publish, Retro. Closing a stage opens the next; closing Retro at `retro-close` completes the Lifecycle. Resumed work continues at its reconciled step. The YAML's stable semantic step keys, completion conditions, transitions, and method links govern the sequence and gates summarized below.
 
-1. **5.1** The Coordinator runs `/retro` (`mattpocock-skills:retro`) and presents candidate issue drafts.
-2. **5.2** The Maintainer reviews each draft. Comments: the Coordinator revises it for another review. Approved: the Coordinator files it exactly as approved. Declined: it's dropped.
-3. **5.3** With every draft filed or dropped, the Coordinator confirms all stage obligations are met and closes Retro, completing the lifecycle.
-4. **5.4** The Coordinator uploads the final [execution checkpoint](#execution-checkpoint) to an issue comment. Success: the Coordinator tells the Maintainer, who archives the worktree. Failure: the Coordinator reports it and holds that notice until an upload succeeds.
-
-## Lifecycle definition
-
-One YAML file under `docs/` holds the lifecycle. The [#66] Coder chooses its filename, exact schema, and step names; the step numbers in this spec are design references only.
-
-Required content:
-
-- **Stage order:** the sequence, Define through Retro.
-- **Step keys:** each step has a stable semantic name, such as `coder-briefing`, independent of its position, so a step can move within or across stages without being renamed. Keys needn't be UUIDs, and other documents needn't cite them.
-- **Transitions:** the conditional jumps, each targeting a step key, such as "Reviewer findings: return to `coder-briefing`". Otherwise the next listed step follows.
-- **Entry:** what must happen before a stage starts.
-- **Exit:** the step that ends a stage.
-- **Completion:** what must be true before that exit is allowed.
-- **Roles:** who performs each step.
-- **Evidence references:** where each step's proof lives: GitHub, chat, or the issue.
-
-The file is documentation only. No schema validator, hook, or workflow engine reads or enforces it.
-
-Definition guidance:
-
-- **Readers:** agents and the Maintainer read it for the allowed steps, their order, and what completes each stage. An issue's actual progress is in its execution checkpoint.
-- **Shape:** the five stages in order, each listing its steps.
-- **Steps:** each names its role, its action, any conditional next step, and where its evidence lives, following the evidence rule.
-- **Pointers, not copies:** steps link to the role SOPs, CONTRIBUTING.md, and the QA reference for methods and checks, without restating them.
-
-## Execution checkpoint
-
-One YAML file per issue under `/tmp/issues/` records where the issue stands, separate from the shared lifecycle definition. It's a working record, not a workflow engine.
-
-- **Contents:** the current stage and next step; completed stages and active waits; requirement and plan references with their revisions; the assessed revision and its evidence; the cycle count and recorded approvals; outstanding decisions.
-- **Updates:** at each stage close and each key Maintainer decision.
-- **Recovery:** a fresh or compacted Coordinator loads it and reconciles it with the current repository and issue before advancing.
-- **Durability:** files under `/tmp` can disappear; the lasting copy is the one uploaded to the GitHub issue after the lifecycle completes (5.4).
-
-## Affected documents
-
-Each affected file and the direction of its change. Role SOP changes apply to Docs issues and keep the current sequencing for other issue types, as [Lifecycle rules](#lifecycle-rules) states. [Appendix: Suggested edits](#appendix-suggested-edits) suggests exact wording.
-
-- **`docs/agents/roles/coordinator.md`:** describe the role as orchestrating work on an issue between the Maintainer and a team of agents. Keep its methods: workspace preparation and its stop-if-dirty safety, the readiness criteria, task tracking, one editor at a time, a separate Reviewer, agent check-ins, milestone updates, and the changed-requirements protocol. For Docs issues, leave timing to the lifecycle: the readiness handoff, the status change, the Architect's assessments, and the review-cycle policy. Keep the current sequencing for other issue types in its own section. Add the oversight duties for every issue and, in a Docs-only section, the lifecycle methods: the `/retro` skill, reporting at the lifecycle's handoffs, the execution checkpoint, and the stage readout.
-- **`docs/agents/roles/planner.md`:** describe the role as capturing the Maintainer's intent and, for Docs issues, planning the implementation. Group its work into capturing requirements, planning the implementation of Docs issues, and limits. The plan's contents and the slicing guidance from the Coordinator SOP live here, and the Planner keeps the plan current with authorized feedback, taking scope questions to the Maintainer. For a Docs issue, it may create and update an issue-linked spec at `docs/specs/<issue>-<slug>.md`, when that helps align requirements with the Maintainer, and its plan at `docs/plans/<issue>-<slug>.md`. These are the only repository files it edits, one editor at a time; for other issue types it edits none. Remove Docs dispatch and handoff timing from it, keeping the "Stop when the issue is ready for a Coder" stop point only for other issue types, and add no trigger on the Coordinator's briefing: the lifecycle owns dispatch and handoffs, and the Planner SOP describes the Planner's responsibilities and methods.
-- **`docs/agents/roles/architect.md`:** assess plans and signed-off commits against approved goals, prior decisions, and any vision documents, then consider future adaptability. The Template aims to make website redesign, coding, and deployment fast; flag Project-specific values or examples made into Template-wide rules and dependencies that make change harder. Include codebase health and System Design. The lifecycle sets timing for Docs issues, and the Coordinator SOP for others. Keep the role read-only and advisory; out-of-scope work needs Maintainer-approved requirements.
-- **`docs/agents/roles/coder.md`:** point to its Docs lifecycle steps in Implement. For Docs issues, write for the intended reader with minimal jargon, give each section a clear question or purpose, use terms consistently, and surface open questions. Its own validation doesn't replace the independent review, and it makes a fix only when assigned, since no fix is authorized automatically. Its methods and checks stay.
-- **`docs/agents/roles/reviewer.md`:** point to its Docs lifecycle steps in Implement. For documentation changes, check for contradictions, unsupported assumptions, and unclear wording. Its acceptance doesn't complete the change. Its methods and checks stay.
-- **`docs/agents/issue-tracker.md`:** specs live at `docs/specs/<issue>-<slug>.md`, linked from their issue. Distinguish the issue's status, the shared workflow, and the issue's checkpoint.
-- **`docs/agents/domain.md`:** allow unresolved questions and agreed wording in the issue's linked spec file.
-- **`GLOSSARY.md`:** the Coordinator, Planner, and Architect definitions state meaning, not procedure. The Maintainer approves the exact wording.
-- **`AGENTS.md`:** point its issues-and-specs sentence to the issue-tracker guide.
-- **`CONTRIBUTING.md` and `.github/pull_request_template.md`:** allow `Refs #<number>` for a PR whose issue stays open after the merge, such as #15's spec PR. Other PRs, such as #66's, keep `Closes`.
-- **New lifecycle definition:** a YAML file under `docs/`, holding the [lifecycle definition](#lifecycle-definition).
-
-## Acceptance criteria
-
-- **AC1** The lifecycle definition exists and holds its [required content](#lifecycle-definition) for the five stages.
-- **AC2** Each affected document follows its direction in [Affected documents](#affected-documents).
-- **AC3** For Docs issues, the definition is the authoritative operational sequence: role SOPs point to it and keep their guidance for other issue types, and this spec stays the design record.
-- **AC4** Native task lists show the active stage's applicable steps and keep the lifecycle open until the Coordinator closes Retro (5.3).
-- **AC5** Implement can't complete on the Reviewer's acceptance alone; it needs the Maintainer's final sign-off and the Architect's assessment of the signed-off commit.
-- **AC6** A trial issue runs through Publish and Retro, and the Maintainer decides the follow-ups.
-- **AC7** The checks in [Validate your change](../../CONTRIBUTING.md#validate-your-change) pass for the changed files.
-
-## Test approach
-
-- **Implementation ([#66]):** the Coder runs the checks in [Validate your change](../../CONTRIBUTING.md#validate-your-change) for the changed files. A YAML file is outside CI's documentation path list, so CI runs its full checks. The Reviewer checks the definition against its [required content](#lifecycle-definition) and each affected document against its direction in [Affected documents](#affected-documents). No schema validator is added.
-- **Trial ([#63]):** after #66 merges, a fresh agent runs #63 through the lifecycle in its own workspace. #63 still has the `needs-triage` label, so it enters at Define. #15's spec PR links with `Refs #15`, so #15 stays open: the Maintainer brings the #66 and #63 Retros and observations to the #15 Coordinator, the spec is revised, and #15 then closes. #15's own Retro (5.3) follows that revision.
-
-## Sources
-
-Issues: [#15], [#35], [#38], [#48], [#63], [#65], and [#66]. Repository documents are linked where they're used.
-
-## Appendix: Suggested edits
-
-These are suggestions for the [#66] implementation agent, not verbatim acceptance requirements. Reconcile them with this spec's direction and the repository as it stands then. Where a suggestion conflicts with [Affected documents](#affected-documents), the direction there governs.
-
-Each entry names the file, the section, and the From, To, or Add text. In the suggested text, "the lifecycle" links to the definition, and existing links stay as they are. Headings in To text are proposals; no repository links point to the headings they replace.
-
-### `docs/agents/roles/coordinator.md`
-
-- **Introduction**
-  - From: "The Coordinator takes a GitHub issue from approval to a reviewed change. It plans the work, hands each part to the right role, and keeps the maintainer informed."
-  - To: "The Coordinator orchestrates work on a GitHub issue between the maintainer and a team of agents. It runs Docs issues through the lifecycle, oversees the work against the approved requirements and plan, and keeps the maintainer informed."
-- **Read**
-  - Add after "The guides at the top level of `docs/agents/`": "The lifecycle, for Docs issues"
-- **Start**, kept for workspace preparation
-  - Move step 2 to Other issue types: "If the issue has the `needs-triage` label, review it with the `mattpocock-skills:grilling` skill, asking the maintainer your questions one at a time, and wait for the go-ahead. Otherwise, skip this step." Define hands unready Docs issues to the Planner (1.2).
-  - Move step 3 to Other issue types: "Change the status of the selected issue from "To do" to "In progress". Confirm the status change or describe the error encountered." For Docs issues, Define makes the status change (1.5); the Docs issues section keeps the confirmation method.
-  - Step 4, now step 2: add at the end: "For a Docs issue, show the active stage's steps, and keep the lifecycle open until it completes."
-  - New step 3: "For a Docs issue, load the issue's execution checkpoint from `/tmp/issues/`, if there is one, and reconcile it with the repository and issue before advancing."
-- **Check that the issue is ready**
-  - Move "Hand an issue that isn't ready to a Planner, saying what's missing." to Other issue types. The criteria stay; for Docs issues, Define makes the handoff (1.2).
-- **Plan the work and Run the work**
-  - From: both sections in full, headings included.
-  - To, four sections. The oversight duties are approved; this wording is suggested.
-    - "## Orchestrate the work"
-      - "Brief each role with the inputs it needs."
-      - The existing "Hand the implementation to a Coder and the review to a separate Reviewer …" bullet, unchanged.
-      - The existing "Let one agent edit files at a time …" and "Track which agent owns what …" bullets, unchanged.
-      - The existing "Check on the agents you started every 15 minutes …" bullet, unchanged.
-    - "## Oversee the work"
-      - "Compare the work with the approved requirements and the plan throughout the issue."
-      - "Resolve omissions, deviations, and conflicts between requirements, plans, code, and reviews directly with the agents when the approved materials already answer them."
-      - "Pause the affected work, and take anything that needs a new approach, or would change the scope, an acceptance criterion, or a recorded decision, to the maintainer. Send every affected agent the resulting change, as When approved requirements change describes."
-      - "Leave correctness review to the Reviewer. Oversight adds no approval gate."
-      - The existing "Update the maintainer at each design and implementation milestone …" bullet, unchanged.
-    - "## Docs issues"
-      - "Run each Docs issue through the lifecycle: brief each role at the step the lifecycle gives it, and check readiness and plan adherence before closing each stage."
-      - "When the lifecycle changes the issue's status, make the change and confirm it, or describe the error encountered."
-      - "Run review cycles as the lifecycle's Implement stage sets out."
-      - "Keep the issue's execution checkpoint current at each stage close and each key maintainer decision. After the lifecycle completes, upload it to a comment on the issue, and give the archive notice only once an upload succeeds."
-      - "Run the Retro with `/retro`, the `mattpocock-skills:retro` skill."
-      - "Start each response to the maintainer with a stage readout, such as `Stage: Implement 3 of 7 done`."
-    - "## Other issue types"
-      - "Until their own lifecycles are defined, Content, Fix, and Feature issues follow these steps instead of the lifecycle."
-      - Start steps 2 and 3 and the "Hand an issue that isn't ready …" sentence, moved unchanged.
-      - The existing "Look for work that can run in parallel …", "For every issue, ask an Architect …", and "Work in review cycles …" bullets, unchanged.
-      - The existing Hand back paragraph "After the maintainer commits, pushes, and says so, open the pull request …", moved unchanged.
-  - For Docs issues, the "Look for work that can run in parallel …" guidance also goes to the Planner SOP, and the Architect timing and the review-cycle policy move to the lifecycle: Plan (2.3) and Implement (its cycle rules and 3.6).
-- **Hand back**
-  - From: the entire section body, including "Stop and give the maintainer:", its list, and the final paragraph. Retain the heading.
-  - To: "Report to the maintainer at the lifecycle's handoffs for a Docs issue, or when the change is ready for other issue types. For their diff review, give a summary of the change, what was checked, open issues, and a suggested commit message. With the final Architect assessment, give the assessment and any suggested new issues. Open each pull request using the pull request template, linking its issue as Open a pull request describes." Keep the template link.
-
-### `docs/agents/roles/planner.md`
-
-- **Introduction**
-  - From: "The Planner gets GitHub issues ready for a Coder."
-  - To: "The Planner captures the maintainer's intent and, for Docs issues, plans the implementation."
-- **Work**
-  - From: the entire section, heading included.
-  - To, three sections:
-    - "## Capture requirements": the existing "Triage issues, interview the maintainer …", "When an interview settles a project term …", and "After an interview, check open issues …" bullets, unchanged, and "For a Docs issue, when a spec helps align the requirements with the maintainer, keep them in an issue-linked spec at `docs/specs/<issue>-<slug>.md`."
-    - "## Plan the implementation", for Docs issues; the Coordinator plans other issue types:
-      - "Build the implementation plan in `docs/plans/<issue>-<slug>.md`: affected files, sequence, role assignments, dependencies, handoffs, and validation evidence."
-      - The Coordinator's "Look for work that can run in parallel …" bullet, unchanged.
-      - "Keep the plan current with authorized feedback, such as the Architect's recommendations. Take scope questions to the maintainer through the Coordinator."
-    - "## Limits": the existing "The `mattpocock-skills:triage` …" and "Work only from the repository …" bullets, unchanged, and in place of "Never edit repository files. Put proposed file changes in the issue as exact text.": "Edit no repository files, except, for a Docs issue, its linked spec in `docs/specs/` and its plan in `docs/plans/`, one editor at a time. Put any other proposed file changes in the issue as exact text."
-- **Hand back**
-  - From: "Stop when the issue is ready for a Coder, and report:"
-  - To: "For other issue types, stop when the issue is ready for a Coder. Report:"
-  - Add after "proposed updates still waiting for the maintainer's approval": "the implementation plan, with each Architect recommendation and its decision"
-
-### `docs/agents/roles/architect.md`
-
-- **Introduction**
-  - From: "The Architect looks after the overall health of the codebase. It assesses every issue, and is read-only."
-  - To: "The Architect looks after the overall health of the codebase and the System Design as a whole, keeping both consistent with the approved intent of the Template or Project. It assesses every issue, and is read-only."
-- **Read**
-  - Add after "The issue and the code it touches": "The approved intent of the Template or Project, and any vision documents"
-- **Work**
-  - From: "The Coordinator asks you to assess each issue twice:" and its two bullets, "Before coding: assess the plan." and "After the change's last review: compare the codebase before and after the change."
-  - To: "Assess what the Coordinator sends you:" with the bullets "A plan: assess the plan." and "A commit: compare the codebase before and after the change."
-  - Add as the first criterion: "**Design intent:** whether the plan or change fits the Template's purpose of fast website redesign, coding, and deployment or the Project's approved goals, preserves prior design decisions, and keeps future changes easy. Flag Project-specific values or examples made into Template-wide rules and unnecessary dependencies."
-  - From: "Anything outside the current issue becomes a suggested new issue for the Planner and the maintainer, never extra work in the current change."
-  - To: "Anything outside the current issue goes to the maintainer as a suggested new issue. It becomes current work only when the maintainer approves a change to the requirements."
-
-### `docs/agents/roles/coder.md`
-
-- **Read**
-  - Add after "The QA reference": "The lifecycle's Implement stage, for Docs issues"
-- **Work**
-  - Add after the "Run the required checks …" bullet: "Your own validation doesn't replace the independent review.", "Make a fix only when the Coordinator assigns it; no fix is authorized automatically.", and "For a Docs issue, write for the intended reader with minimal jargon. Give each section a clear question or purpose, use the glossary's terms consistently, and surface open questions instead of guessing."
-
-### `docs/agents/roles/reviewer.md`
-
-- **Read**
-  - Add after "The QA reference": "The lifecycle's review steps in Implement, for Docs issues"
-- **Review**
-  - Add after "Fix nothing. Report each finding for the Coder to fix.": "Your acceptance informs the maintainer's decision; it doesn't complete the change."
-
-### `docs/agents/issue-tracker.md`
-
-- **Introduction**
-  - From: "Issues and specs live in this code repository's GitHub Issues, not in its wiki."
-  - To: "Issues live in this code repository's GitHub Issues, not in its wiki. Specs live in `docs/specs/<issue>-<slug>.md`, linked from their issue. The issue tracks its status, the lifecycle definition holds the shared workflow, and the issue's execution checkpoint records its progress."
-
-### `docs/agents/domain.md`
-
-- **Scope and entry format**
-  - From: "Keep unresolved questions in the issue."
-  - To: "Keep unresolved questions in the issue, or in the spec file the issue links to."
-- **Add or revise an entry, step 3**
-  - From: "During an interview, retain agreed wording in the issue until repository implementation is authorized."
-  - To: "During an interview, retain agreed wording in the issue or its linked spec file until repository implementation is authorized."
-
-### `GLOSSARY.md`
-
-- **Roles**, subject to the Maintainer's approval under [Add or revise an entry](../agents/domain.md#add-or-revise-an-entry)
-  - Coordinator, from: "The agent role that takes a GitHub issue from approval to a reviewed change, handing each part to the right role."
-  - Coordinator, to: "The agent role that orchestrates work on a GitHub issue between the Maintainer and a team of agents."
-  - Planner, from: "The agent role that gets GitHub issues ready for a Coder through triage, maintainer interviews, and issue writing."
-  - Planner, to: "The agent role that captures the Maintainer's intent and plans the implementation of a GitHub issue."
-  - Architect, from: "The read-only agent role that assesses every issue for code health: the plan before coding, and the change after its last review."
-  - Architect, to: "The agent role responsible for the overall health of the codebase and the System Design as a whole, consistent with the approved intent of the Template or Project."
-
-### `AGENTS.md` (`CLAUDE.md` is a symlink to it)
-
-- **Agent skills, Issue tracker**
-  - From: "Issues and specs live in this code repository's GitHub Issues, not its wiki."
-  - To: "Issues live in this code repository's GitHub Issues, not its wiki. For issues and specs, see `docs/agents/issue-tracker.md`."
-
-### `CONTRIBUTING.md`
-
-- **Open a pull request**
-  - From: "Link the pull request to the relevant GitHub Issue or Sub-Issue with `Closes #<number>`."
-  - To: "Link the pull request to the relevant GitHub Issue or Sub-Issue with `Closes #<number>`, or with `Refs #<number>` when the issue stays open after the merge."
-
-### `.github/pull_request_template.md`
-
-- **First line**
-  - From: `Closes #<issue-or-sub-issue-number>`
-  - To: `Closes #<issue-or-sub-issue-number> <!-- or Refs #<number> when the issue stays open after the merge -->`
-
-### New: the lifecycle definition
-
-- Add: a YAML file under `docs/`, named by the #66 Coder, holding the [lifecycle definition](#lifecycle-definition).
+### Define: approve requirements and establish readiness
+
+The Coordinator establishes the issue's real state and readiness. Unready or `needs-triage` work goes to the Planner for clarification and the Maintainer's review of the identified requirements revision. Already-approved, ready work goes directly to readiness confirmation.
+
+Define closes with approved requirements ready to plan and the issue's GitHub Project status changed to In progress. The [Project status method](../agents/roles/coordinator.md#change-github-project-status) discovers the intended repository-linked Project and Status mapping, verifies the change, or reports ambiguity or the actual access error. Empty issue membership alone does not prove no Project applies. Plan needs no further entry approval.
+
+### Plan: decide concrete work and resolve recommendations
+
+The Coordinator briefs the Planner, who writes the implementation plan. The Architect assesses that plan revision. The Planner incorporates in-scope recommendations and refers scope decisions through the Coordinator to the Maintainer. Plan closes only after every recommendation has a disposition, authorized feedback is reflected in the plan, and no scope decision remains pending.
+
+### Implement: validate and review the current revision
+
+Each cycle is one round of changes followed by independent review of the whole changed issue revision, including earlier cycles, or an eligible recorded review exception. Every cycle needs Maintainer authorization: starting the Coordinator authorizes the first, after the go-ahead for a `needs-triage` issue; later cycles need a Maintainer request for changes or authorized fix. There is a five-cycle cap; a sixth or later needs an explicit extension. Returning from Implement or Publish never resets the count.
+
+The Coordinator briefs the Coder as sole editor. For a new or substantially revised document, the Coder sends a short outline through the Coordinator for Maintainer approval before expanding it. The Coder implements and validates the assigned work against the plan and repository checks. Validation does not replace independent review.
+
+A separate Reviewer may be omitted only with the Maintainer's explicit waiver for an isolated one- or two-line whole logical unreviewed change. Splitting a larger change into hunks does not qualify. Record the exact revision and waiver in chat and the checkpoint, re-evaluate eligibility after any revision, and count the waived round as a cycle. An assignment is not a waiver. The exception retains validation, cycle authorization and limits, final Maintainer sign-off, final Architect assessment, and matching evidence; record it as an exception, not a Reviewer pass.
+
+Reviewer findings go to the Maintainer and wait for the go-ahead before another cycle. The Maintainer then reviews diffs, comments, and commits, either requesting changes or giving final sign-off naming the commit. The Architect subsequently assesses that signed-off commit. Authorized changes return through Implement; advisory recommendations alone authorize nothing. Implement closes only when validation, review or eligible waiver, final sign-off, and final Architect assessment match the current revision, with no authorized changes remaining.
+
+### Publish: merge the signed-off revision
+
+Only the Maintainer commits, pushes, or merges. Publish starts with the Maintainer pushing the signed-off commit; the Coordinator opens or reuses the issue's PR, and GitHub runs CI and deletes the remote branch after merge. A transient CI failure can be retried on the same commit. Any required file change needs authorization and a return through Implement, including its closing evidence check, before updating the same PR.
+
+Passing CI does not overcome pending PR feedback or a pushed revision differing from the signed-off commit. The Coordinator reports blockers and waits for Maintainer direction. Publish closes after the correct revision is merged, the remote branch is deleted, and the Maintainer confirms the merge. Follow [CONTRIBUTING.md](../../CONTRIBUTING.md#open-a-pull-request): use `Closes` for an issue completed by the merge and `Refs` when it stays open, as #15 does while awaiting trial findings.
+
+### Retro: decide drafts and close remaining obligations
+
+Retro drafting is optional until session capture exists. Only the Maintainer starts or restarts `/retro` (`mattpocock-skills:retro`), or chooses to skip. Invocation or a running, failed, or partial run does not establish a completed Retro. The Coordinator records errors and kept partial drafts and waits for direction; it never silently restarts the skill or treats failure as zero candidates.
+
+Completed candidate drafts proceed to Maintainer decisions. Kept partial drafts can proceed only under explicit Maintainer direction, with the failed run still recorded as failed. The Coordinator revises commented drafts, files each approved draft exactly as approved, and drops declined drafts. Closure without draft decisions requires either a recorded skip before any drafts, including kept partial drafts, exist, or a completed zero-candidate run with no kept drafts.
+
+A skip does not discard outstanding obligations. Once all drafts are filed or dropped, or an eligible no-draft outcome is recorded, and all other obligations are met, `retro-close` completes the Lifecycle and hands back to the Maintainer with the archive notice. There is no post-completion checkpoint-upload step or receipt condition.
+
+## Acceptance, evidence, and remaining trial
+
+These criteria retain the original implementation-and-trial distinction while reflecting approved amendments:
+
+- **AC1:** The canonical Lifecycle defines all five stages, stable step keys, entry and completion conditions, actors, evidence, and permitted transitions.
+- **AC2:** The directly affected role SOPs, references, glossary, contributor guidance, and PR template follow the ownership and artifact boundaries above.
+- **AC3:** The Lifecycle is the authoritative operational sequence for all issue types; this spec is its design record, with Docs as the first live trial.
+- **AC4:** Native tasks and readouts reflect the reconciled active stage, including waits and re-entry, and stay distinct from whole-Lifecycle completion.
+- **AC5:** Independent acceptance alone cannot complete Implement. Current-revision validation, review or eligible waiver, final Maintainer sign-off, and subsequent Architect assessment are required.
+- **AC6:** A live trial runs through Publish and Retro, returns its observations and outcomes to #15, and receives Maintainer decisions on follow-ups before final revision and closure.
+- **AC7:** The checks in [Validate your change](../../CONTRIBUTING.md#validate-your-change) pass for the changed files, alongside review for accuracy, clarity, links, and scope.
+
+### Delivery evidence and remaining work
+
+1. **Implementation, #66:** [PR #71] merged as `d2cbd09`. Its validation report records full local checks repeated independently, whole-issue review, and final sign-off and Architect assessment for `4a4b60a`. Documentary walkthroughs and task-tracking wording establish implementation evidence, not a live trial.
+2. **Current reconciliation, #15:** reconcile the frozen design with approved #66 amendments and merged sources. Validate this Markdown-only change with `npm run format:check`, `git diff --check`, diff/scope review, and link checks. It remains subject to independent review and Maintainer acceptance.
+3. **First live trial, #63:** outstanding. A fresh agent in its own workspace takes the Docs classification issue through the Lifecycle, starting at Define while it remains unready. Before execution, establish the trial's evidence and completion boundary. Keep #63's classification decisions distinct from workflow observations.
+4. **Final refinement, #15:** bring #63 observations and Retro outcomes back to the #15 Coordinator, together with #66 findings. The Maintainer decides follow-ups; revise again as needed before finalizing #15 and its in-scope work. #15's own Retro follows its revision and Publish stages.
+
+No #63 plan or trial was produced in #66. No trial of Content, Fix, or Feature work is claimed. Future variations need concrete evidence and Maintainer approval.
+
+## Approval lineage and boundaries
+
+The [original approved spec][baseline-spec] at `9672858` ([PR #68]) deliberately stayed unchanged throughout #66. The [#66 issue body][#66] records subsequent Maintainer approvals; later approved amendments supersede conflicting earlier choices. Merged files establish implementation evidence, not approval by themselves.
+
+- **Triage and 2026-10-26 review amendments:** use “coordinates”, preserve role meanings, make `/retro` Maintainer-started, add explicit tiny-change waivers and Project discovery, and strengthen reusable Architect and documentation guidance.
+- **Cycle 3, 2026-10-27:** authorize the collected review feedback and [Vertical Slice/Layer agreement][terms], make Planner ownership universal, remove Milestone, and adopt the previously proposed [optional Retro drafting][retro-proposal]. The comments were proposals or wording agreements when first posted; this later authorization permitted implementation.
+- **Cycles 5–6, 2026-10-28:** clarify requirements revision/approval, recovery and evidence-based progress, plans for all types, practical operations and skill routes; make the common Lifecycle apply to all types. Checkpoint synchronization through one issue comment was an approved intermediate choice.
+- **Cycle 7, 2026-10-28:** replace remote checkpoint synchronization and final upload with the small local-only record, retain the repository specs/plans, and simplify document ownership and scenario guidance. This supersedes the original `/tmp` and upload design and the intermediate remote-sync rules.
+
+During #66 Retro, the suggestion to correct requirements drift was withdrawn. The lesson about preserving agreed intent is input to the existing #15 reconciliation only; no standalone issue or SOP wording was approved. The agent-discovery guidance proposal was declined, and whether #66 should have been split remains undecided. These outcomes do not add requirements or authorize new issues.
+
+Out of scope remain new skills, runtime consumers, validators, hooks, workflow engines, enforcement automation, separate audit infrastructure, a central reference catalogue, and automatic conversion of Wiki checklists into workflows. No diagram or Wiki publication is required to operate the Lifecycle. [#48] enforcement and [#65] progress evaluation are separate. [#69] weekly Retro and [#70] session capture are future, unimplemented work, not prerequisites already delivered by optional drafting. Reporting decisions in [#35] and classification decisions in #63 remain with their respective issues.
 
 [#15]: https://github.com/joebaz/web-starter/issues/15
 [#35]: https://github.com/joebaz/web-starter/issues/35
@@ -326,3 +149,10 @@ Each entry names the file, the section, and the From, To, or Add text. In the su
 [#63]: https://github.com/joebaz/web-starter/issues/63
 [#65]: https://github.com/joebaz/web-starter/issues/65
 [#66]: https://github.com/joebaz/web-starter/issues/66
+[#69]: https://github.com/joebaz/web-starter/issues/69
+[#70]: https://github.com/joebaz/web-starter/issues/70
+[PR #68]: https://github.com/joebaz/web-starter/pull/68
+[PR #71]: https://github.com/joebaz/web-starter/pull/71
+[baseline-spec]: https://github.com/joebaz/web-starter/blob/9672858452a24e50462b3f3d2ada2c4c31d0d2ee/docs/specs/15-docs-lifecycle.md
+[terms]: https://github.com/joebaz/web-starter/issues/66#issuecomment-6418534064
+[retro-proposal]: https://github.com/joebaz/web-starter/issues/66#issuecomment-6419511814
