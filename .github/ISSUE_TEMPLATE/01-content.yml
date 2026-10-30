@@ -1,5 +1,5 @@
 name: Content Issue
-description: Request one focused change to site content, structure, shared data, or metadata.
+description: Request one focused change to site content, page structure, shared data, and/or metadata.
 title: "[Content]: "
 labels:
   - content
@@ -22,7 +22,7 @@ body:
         - Update shared site data
         - Add a page
         - Delete a page
-        - Change navigation or site structure
+        - Change navigation or page structure
         - Update site metadata
         - Not sure
     validations:

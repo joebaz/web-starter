@@ -48,10 +48,12 @@ For shared terminology, glossary entry format, and approval of term changes, fol
 
 Select the GitHub Issue form that best matches the work:
 
-- **Content:** Changes to user-facing content, images, shared data, metadata, navigation, or page structure.
+- **Content:** Changes to Content, Page Structure, or both, such as copy, images, navigation labels, metadata, shared site data, pages, or layout.
 - **Documentation:** Repository documentation or instructions only. Choose the primary document type: **SOP** for repeatable instructions, **Reference** for facts and conventions, **Design** for a proposed-work specification, or **Other** for another documentation request.
-- **Fix:** Unintended behavior, layout, accessibility, or functionality, including an uncovered design gap in an existing capability.
+- **Fix:** Unintended behavior, layout, accessibility, performance, or functionality, including an uncovered design gap in an existing capability.
 - **Feature:** One cohesive new or expanded capability.
+
+Classify a change by its purpose, not by the files it touches: a change that corrects a problem is a Fix, and one that adds a capability is a Feature, even if it only edits Content or Page Structure.
 
 Use the Documentation form only for repository documentation and instructions. Do not use it for changes to user-facing content, behavior, tests, builds, deployment, or external services.
 
@@ -65,12 +67,10 @@ Create a branch using this format:
 
 Choose exactly one of these types:
 
-- `content`: User-facing content, images, shared data, metadata, navigation, or page structure.
+- `content`: Content, Page Structure, or both, such as copy, images, navigation labels, metadata, shared site data, pages, or layout.
 - `docs`: Repository documentation and instructions only, such as `README.md`, `CONTRIBUTING.md`, `AGENTS.md`, `CLAUDE.md`, and similar documentation.
-- `fix`: Broken or incorrect behavior, layout, accessibility, or functionality, including an uncovered design gap in an existing capability.
+- `fix`: Broken or incorrect behavior, layout, accessibility, performance, or functionality, including an uncovered design gap in an existing capability.
 - `feature`: One cohesive new or expanded capability.
-
-> **Pending reference — [#63](https://github.com/joebaz/web-starter/issues/63):** The current `content` issue and branch category also covers Page Structure. Retain this classification until #63 settles how Page Structure work aligns with the glossary, then replace or remove this note.
 
 Use a concise, specific, lowercase kebab-case description. Do not use any other prefix.
 

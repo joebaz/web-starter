@@ -10,11 +10,11 @@
 
 ## Category labels
 
-| Canonical role | Label in this repo | Meaning                                                  |
-| -------------- | ------------------ | -------------------------------------------------------- |
-| `bug`          | `fix`              | Broken behavior, layout, accessibility, or functionality |
-| `enhancement`  | `feature`          | New or expanded capability                               |
+| Canonical role | Label in this repo | Meaning                                                               |
+| -------------- | ------------------ | --------------------------------------------------------------------- |
+| `bug`          | `fix`              | Broken behavior, layout, accessibility, performance, or functionality |
+| `enhancement`  | `feature`          | New or expanded capability                                            |
 
-This repo also uses `content` (user-facing content changes) and `docs` (repository documentation and instructions) as categories with no canonical equivalent. Each triaged issue carries exactly one category label.
+This repo also uses `content` (Content and Page Structure changes that are neither fixes nor features) and `docs` (repository documentation and instructions) as categories with no canonical equivalent. Each triaged issue carries exactly one category label.
 
 When a skill names a canonical role, use its label in this table.
