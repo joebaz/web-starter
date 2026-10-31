@@ -6,6 +6,14 @@ Name each plan `<issue>-<slug>.md`: the issue number, then a short lowercase keb
 
 A plan is an ordered list of operations for one issue, which is one Vertical Slice. Operations are numbered pieces of work inside the plan; they are not Vertical Slices or Lifecycle steps. Link the approved requirements instead of copying them, and scale the plan to the issue: a small change may need only one or two operations.
 
+Scope checks account for every path the work leaves in the checkout, in three groups:
+
+- **Implementation files:** the files the operations change.
+- **Task Artifacts:** the plan, a linked spec, or another task record the issue delivers, including any that exist before implementation starts. `git diff` omits untracked files, so list them with `git status --short --untracked-files=all` and inspect each with `git diff --no-index -- /dev/null <path>`.
+- **Local records:** the execution checkpoint, which Git ignores. Confirm it with `git check-ignore`; it is not a deliverable.
+
+Explain any other path before hand back. Don't delete a deliverable to match an expected file list.
+
 ```markdown
 # <Issue title>: implementation plan
 
@@ -36,6 +44,7 @@ Issue: #<issue>
 
 ## Final validation and hand back
 
+- Scope: implementation files <paths>; Task Artifacts <paths>; local records <paths>
 - Checks: <required commands and reviews>, expecting <evidence>
 - Hand back: <what goes to whom>
 

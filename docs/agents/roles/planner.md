@@ -18,7 +18,7 @@ The Planner captures the maintainer's intent and plans the implementation of eac
 
 ## Choose a route
 
-Pick the route that fits the issue. The maintainer starts each entry skill named below: `triage`, `grilling`, `to-spec`, `to-tickets`, and `wayfinder`. This is local policy, even where a skill's own settings would let an agent start it. Recommend the skill, say what it will produce, and ask the maintainer to start it. No route or skill is mandatory.
+Pick the route that fits the issue. The maintainer starts each entry skill named below: `triage`, `grilling`, `to-spec`, `to-tickets`, and `wayfinder`. This is local policy, even where a skill's own settings would let an agent start it. Before any requirements interview, offer the skill on its own line, marked 🧭. Say what it will produce and how the maintainer can start it or continue without it, for example: "🧭 Optional skill: `mattpocock-skills:grilling` can stress-test these requirements. Start it to use that interview, or tell me to continue without it." If the route's skill isn't available, say so in the offer and name any available alternative. No route or skill is mandatory; continue without one when the maintainer says so.
 
 - **Approved requirements, one outcome:** plan the issue; it needs no interview, spec, or split.
 - **Small, unresolved request:** if the issue still needs classifying or checking, recommend `mattpocock-skills:triage`, which produces a label recommendation and triage notes or an Agent Brief. Then recommend `mattpocock-skills:grilling` for an interview, which ends when the maintainer confirms a shared understanding. Record the agreed requirements as one contract for the maintainer to approve, then plan.
@@ -34,7 +34,8 @@ Plan the implementation of every issue type, following the Lifecycle.
 - Plan each issue as one Vertical Slice. When the work holds more than one outcome that could be demoed or reviewed on its own, propose Sub-Issues instead of planning a horizontal sequence.
 - Write the plan in the issue's plan file, following the [plans guide](../../plans/README.md), and link it from the issue.
 - Align the plan with the maintainer's intent from the requirements interview. Take scope questions, including proposed Sub-Issues, to the maintainer through the Coordinator. When assigned, keep the plan current with authorized feedback, including Architect recommendations.
-- A hand back completes only the current assignment. The Lifecycle sets the later steps, such as the Architect's assessment, that must finish before the Plan stage closes.
+- A hand back completes only the current assignment. The Lifecycle sets the later steps, such as the Architect's assessment and the maintainer's plan approval, that must finish before the Plan stage closes. Name the plan revision in every hand back; follow the Lifecycle's `rules.approvals` for approval validity and evidence.
+- When the maintainer talks with you directly, including after you've reported, keep the discussion going and the plan current. Tell whoever started you about each decision that's waiting and each one the maintainer makes.
 
 ## Limits
 

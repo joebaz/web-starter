@@ -14,7 +14,7 @@ reading:
   - State that stays unknown waits at the gate it affects.
 rules:
   authorization:
-    - The Maintainer approves requirements, scope, and changes to either.
+    - The Maintainer approves requirements, scope, and changes to either, and the final plan revision under rules.approvals.
     - Agent findings, recommendations, reports, checkpoints, and readouts authorize nothing.
     - When approved materials change, follow agents/roles/coordinator.md#when-approved-requirements-change.
   evidence:
@@ -30,6 +30,16 @@ rules:
     - An Agent Brief summarizes and links the approved requirements; it is neither a second contract nor an approval.
     - A skill-applied label or a checkpoint is not approval.
     - An already approved, ready issue needs no further approval and no second spec.
+  approvals:
+    - Requirements approval, plan approval, and final sign-off are separate Maintainer decisions; none implies another.
+    - Requirements approval accepts the requirements contract in Define.
+    - Plan approval accepts one final plan revision in Plan, after the Architect's assessment and a decision on every recommendation.
+    - Final sign-off accepts the implemented commit in Implement.
+    - Plan approval names the plan's revision, a commit or blob. The Coder works only from an approved revision.
+    - A plan revision is material when it changes an operation, a file in scope, wording to implement, a check, or a recommendation's decision. A material revision needs a new plan approval.
+    - Before Plan closes, a material revision from any step returns to implementation-plan, then plan-assessment and recommendation decisions before plan-approval.
+    - After Plan closes, pause the work that depends on a material revision until the Maintainer approves the revised plan; continue under the normal cycle, review, and sign-off rules, with signed-off-assessment covering the final signed-off commit.
+    - Other revisions, such as recording an already approved decision or fixing a typo or link, keep the approval. Record the new revision with the approval it falls under. Merely recording an already approved recommendation decision does not require another assessment.
   artifacts:
     - Create Task Artifacts only when needed, at the locations in agents/issue-tracker.md.
   state:
@@ -111,7 +121,7 @@ stages:
         action:
           - Confirm readiness.
           - Change the issue's status from To do to In progress.
-          - Close Define; the Plan stage needs no further approval.
+          - Close Define; the Plan stage needs no entry approval.
         method:
           - agents/roles/coordinator.md#change-github-project-status
         evidence: Issue status and chat confirmation; updated checkpoint.
@@ -122,6 +132,7 @@ stages:
       - The Architect has assessed the plan.
       - Every recommendation has a decision.
       - The plan reflects authorized feedback, with no pending scope decision.
+      - The Maintainer has approved the final plan revision under rules.approvals.
     steps:
       - key: planner-briefing
         role: Coordinator
@@ -135,7 +146,9 @@ stages:
         evidence: Plan file and revision linked in chat.
       - key: plan-assessment
         role: Coordinator and Architect
-        action: The Coordinator asks the Architect to assess the plan.
+        action:
+          - The Coordinator asks the Architect to assess the plan.
+          - On every return before Plan closes, regardless of the originating step, the Architect assesses the material changes since the last assessed revision under rules.approvals.
         method:
           - agents/roles/architect.md#work
         evidence: Architect assessment in chat, tied to the plan revision.
@@ -150,7 +163,7 @@ stages:
           - when: Out-of-scope recommendations need decisions.
             to: scope-decision
           - when: No out-of-scope recommendation is pending.
-            to: plan-close
+            to: plan-approval
       - key: scope-decision
         role: Maintainer and Planner
         action:
@@ -159,6 +172,19 @@ stages:
         method:
           - agents/roles/coordinator.md#when-approved-requirements-change
         evidence: Maintainer decisions in chat or the issue; updated plan and checkpoint.
+      - key: plan-approval
+        role: Maintainer and Coordinator
+        action:
+          - The Coordinator asks the Maintainer to approve the final plan revision.
+          - The Maintainer approves that revision or requests changes.
+        method:
+          - agents/roles/coordinator.md#hand-back
+        evidence: Maintainer approval in chat or the issue, naming the plan revision; the checkpoint's plan evidence.
+        transitions:
+          - when: Changes requested.
+            to: implementation-plan
+          - when: Approved.
+            to: plan-close
       - key: plan-close
         role: Coordinator
         action: Confirm the Plan stage's obligations and close it.
@@ -167,6 +193,7 @@ stages:
     entry:
       - Plan is closed, or Publish returns for an authorized file change.
       - Every cycle meets rules.cycles before changes start.
+      - The Coder works from a plan revision approved under rules.approvals.
     exit: implementation-evidence
     completion:
       - The current revision has an independent review or a recorded eligible review_exception.
@@ -179,7 +206,7 @@ stages:
         role: Coordinator
         action:
           - Check cycle authorization and count, including an explicit extension for cycle six or later.
-          - Brief the Coder on requirements, plan, references, scope, and assignment, with the Coder as the one editor.
+          - Brief the Coder on requirements, the approved plan revision, references, scope, and assignment, with the Coder as the one editor.
           - Record the cycle without resetting earlier cycles.
         evidence: Chat assignment; checkpoint cycle count and Maintainer authorization.
       - key: implementation-validation
