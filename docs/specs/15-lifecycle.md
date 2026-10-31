@@ -1,6 +1,6 @@
 # Issue lifecycle design record
 
-> **Status:** Reconciliation draft for [#15], following the implementation of [#66] in [PR #71]. The common Lifecycle is operational for all issue types. The Docs trial on [#63] remains outstanding; the Maintainer selected open Feature issue [#45] as the next trial candidate after it. Neither trial is complete; this is not #15's final revision.
+> **Status:** Reconciliation draft for [#15], following the implementation of [#66] in [PR #71] and the Docs trial on [#63], delivered in [PR #75]. The common Lifecycle is operational for all issue types. [#76] applied #63's retrospective findings. The trial on Feature issue [#45] remains outstanding; this is not #15's final revision.
 
 ## Problem and goal
 
@@ -46,7 +46,7 @@ Create Task Artifacts only when needed. This design record uses the Maintainer-s
 
 The Coordinator coordinates: it establishes state, briefs agents, oversees alignment with approved requirements and the plan, and reports against the issue's acceptance criteria. The [Planner](../agents/roles/planner.md) triages, captures intent, interviews the Maintainer, and plans implementation for every issue type. The Planner may edit only the issue's linked spec and plan. There is one editor at a time; read-only assignments can run alongside editing.
 
-A plan is an ordered list of concrete operations, scaled to the issue. Each operation names its owner, affected files and actions, prerequisites, output and handoff, and expected validation evidence. The plan identifies dependencies and parallel read-only work, links requirements rather than copying them, and records sourced Maintainer feedback and Architect recommendation dispositions. A Planner hand back ends its assignment, not the Plan stage's remaining obligations.
+A plan is an ordered list of concrete operations, scaled to the issue. Each operation names its owner, affected files and actions, prerequisites, output and handoff, and expected validation evidence. The plan identifies dependencies and parallel read-only work, links requirements rather than copying them, and records sourced Maintainer feedback and Architect recommendation dispositions. After the Architect's assessment and a decision on every recommendation, the Maintainer approves the final plan revision, and the Coder works only from an approved revision. Requirements approval, plan approval, and final sign-off are separate decisions; the Lifecycle's `approvals` rule defines which plan revisions need a new approval. A Planner hand back ends its assignment, not the Plan stage's remaining obligations.
 
 One Issue or Sub-Issue is one [Vertical Slice](../../GLOSSARY.md#planning), delivered through every Layer it needs. A Layer is a responsibility boundary serving many outcomes. Propose Sub-Issues when there are multiple independently demoable or reviewable outcomes. Plan operations are pieces within an issue; they are not additional Vertical Slices or Lifecycle steps. Completion follows the issue's acceptance criteria, without a separate Milestone planning or reporting requirement.
 
@@ -58,7 +58,7 @@ The [Coder](../agents/roles/coder.md) implements assigned work within its scope 
 
 The [Planner's scenario routes](../agents/roles/planner.md#choose-a-route) fit the unresolved work: approved atomic requirements go straight to planning; a small unresolved request may need triage and an interview; settled multi-session or multi-outcome work may need a spec and approved decomposition; a large uncertain effort may need a wayfinding decision map. No route or universal skill chain is mandatory.
 
-Under local policy the Maintainer starts the five entry skills: `triage`, `grilling`, `to-spec`, `to-tickets`, and `wayfinder`. The Planner recommends the relevant skill and explains its expected output. Once an entry skill starts, its required nested calls run within repository role, file-editing, and approval limits. Skill outputs retain their actual purposes: a tracker spec or dependency-linked tickets do not replace the repository implementation plan, and a generated brief or ready label does not approve requirements. No new skills or changes to installed skills are part of this design.
+Under local policy the Maintainer starts the five entry skills: `triage`, `grilling`, `to-spec`, `to-tickets`, and `wayfinder`. Before any requirements interview, the Planner offers the relevant skill on a visible line marked 🧭, with its expected output and how to start it or continue without it, and names any unavailable skill and an available alternative. Once an entry skill starts, its required nested calls run within repository role, file-editing, and approval limits. Skill outputs retain their actual purposes: a tracker spec or dependency-linked tickets do not replace the repository implementation plan, and a generated brief or ready label does not approve requirements. No new skills or changes to installed skills are part of this design.
 
 ### Local state, recovery, and progress
 
@@ -72,6 +72,8 @@ The checkpoint is a convenience record that can be lost with the workspace. It i
 
 The Coordinator refreshes its native task list on each stage entry or re-entry to show only that stage's applicable steps, and updates task statuses at transitions. Re-entry preserves cycle counts, approvals, and established step state. Each response to the Maintainer starts with a one-line readout from reconciled state, such as `Stage: Implement 3 of 7 done`, or `Stage: reconciling` until state is established. A completed stage task list does not complete the Lifecycle.
 
+The [Coordinator](../agents/roles/coordinator.md#check-on-delegated-work) checks on delegated agents every 15 minutes while their work or a Maintainer decision about it is open, including direct conversations between the Maintainer and another agent. A finished turn or completion report doesn't end those checks. When the Maintainer must act in another agent's session, the Coordinator sends a short notice naming the action and session instead of repeating that session's content.
+
 ## Five-stage overview
 
 Stages run in order: Define, Plan, Implement, Publish, Retro. Closing a stage opens the next; closing Retro at `retro-close` completes the Lifecycle. Resumed work continues at its reconciled step. The YAML's stable semantic step keys, completion conditions, transitions, and method links govern the sequence and gates summarized below.
@@ -84,13 +86,13 @@ Define closes with approved requirements ready to plan and the issue's GitHub Pr
 
 ### Plan: decide concrete work and resolve recommendations
 
-The Coordinator briefs the Planner, who writes the implementation plan. The Architect assesses that plan revision. The Planner incorporates in-scope recommendations and refers scope decisions through the Coordinator to the Maintainer. Plan closes only after every recommendation has a disposition, authorized feedback is reflected in the plan, and no scope decision remains pending.
+The Coordinator briefs the Planner, who writes the implementation plan. The Architect assesses that plan revision. The Planner incorporates in-scope recommendations and refers scope decisions through the Coordinator to the Maintainer. Plan closes only after every recommendation has a disposition, authorized feedback is reflected in the plan, no scope decision remains pending, and the Maintainer approves the final plan revision.
 
 ### Implement: validate and review the current revision
 
 Each cycle is one round of changes followed by independent review of the whole changed issue revision, including earlier cycles, or an eligible recorded review exception. Every cycle needs Maintainer authorization: starting the Coordinator authorizes the first, after the go-ahead for a `needs-triage` issue; later cycles need a Maintainer request for changes or authorized fix. There is a five-cycle cap; a sixth or later needs an explicit extension. Returning from Implement or Publish never resets the count.
 
-The Coordinator briefs the Coder as sole editor. For a new or substantially revised document, the Coder sends a short outline through the Coordinator for Maintainer approval before expanding it. The Coder implements and validates the assigned work against the plan and repository checks. Validation does not replace independent review.
+The Coordinator briefs the Coder as sole editor on the approved plan revision. For a new or substantially revised document, the Coder sends a short outline through the Coordinator for Maintainer approval before expanding it. The Coder implements and validates the assigned work against the plan and repository checks. Validation does not replace independent review.
 
 A separate Reviewer may be omitted only with the Maintainer's explicit waiver for an isolated one- or two-line whole logical unreviewed change. Splitting a larger change into hunks does not qualify. Record the exact revision and waiver in chat and the checkpoint, re-evaluate eligibility after any revision, and count the waived round as a cycle. An assignment is not a waiver. The exception retains validation, cycle authorization and limits, final Maintainer sign-off, final Architect assessment, and matching evidence; record it as an exception, not a Reviewer pass.
 
@@ -114,7 +116,7 @@ A skip does not discard outstanding obligations. Once all drafts are filed or dr
 
 These criteria retain the original implementation-and-trial distinction while reflecting approved amendments:
 
-- **AC1:** The canonical Lifecycle defines all five stages, stable step keys, entry and completion conditions, actors, evidence, and permitted transitions.
+- **AC1:** The canonical Lifecycle defines all five stages, stable step keys, entry and completion conditions, actors, evidence, approval gates, and permitted transitions.
 - **AC2:** The directly affected role SOPs, references, glossary, contributor guidance, and PR template follow the ownership and artifact boundaries above.
 - **AC3:** The Lifecycle is the authoritative operational sequence for all issue types; this spec is its design record, with Docs as the first live trial.
 - **AC4:** Native tasks and readouts reflect the reconciled active stage, including waits and re-entry, and stay distinct from whole-Lifecycle completion.
@@ -126,11 +128,23 @@ These criteria retain the original implementation-and-trial distinction while re
 
 1. **Implementation, #66:** [PR #71] merged as `d2cbd09`. Its validation report records full local checks repeated independently, whole-issue review, and final sign-off and Architect assessment for `4a4b60a`. Documentary walkthroughs and task-tracking wording establish implementation evidence, not a live trial.
 2. **Current reconciliation, #15:** reconcile the frozen design with approved #66 amendments and merged sources. Validate these documentation changes with `npm run format:check`, `git diff --check`, diff/scope review, and link checks. They remain subject to independent review and Maintainer acceptance.
-3. **First live trial, #63:** outstanding. A fresh agent in its own workspace takes the Docs classification issue through the Lifecycle, starting at Define while it remains unready. Before execution, establish the trial's evidence and completion boundary. Keep #63's classification decisions distinct from workflow observations.
+3. **First live trial, #63:** delivered in [PR #75], merged as `33cc5d0`; its Retro filed [#76]. The session did not establish a separate explicit trial evidence and completion boundary before execution, so [Trial observations from #63](#trial-observations-from-63) records observations rather than measuring them against an agreed boundary. #63's classification decision stays with #63 and PR #75.
 4. **Intended second live trial, #45:** the Maintainer selected this open Feature issue as the next trial candidate after Docs #63. This selection establishes neither readiness nor implementation authorization. Establish #45's own investigation, proposal, and approval, and its trial execution, evidence, and completion boundaries, within its workflow before running it.
-5. **Final refinement, #15:** bring observations and Retro outcomes from both planned trials back to the #15 Coordinator, together with #66 findings. The Maintainer decides follow-ups; revise again as needed before finalizing #15 and its in-scope work. #15's own Retro follows its revision and Publish stages.
+5. **Final refinement, #15:** #63's observations returned through #76. Bring #45's observations and Retro outcomes back to the #15 Coordinator, together with #66 findings. The Maintainer decides follow-ups, including whether #63 met AC6 without an agreed boundary; revise again as needed before finalizing #15 and its in-scope work. #15's own Retro follows its revision and Publish stages.
 
-No #63 plan or trial was produced in #66. Neither planned trial is complete, and no trial of Content, Fix, or Feature work is claimed. Content and Fix trials are not required by this planned sequence; the two selected trials will not prove all issue types. Future variations need concrete evidence and Maintainer approval.
+No #63 plan or trial was produced in #66. The #45 trial is not complete, and no trial of Content, Fix, or Feature work is claimed. Content and Fix trials are not required by this planned sequence; the two selected trials will not prove all issue types. Future variations need concrete evidence and Maintainer approval.
+
+### Trial observations from #63
+
+These workflow observations from the #63 session are separate from its classification decision. [#76] holds the evidence and the Maintainer's dispositions.
+
+| Observation                                                                                                                                               | Disposition in #76                                                                                                        |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| The Maintainer expected to approve the plan before implementation, but Plan could close without that approval.                                            | The Lifecycle's `plan-approval` step and `approvals` rule.                                                                |
+| The Coordinator's check was deleted after the Planner's first completion report, while the Maintainer and Planner kept talking.                           | [Check on delegated work](../agents/roles/coordinator.md#check-on-delegated-work).                                        |
+| The Coordinator repeated proposals already in the Planner session.                                                                                        | A short notice naming the action and session, in the [Coordinator's hand back](../agents/roles/coordinator.md#hand-back). |
+| The interview began without the skill offer, and the unavailable `triage` skill wasn't surfaced.                                                          | A visible 🧭 offer before any interview, in [Choose a route](../agents/roles/planner.md#choose-a-route).                  |
+| The plan expected four changed files and missed the untracked plan; Architect recommendation R1 corrected it before implementation, and no file was lost. | Separate scope groups in the [plans guide](../plans/README.md).                                                           |
 
 ## Approval lineage and boundaries
 
@@ -140,6 +154,7 @@ The [original approved spec][baseline-spec] at `9672858` ([PR #68]) deliberately
 - **Cycle 3, 2026-10-27:** authorize the collected review feedback and [Vertical Slice/Layer agreement][terms], make Planner ownership universal, remove Milestone, and adopt the previously proposed [optional Retro drafting][retro-proposal]. The comments were proposals or wording agreements when first posted; this later authorization permitted implementation.
 - **Cycles 5–6, 2026-10-28:** clarify requirements revision/approval, recovery and evidence-based progress, plans for all types, practical operations and skill routes; make the common Lifecycle apply to all types. Checkpoint synchronization through one issue comment was an approved intermediate choice.
 - **Cycle 7, 2026-10-28:** replace remote checkpoint synchronization and final upload with the small local-only record, retain the repository specs/plans, and simplify document ownership and scenario guidance. This supersedes the original `/tmp` and upload design and the intermediate remote-sync rules.
+- **#76, 2026-10-30:** apply #63's retrospective findings: a separate Maintainer plan approval, oversight that outlasts a finished turn, short notices for actions in another session, a visible skill offer, and separate scope checks for Task Artifacts. Requirements approved at body SHA-256 `f0ebc04f2245e228b35fdc00e1889c6622e95f4eaec1a3b7e6bc2eb70be2b9cd`.
 
 During #66 Retro, the suggestion to correct requirements drift was withdrawn. The lesson about preserving agreed intent is input to the existing #15 reconciliation only; no standalone issue or SOP wording was approved. The agent-discovery guidance proposal was declined, and whether #66 should have been split remains undecided. These outcomes do not add requirements or authorize new issues.
 
@@ -155,8 +170,10 @@ Out of scope remain new skills, runtime consumers, validators, hooks, workflow e
 [#66]: https://github.com/joebaz/web-starter/issues/66
 [#69]: https://github.com/joebaz/web-starter/issues/69
 [#70]: https://github.com/joebaz/web-starter/issues/70
+[#76]: https://github.com/joebaz/web-starter/issues/76
 [PR #68]: https://github.com/joebaz/web-starter/pull/68
 [PR #71]: https://github.com/joebaz/web-starter/pull/71
+[PR #75]: https://github.com/joebaz/web-starter/pull/75
 [baseline-spec]: https://github.com/joebaz/web-starter/blob/9672858452a24e50462b3f3d2ada2c4c31d0d2ee/docs/specs/15-docs-lifecycle.md
 [terms]: https://github.com/joebaz/web-starter/issues/66#issuecomment-6418534064
 [retro-proposal]: https://github.com/joebaz/web-starter/issues/66#issuecomment-6419511814

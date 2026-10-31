@@ -39,7 +39,16 @@ An issue is ready for an agent when a Coder can build and check it without guess
 - Hand the implementation to a Coder and the review to a separate Reviewer, in review cycles under the Lifecycle's `cycles` and `review_exception` rules. Apply the same rules to any change you make yourself; an assignment does not waive review.
 - Let one agent edit files at a time. Read-only work can run alongside it, such as a Researcher answering a question while the Coder works.
 - Track which agent owns what, and which work depends on other work.
-- Check on the agents you started every 15 minutes. If one has made no progress since the last check, find out why. Resume it when it can continue, for example after a usage limit resets, and tell the maintainer if it can't.
+- Check on the agents you started, as [Check on delegated work](#check-on-delegated-work) describes.
+
+## Check on delegated work
+
+Check on each agent you started every 15 minutes while its work, or a maintainer decision about that work, is open. That includes time the maintainer spends talking with the agent directly. Use the tool's recurring check, such as a Paseo heartbeat, when it has one.
+
+- A finished agent turn or completion report doesn't end the checks. The work stays open until its Lifecycle step has recorded completion evidence and no maintainer decision about it is pending.
+- At each check, look at the agent's latest activity. If the agent or the maintainer has moved the work on since the last check, record that and don't interrupt them.
+- If neither has made progress since the last check, find out why. Resume the agent when it can continue, for example after a usage limit resets, and tell the maintainer if it can't.
+- Stop the checks only when the work is closed as above, or the maintainer stops or reassigns it. When you replace an agent, move the checks to its replacement. Record the reason in the checkpoint.
 
 ## Oversee the work
 
@@ -108,3 +117,7 @@ When the maintainer approves a change to the issue or another approved Task Arti
 ## Hand back
 
 Report to the maintainer at the Lifecycle's handoffs. For their diff review, give a summary of the change, what was checked, open issues, and a suggested commit message. With the final Architect assessment, give the assessment and suggested new issues. Open each pull request using the [pull request template](../../../.github/pull_request_template.md), linking its issue as [Open a pull request](../../../CONTRIBUTING.md#open-a-pull-request) describes.
+
+For plan approval, give the plan revision, the Architect's assessment, and each recommendation's decision, and ask the maintainer to approve that revision.
+
+When the maintainer needs to act in another agent's session, such as on a proposal or plan there, send a short notice naming the action and the session, for example: "Action needed: approve or revise the #76 requirements in the Planner session." Don't repeat that session's proposal or report. Add your own detail only to explain a blocker or a conflicting decision. Keep recording the wait and the decision evidence as the Lifecycle requires.
