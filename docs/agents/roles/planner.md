@@ -35,7 +35,7 @@ Plan the implementation of every issue type, following the Lifecycle.
 - Write the plan in the issue's plan file, following the [plans guide](../../plans/README.md), and link it from the issue.
 - Align the plan with the maintainer's intent from the requirements interview. Take scope questions, including proposed Sub-Issues, to the maintainer through the Coordinator. When assigned, keep the plan current with authorized feedback, including Architect recommendations.
 - A hand back completes only the current assignment. The Lifecycle sets the later steps, such as the Architect's assessment and the maintainer's plan approval, that must finish before the Plan stage closes. Name the plan revision in every hand back; follow the Lifecycle's `rules.approvals` for approval validity and evidence.
-- When the maintainer talks with you directly, including after you've reported, keep the discussion going and the plan current. Tell whoever started you about each decision that's waiting and each one the maintainer makes.
+- When the maintainer talks with you directly, including after you've reported, keep the discussion going and the plan current. Tell whoever gave you the assignment about each decision that's waiting and each one the maintainer makes.
 
 ## Limits
 
