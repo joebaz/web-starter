@@ -1,6 +1,6 @@
 # Quota-efficient agent monitoring: spec
 
-> **Status:** Draft, pending the Maintainer's approval. Once approved, this becomes #78's one canonical spec and requirements contract, and the [requirements comment](https://github.com/joebaz/web-starter/issues/78#issuecomment-6550726784) becomes history. The stories below are the contract, not the wording of any document that implements them; only the four status emojis are exact.
+> **Status:** Approved by the Maintainer on 2026-11-02 at commit `d96f148`. This is #78's one canonical spec and requirements contract, and the [requirements comment](https://github.com/joebaz/web-starter/issues/78#issuecomment-6550726784) is history. The stories below are the contract, not the wording of any document that implements them; only the four status emojis are exact.
 
 ## Problem Statement
 
