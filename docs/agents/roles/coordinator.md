@@ -11,7 +11,7 @@ The Coordinator coordinates work on a GitHub issue between the maintainer and a 
 
 ## Start
 
-Establish where the issue actually stands before advancing it. From your first response, give the readout and task list as [Track the stage](#track-the-stage) describes. A fresh start has a clean checkout with no work of its own on the branch and no checkpoint or handoff for the issue. Anything else is resumed work.
+Establish where the issue actually stands before advancing it. From your first response, give the Progress Readout and task list as [Track the stage](#track-the-stage) describes. A fresh start has a clean checkout with no work of its own on the branch and no checkpoint or handoff for the issue. Anything else is resumed work.
 
 1. On a fresh start, fetch `origin/main` and bring the branch up to date with it. For resumed work, keep existing commits and uncommitted changes as they are; don't reset, stash, rebase, or overwrite them. Continue work that the maintainer or a handoff identifies as this issue's, and ask the maintainer about anything else.
 2. For resumed work, reconcile the issue's state from the evidence available:
@@ -50,7 +50,7 @@ Check on agents when an event wakes you, within the [shared rules](../../../AGEN
 - A finished turn or completion report doesn't close the work. The work stays open until its Lifecycle step has recorded completion evidence and no maintainer decision about it is pending.
 - When an agent stops at a usage limit, tell the maintainer once so they can resume it, giving the reset time if the tool shows one, or saying it's unknown.
 - When the next step is the maintainer's alone, or you can't tell whether a stopped agent is stalled or waiting on the maintainer, tell them once, with the exact question. Until they reply, leave that work out of your checks and reports; unrelated authorized work carries on.
-- Message the maintainer only when something changes. Lead each message, ahead of the readout, with exactly one status emoji: 🛑 for an error or failure, 🟡 when it needs the maintainer's attention, 🟢 when work moved forward, or ⏸️ for a usage-limit pause.
+- Message the maintainer only when something changes, starting with the Progress Readout that the Lifecycle's `progress_readout` defines.
 - To wait for GitHub CI, watch the pull request's checks from the shell, for example with `gh pr checks <pr> --watch`. Run the watch again whenever it reaches your tool's time limit.
 
 ## Oversee the work
@@ -70,15 +70,67 @@ Run every issue through the Lifecycle.
 
 ## Track the stage
 
-The Lifecycle's `tracking` rule sets when to refresh the task list and give the readout.
+The Lifecycle's `tracking` rule sets when to refresh the task list. Its [`progress_readout`](../../lifecycle.yaml) defines the Progress Readout, what the task list is built from, and what replaces it without a task tool.
 
-- Keep the task list with the session's task tool: `update_plan` in Codex, or `TaskCreate` and `TaskUpdate` in Claude Code. If neither is available, keep the list in your messages.
-- Show only the current stage's applicable steps, each named after its step key.
+- Keep the task list with the session's task tool: `update_plan` in Codex, or `TaskCreate` and `TaskUpdate` in Claude Code.
 - On a stage entry, first make sure the checkpoint or its source evidence holds the completed stages, waits, decisions, and remaining obligations. Then replace the list.
 - After recovery, build the list for the reconciled stage.
-- When a stage is re-entered, keep cycle counts, approvals, and step status; reset nothing.
+- When a stage is re-entered, keep cycle counts and approvals. The Lifecycle's `progress_readout` sets which step statuses go back to pending.
 - A finished stage list doesn't mean the Lifecycle is finished; only closing Retro completes it.
-- Write the readout from the reconciled state: the stage, then the applicable steps done out of the total, such as `Stage: Implement 3 of 7 done`. Until the state is established, write `Stage: reconciling`; never report a stage or step you haven't confirmed.
+
+Examples of the Progress Readout:
+
+Active work:
+
+```markdown
+Stage: Define
+
+- [x] readiness-check
+- [x] planner-handoff
+- 🟢 requirements-interview: Planner interviewing
+- [ ] requirements-review
+- [ ] readiness-confirmation
+```
+
+An approval wait:
+
+```markdown
+Stage: Define
+
+- [x] readiness-check
+- [x] planner-handoff
+- [x] requirements-interview
+- 🟡 requirements-review: Review requirements in the Planner session
+- [ ] readiness-confirmation
+```
+
+A failure:
+
+```markdown
+Stage: Retro
+
+- 🛑 retro-drafts: /retro timed out; drafts kept. Start it again or decide the drafts
+- [ ] retro-close
+```
+
+A usage-limit pause:
+
+```markdown
+Stage: Plan
+
+- [x] planner-briefing
+- ⏸️ implementation-plan: Planner paused; resets at 21:00
+- [ ] plan-assessment
+- [ ] recommendations-review
+- [ ] plan-approval
+- [ ] plan-close
+```
+
+Recovery or takeover, until the state is established:
+
+```markdown
+Stage: reconciling
+```
 
 ## Keep the execution checkpoint
 

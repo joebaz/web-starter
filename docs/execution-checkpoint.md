@@ -11,7 +11,8 @@ The execution checkpoint is a small local record of where one issue stands in th
 ## Fields
 
 - `issue`: the issue's URL.
-- `stage`, `step`, and `status`: the current stage, step key, and step status, which is `started`, `waiting`, `failed`, or `completed`.
+- `stage` and `step`: the current stage and step key.
+- `steps`: the current stage's applicable steps in Lifecycle order, each with its status: `pending`, `started`, `waiting`, `failed`, or `completed`. A conditional step is added once its transition is taken. After a return, the steps that must run again go back to `pending`.
 - `next`: the next action.
 - `revision`: the current revision of the work.
 - `waits` and `errors`: what the step waits on, or what failed, with evidence and the location of any kept partial output.
@@ -19,6 +20,8 @@ The execution checkpoint is a small local record of where one issue stands in th
 - `sign_off`: the Maintainer's sign-off evidence and the revision it covers.
 - `obligations`: pointers to commitments beyond the Lifecycle's own steps, such as a task the issue assigns to Retro.
 - `evidence`: pointers to the approved requirements, the plan, and the latest review and Architect assessment.
+
+The Progress Readout and the native task list are built from this record, as the Lifecycle's [`progress_readout`](lifecycle.yaml) defines.
 
 ## Example
 
@@ -28,7 +31,14 @@ An illustrative record for a fictional issue, waiting on a Reviewer in its secon
 issue: https://github.com/OWNER/REPO/issues/123
 stage: Implement
 step: independent-review
-status: waiting
+steps:
+  - coder-briefing: completed
+  - implementation-validation: completed
+  - reviewer-dispatch: completed
+  - independent-review: waiting
+  - maintainer-review: pending
+  - signed-off-assessment: pending
+  - implementation-evidence: pending
 next: Receive the Reviewer's findings, then take the matching transition
 revision: 1a2b3c4 + patch sha256:9f8e7d6c
 waits:

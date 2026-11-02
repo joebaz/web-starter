@@ -2,7 +2,7 @@
 name: Lifecycle
 applies_to: All issue types
 authority:
-  - This file owns the sequence, handoffs, approval gates, loops, and update timing.
+  - This file owns the sequence, handoffs, approval gates, loops, update timing, and the Progress Readout.
   - Each step's method links to the role SOP or guide that says how to do it.
   - specs/15-lifecycle.md is the historical design record.
 reading:
@@ -15,7 +15,7 @@ reading:
 rules:
   authorization:
     - The Maintainer approves requirements, scope, and changes to either, and the final plan revision under rules.approvals.
-    - Agent findings, recommendations, reports, checkpoints, and readouts authorize nothing.
+    - Agent findings, recommendations, reports, checkpoints, and Progress Readouts authorize nothing.
     - When approved materials change, follow agents/roles/coordinator.md#when-approved-requirements-change.
   evidence:
     - PR and CI evidence stays in GitHub.
@@ -50,7 +50,7 @@ rules:
   tracking:
     - On every stage entry, including a return to Implement, refresh the native task list to that stage's steps.
     - At every transition, update the task list's step status.
-    - Start every response to the Maintainer with the one-line readout.
+    - Give the Progress Readout as progress_readout describes.
     - Follow agents/roles/coordinator.md#track-the-stage.
   review_exception:
     - Omit a separate Reviewer only with the Maintainer's explicit waiver for one isolated one- or two-line change.
@@ -75,6 +75,28 @@ checkpoint:
   updates:
     - Whenever a step starts, waits, fails, or completes, and at every transition.
     - Whenever a decision, handoff, or recorded field changes.
+progress_readout:
+  when:
+    - The Coordinator starts every message to the Maintainer that reports a change with the full Progress Readout.
+    - A message without a change has none. There is no short form.
+  source:
+    - Build the Progress Readout from the execution checkpoint alone. Its steps give the markers; its waits, errors, and next give the current step's note.
+    - The native task list mirrors the same record. A completed step is completed, the current step is in progress, and a pending step is pending. Without a task tool, the Progress Readout is the list.
+  format:
+    - "The first line is Stage: <stage name>, with no count and no emoji."
+    - Each applicable step of the current stage follows, in Lifecycle order, by step key.
+    - "[x] marks a step completed with recorded evidence, and [ ] marks a pending step."
+    - The current step shows its status emoji in place of its checkbox, then a short note. When the Maintainer must act, the note names the exact action and gate; otherwise it says what is happening.
+    - A step is conditional when some route from the stage's entry to its exit skips it. List a conditional step, and the steps its branch then runs in order, only once the transition into it is taken.
+    - After a return to an earlier step, the steps that must run again show [ ]. Cycle counts and approvals are kept.
+    - "Until the state is established, the Progress Readout is Stage: reconciling with no list. Never report a stage or step that isn't confirmed."
+  status:
+    about: Choose the current step's emoji by its status and what it waits on. A status emoji is not completion.
+    🛑: An error or failure, with the error and the action needed. Status failed.
+    ⏸️: A usage-limit pause, naming the agent and the reset time, or saying it's unknown. Status waiting on a usage limit.
+    🟡: Needs the Maintainer's attention. Status waiting on the Maintainer.
+    🟢: Work moving forward. Status started, or waiting on an agent or CI.
+  examples: agents/roles/coordinator.md#track-the-stage
 scenarios:
   about: Optional routes through Define into the Plan stage; the steps below still govern readiness and approval.
   method: agents/roles/planner.md#choose-a-route

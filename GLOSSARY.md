@@ -74,6 +74,10 @@ A part of the Template or Project that owns one kind of responsibility for many 
 **Lifecycle**:
 The stages and permitted transitions through which an issue progresses from definition to completion.
 
+**Progress Readout**:
+A brief, in-conversation summary of where an issue stands in its Lifecycle stage, so the Maintainer can see what is done, what is happening, and whether they need to act.
+_Avoid_: readout (alone), status report
+
 **Agent Brief**:
 A concise description of an agent’s assigned work, including its expected outcome, scope and acceptance criteria.
 
