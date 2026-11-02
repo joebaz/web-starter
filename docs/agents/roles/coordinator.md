@@ -70,15 +70,15 @@ Run every issue through the Lifecycle.
 
 ## Track the stage
 
-The Lifecycle's `tracking` rule sets when to refresh the task list, and its `progress_readout` defines the Progress Readout.
+The Lifecycle's `tracking` rule sets when to refresh the task list. Its [`progress_readout`](../../lifecycle.yaml) defines the Progress Readout, what the task list is built from, and what replaces it without a task tool.
 
-- Keep the task list with the session's task tool, built from the checkpoint's `steps`: `update_plan` in Codex, or `TaskCreate` and `TaskUpdate` in Claude Code. If neither is available, the Progress Readout is the list.
+- Keep the task list with the session's task tool: `update_plan` in Codex, or `TaskCreate` and `TaskUpdate` in Claude Code.
 - On a stage entry, first make sure the checkpoint or its source evidence holds the completed stages, waits, decisions, and remaining obligations. Then replace the list.
 - After recovery, build the list for the reconciled stage.
-- When a stage is re-entered, keep cycle counts, approvals, and step status; reset nothing.
+- When a stage is re-entered, keep cycle counts and approvals. The Lifecycle's `progress_readout` sets which step statuses go back to pending.
 - A finished stage list doesn't mean the Lifecycle is finished; only closing Retro completes it.
 
-Examples of the Progress Readout follow; the Lifecycle's [`progress_readout`](../../lifecycle.yaml) defines its format and status emojis.
+Examples of the Progress Readout:
 
 Active work:
 
@@ -87,7 +87,7 @@ Stage: Define
 
 - [x] readiness-check
 - [x] planner-handoff
-- 🟢 requirements-interview: the Planner is interviewing the maintainer
+- 🟢 requirements-interview: Planner interviewing
 - [ ] requirements-review
 - [ ] readiness-confirmation
 ```
@@ -100,7 +100,7 @@ Stage: Define
 - [x] readiness-check
 - [x] planner-handoff
 - [x] requirements-interview
-- 🟡 requirements-review: approve or revise the #123 requirements in the Planner session, for requirements approval
+- 🟡 requirements-review: Review requirements in the Planner session
 - [ ] readiness-confirmation
 ```
 
@@ -109,7 +109,7 @@ A failure:
 ```markdown
 Stage: Retro
 
-- 🛑 retro-drafts: /retro failed with a timeout; two partial drafts are kept. Start /retro again or decide the kept drafts
+- 🛑 retro-drafts: /retro timed out; drafts kept. Start it again or decide the drafts
 - [ ] retro-close
 ```
 
@@ -119,7 +119,7 @@ A usage-limit pause:
 Stage: Plan
 
 - [x] planner-briefing
-- ⏸️ implementation-plan: the Planner stopped at a usage limit; it resets at 21:00. Resume it then
+- ⏸️ implementation-plan: Planner paused; resets at 21:00
 - [ ] plan-assessment
 - [ ] recommendations-review
 - [ ] plan-approval

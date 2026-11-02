@@ -129,6 +129,20 @@ Issue: #79
 - The 100-line limit belonged to #78; for #79 the rule is to keep the change slim (Planner chat, 2026-11-02).
 - #82 owns delegated roles' tracking, so no other role SOP changes.
 
+## Cycle 2 changes
+
+The Maintainer approved these changes in the Coordinator chat at 2026-11-02T21:41+09:00 ("Good suggestions"), amending the operations named. The plan was committed at `6e8cf04`.
+
+1. Reviewer F1, operation 3: reword the `coordinator.md` bullet "When a stage is re-entered…". It keeps cycle counts and approvals, points to the Lifecycle's `progress_readout` for which step statuses go back to pending, and drops "reset nothing".
+2. Reviewer F2, operation 3: in "Track the stage", turn the restated source and fallback into a pointer only, and merge the two `progress_readout` pointers into one.
+3. Reviewer F3, operation 1: `status.about` in `docs/lifecycle.yaml` reads "Choose the current step's emoji by its status and what it waits on."
+4. Maintainer diff comments, operation 3: the example notes use these exact texts:
+   - 🟢 `requirements-interview`: `Planner interviewing`
+   - 🟡 `requirements-review`: `Review requirements in the Planner session`
+   - 🛑 `retro-drafts`: `/retro timed out; drafts kept. Start it again or decide the drafts`
+   - ⏸️ `implementation-plan`: `Planner paused; resets at 21:00`
+5. Reviewer F5, operation 5: the readout `rg` check also allows the glossary's approved `_Avoid_: readout (alone)` line.
+
 ## Architect recommendations
 
 Assessment of plan blob `19674a30…` by Architect `abd0b6f9`, relayed by the Coordinator on 2026-11-02. The Architect agreed with the examples in the YAML, the `steps` field replacing `status`, and no outline approval.

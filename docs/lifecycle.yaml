@@ -91,7 +91,7 @@ progress_readout:
     - After a return to an earlier step, the steps that must run again show [ ]. Cycle counts and approvals are kept.
     - "Until the state is established, the Progress Readout is Stage: reconciling with no list. Never report a stage or step that isn't confirmed."
   status:
-    about: Choose the current step's emoji by what it waits on. A status emoji is not completion.
+    about: Choose the current step's emoji by its status and what it waits on. A status emoji is not completion.
     🛑: An error or failure, with the error and the action needed. Status failed.
     ⏸️: A usage-limit pause, naming the agent and the reset time, or saying it's unknown. Status waiting on a usage limit.
     🟡: Needs the Maintainer's attention. Status waiting on the Maintainer.
