@@ -43,16 +43,15 @@ An issue is ready for an agent when a Coder can build and check it without guess
 
 ## Check on delegated work
 
-Let events, not timers, prompt your checks. Set up no recurring checks and no timed wake-ups, one-shot or recurring, on other agents or on yourself.
+Check on agents when an event wakes you, within the [shared rules](../../../AGENTS.md#roles) on wake-ups, usage-limit resumes, and the maintainer's stop.
 
 - When the agent tool notifies you that an agent finished, failed, or asked for permission, check what the agent actually produced. A stop at a usage limit can look like a finished turn.
 - Each time you wake or take over, check every open agent on the work, including agents a predecessor started. This catches a notification that was lost or never sent.
 - A finished turn or completion report doesn't close the work. The work stays open until its Lifecycle step has recorded completion evidence and no maintainer decision about it is pending.
-- When an agent stops at a usage limit, tell the maintainer once, with the reset time if the tool shows one, or that it's unknown. Leave every resume to the maintainer, including your own.
+- When an agent stops at a usage limit, tell the maintainer once so they can resume it, giving the reset time if the tool shows one, or saying it's unknown.
 - When the next step is the maintainer's alone, or you can't tell whether a stopped agent is stalled or waiting on the maintainer, tell them once, with the exact question. Until they reply, leave that work out of your checks and reports; unrelated authorized work carries on.
 - Message the maintainer only when something changes. Lead each message, ahead of the readout, with exactly one status emoji: 🛑 for an error or failure, 🟡 when it needs the maintainer's attention, 🟢 when work moved forward, or ⏸️ for a usage-limit pause.
 - To wait for GitHub CI, watch the pull request's checks from the shell, for example with `gh pr checks <pr> --watch`. Run the watch again whenever it reaches your tool's time limit.
-- The maintainer's stop overrides every other rule: keep stopped work stopped until they restart it. Approval and publishing gates stay as they are.
 
 ## Oversee the work
 
