@@ -39,15 +39,17 @@ Issue: #78
     The takeover check covers open agents instead, and no timers move.
 
   - Keep the heading, so the `#check-on-delegated-work` anchor still works. In the bullet that links to it, widen "the agents you started" to cover inherited agents.
-  - Story 13's tool-agnostic rule applies to this section and that bullet only. Name no agent tool there; `gh` is allowed. Other tool references in the repository are out of scope.
+  - The shared rules from operation 3 are the single authority on these points: no timers, no automatic resume, and the Maintainer's stop overriding everything. This section refers to them rather than restating them, and keeps the Coordinator-specific procedures.
+  - Story 13's tool-agnostic rule applies to this section, that bullet, and the shared rules from operation 3. Name no agent tool there; `gh` is allowed. Other tool references in the repository are out of scope.
 - Do not start before: the artifact baseline commit.
 - Output and handoff: an uncommitted diff, handed to the Coordinator.
 
-### 3. Align the reporting rule
+### 3. Add shared rules and align reporting
 
 - Owner: Coder
 - Files and actions: `AGENTS.md`, Roles section:
   - Replace "Report to whoever started you…" with a rule meeting story 11: reply to whoever sent each message, agent or Maintainer, and send the hand back to whoever gave the assignment.
+  - Add rules for every role that meet stories 1, 5, and 9: set up no recurring or one-shot checks or wake-ups, on any agent or on yourself; never resume usage-limited work automatically, because the Maintainer resumes it; and never restart something the Maintainer stopped. A CI watch in the shell isn't a wake-up, and the Maintainer's own optional local pings aren't set up by agents. The wording is the Coder's choice, and it names no agent tool. (Cycle 2.)
   - In the unavailable-skill bullet, change "tell whoever started you" to the assignment-giver, so that inherited agents report to the right owner.
   - Leave the requirements-change bullet as it is; "whoever told you" already names the sender.
   - Don't add any automatic copy to the Coordinator.
@@ -65,11 +67,11 @@ Issue: #78
 - Output and handoff: results in chat to the Coordinator, as [qa.md](../qa.md#report-results) describes.
 - Check:
   - `npm run format:check`, `npm run lint`, `npm run check`, `npm test`, and `npm run build`, expecting a pass, as CONTRIBUTING requires for a `fix`.
-  - `git diff --check` and `git diff <baseline>`, expecting only `docs/agents/roles/coordinator.md` and `AGENTS.md`. `git status --short --untracked-files=all` checks the working tree, expecting those two files and nothing untracked.
-  - `git diff --numstat <baseline>`, expecting 100 or fewer added plus deleted lines.
+  - `git diff --check` and `git diff <baseline>`, expecting only `docs/agents/roles/coordinator.md`, `AGENTS.md`, and this plan's cycle-2 amendment. `git status --short --untracked-files=all` checks the working tree, expecting those three files and nothing untracked.
+  - `git diff --numstat <baseline>`, expecting 100 or fewer added plus deleted lines, including the plan amendment.
   - `rg -n -i "heartbeat|15 minutes|every [0-9]+ min" docs/agents/roles/coordinator.md`, expecting no leftover of the old monitoring policy. This is not a search for tool names in general.
   - `git diff --quiet <baseline> -- docs/lifecycle.yaml docs/execution-checkpoint.md docs/specs docs/agents/roles/planner.md docs/agents/roles/researcher.md`, expecting no change.
-  - The Reviewer runs `git fetch origin main` and records `git merge-base origin/main HEAD` as the review base, with no reset or rebase. The Reviewer then reviews the whole branch from that base: spec, plan, Status note, and implementation. The Reviewer traces stories 1–13 to the new text and reports any story that isn't met.
+  - The Reviewer runs `git fetch origin main` and records `git merge-base origin/main HEAD` as the review base, with no reset or rebase. The Reviewer then reviews the whole branch from that base: spec, plan, Status note, and implementation. The Reviewer traces stories 1–13 to the new text, confirms that the shared rules for stories 1, 5, and 9 reach every role through `AGENTS.md`, and reports any story that isn't met.
   - No automated regression test, since one would only repeat the prose. Verification is the trace, plus the spec's observation of ordinary use after merge. No extra model requests.
 
 ## Final validation and hand back
@@ -81,6 +83,10 @@ Issue: #78
 
 - Spec approval: commit `d96f148`, "Approved" in the Coordinator chat, 2026-11-02. It covers requirements only.
 - The spec prescribes no wording except the emojis (Maintainer direction, 2026-11-02). This plan sets required content, not text.
+- Cycle 2, 2026-11-02:
+  - The cycle-1 Reviewer found stories 1, 5, and 9 met only for the Coordinator (Spec, P2). The Maintainer authorized the fix with "Proceed" in the Coordinator chat.
+  - Operation 1 was completed at the artifact baseline `2cdb0e9`, and it isn't repeated.
+  - Once this revision is approved, the Coder resumes from the cycle-1 patch against `2cdb0e9`. The cycle count continues.
 
 ## Architect recommendations
 
