@@ -39,16 +39,19 @@ An issue is ready for an agent when a Coder can build and check it without guess
 - Hand the implementation to a Coder and the review to a separate Reviewer, in review cycles under the Lifecycle's `cycles` and `review_exception` rules. Apply the same rules to any change you make yourself; an assignment does not waive review.
 - Let one agent edit files at a time. Read-only work can run alongside it, such as a Researcher answering a question while the Coder works.
 - Track which agent owns what, and which work depends on other work.
-- Check on the agents you started, as [Check on delegated work](#check-on-delegated-work) describes.
+- Check on the agents you started or inherited, as [Check on delegated work](#check-on-delegated-work) describes.
 
 ## Check on delegated work
 
-Check on each agent you started every 15 minutes while its work, or a maintainer decision about that work, is open. That includes time the maintainer spends talking with the agent directly. Use the tool's recurring check, such as a Paseo heartbeat, when it has one.
+Check on agents when an event wakes you, within the [shared rules](../../../AGENTS.md#roles) on wake-ups, usage-limit resumes, and the maintainer's stop.
 
-- A finished agent turn or completion report doesn't end the checks. The work stays open until its Lifecycle step has recorded completion evidence and no maintainer decision about it is pending.
-- At each check, look at the agent's latest activity. If the agent or the maintainer has moved the work on since the last check, record that and don't interrupt them.
-- If neither has made progress since the last check, find out why. Resume the agent when it can continue, for example after a usage limit resets, and tell the maintainer if it can't.
-- Stop the checks only when the work is closed as above, or the maintainer stops or reassigns it. When you replace an agent, move the checks to its replacement. Record the reason in the checkpoint.
+- When the agent tool notifies you that an agent finished, failed, or asked for permission, check what the agent actually produced. A stop at a usage limit can look like a finished turn.
+- Each time you wake or take over, check every open agent on the work, including agents a predecessor started. This catches a notification that was lost or never sent.
+- A finished turn or completion report doesn't close the work. The work stays open until its Lifecycle step has recorded completion evidence and no maintainer decision about it is pending.
+- When an agent stops at a usage limit, tell the maintainer once so they can resume it, giving the reset time if the tool shows one, or saying it's unknown.
+- When the next step is the maintainer's alone, or you can't tell whether a stopped agent is stalled or waiting on the maintainer, tell them once, with the exact question. Until they reply, leave that work out of your checks and reports; unrelated authorized work carries on.
+- Message the maintainer only when something changes. Lead each message, ahead of the readout, with exactly one status emoji: 🛑 for an error or failure, 🟡 when it needs the maintainer's attention, 🟢 when work moved forward, or ⏸️ for a usage-limit pause.
+- To wait for GitHub CI, watch the pull request's checks from the shell, for example with `gh pr checks <pr> --watch`. Run the watch again whenever it reaches your tool's time limit.
 
 ## Oversee the work
 
