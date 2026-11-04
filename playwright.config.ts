@@ -36,12 +36,14 @@ export default defineConfig({
   ],
 
   webServer: {
-    // example.com is a reserved test domain (RFC 2606), not a project fact.
-    // The test config adds a fixture page to the site's configuration.
+    // The test config builds the site's configuration from a fixture: a test
+    // input the tests own, here tests/fixtures/website-facts.yaml, plus fixture
+    // pages. Its production URL, example.com, is a reserved test domain
+    // (RFC 2606) used as a test input.
     // `--ignore-lock` lets the test server run alongside this checkout's
     // development server.
     command:
-      "npm run dev -- --config tests/fixtures/astro.config.mjs --host 127.0.0.1 --port 4320 --site https://example.com --ignore-lock",
+      "npm run dev -- --config tests/fixtures/astro.config.mjs --host 127.0.0.1 --port 4320 --ignore-lock",
     // Astro 7 runs `astro dev` in the background when it detects an AI agent,
     // which ends this command early. Astro sets this variable for its own
     // background child; setting it keeps the test server in the foreground.

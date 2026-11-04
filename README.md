@@ -46,7 +46,7 @@ Paseo, an agent orchestration tool (https://paseo.sh), is optional. The Wiki's [
 
 ## Testing
 
-`npm test` first runs the lint configuration tests in `tests/lint/` with Node's test runner. It then removes stale Playwright output, runs the configured browser tests, and removes output after a successful run. Playwright manages a dedicated Astro test server with the reserved test domain passed through `--site`; see [playwright.config.ts](playwright.config.ts) for its command and port. The test domain is separate from the production configuration.
+`npm test` first runs the lint configuration tests in `tests/lint/` with Node's test runner. It then removes stale Playwright output, runs the configured browser tests, and removes output after a successful run. Playwright manages a dedicated Astro test server built from a fixture, a test input the tests own under `tests/fixtures/` with its own facts file, which uses the reserved test domain `example.com`; see [playwright.config.ts](playwright.config.ts) for its command and port. No test depends on the values in the root `website-facts.yaml`, but each fixture's config imports `astro.config.mjs`, so the reader module also validates the root file and an invalid root file fails the test builds.
 
 If a test fails, the final cleanup does not run. Fresh failure evidence remains in `test-results/` for diagnosis, including a screenshot. Routine successful runs do not create an HTML report. Generated Playwright output is ignored by Git.
 
@@ -96,6 +96,7 @@ The human-facing [site launch checklist](https://github.com/joebaz/web-starter/w
 | `tests/lint/`                      | Node tests for the ESLint accessibility configuration                                |
 | `tests/smoke/`                     | Browser smoke tests                                                                  |
 | `tsconfig.json`                    | TypeScript configuration                                                             |
+| `website-facts.yaml`               | Facts about the website, as an intake form                                           |
 | `dist/`                            | Generated deployment output, ignored by Git                                          |
 
 ## CI
@@ -112,11 +113,9 @@ Validation tools:
 
 See [CONTRIBUTING](CONTRIBUTING.md#validate-your-change) for which checks run and when.
 
-## Project facts
+## Website facts
 
-Project facts are a project's current approved values. A fact with a configuration home lives only in that configuration; business facts without one, such as the hosting provider or approved third-party services, are listed here with a link to the decision issue that set them, when one exists. Leave unknown facts out rather than adding placeholders (except `example.com` in tests, which is a test input, not a project fact), and record "not applicable" only where a capability might otherwise be assumed, such as "Forms: none".
-
-This template is never deployed, so it records no business facts.
+[website-facts.yaml](website-facts.yaml) is the only place for facts about the website.
 
 ## Deployment
 
@@ -124,4 +123,4 @@ This template is never deployed, so it records no business facts.
 
 Projects can add server-side features or hosting-specific code as needed; explain why in the project's README.
 
-Record the chosen host in [Project facts](#project-facts). Use the human launch checklist to set up hosting and check the live site.
+Record the chosen host as `hosting_provider` in [website-facts.yaml](website-facts.yaml). Use the human launch checklist to set up hosting and check the live site.

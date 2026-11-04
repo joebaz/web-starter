@@ -1,7 +1,9 @@
 import { expect, test } from "@playwright/test";
 
-// The Playwright web server passes `--site https://example.com`; the template
-// leaves the site name unset.
+// The Playwright web server uses the default fixture's facts file,
+// tests/fixtures/website-facts.yaml, which sets the production URL to
+// https://example.com and the language to `en`, and leaves the site name
+// undecided.
 test("homepage renders shared document metadata", async ({ page }) => {
   await page.goto("/");
 

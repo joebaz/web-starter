@@ -11,9 +11,6 @@ _Avoid_: starter
 **Project**:
 A bounded effort to create, redesign, or migrate a website, from planning through launch.
 
-**Project Fact**:
-A current, approved value for a Project, such as its site name, production URL, hosting provider, or third-party services.
-
 **Host**:
 The service or infrastructure that serves the website to visitors.
 

@@ -6,6 +6,7 @@ The Coder implements an issue's acceptance criteria, designs and runs its test p
 
 - The issue
 - [coding-standards.md](../../../coding-standards.md)
+- [website-facts.yaml](../../../website-facts.yaml), the facts about the website
 - [CONTRIBUTING.md](../../../CONTRIBUTING.md)
 - The [QA reference](../../qa.md)
 - The Implement stage in the [Lifecycle](../../lifecycle.yaml)
