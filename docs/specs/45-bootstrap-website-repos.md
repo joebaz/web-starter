@@ -1,6 +1,6 @@
 # Bootstrap website repositories from the Template: spec
 
-> **Status:** Approved by the Maintainer on 2026-11-04 at 09:42 JST, at revision SHA-256 `0a03551c7d88833bec1ab19736099fda12d666ee59baac56a1732e0288328a90` (uncommitted, on `50071f7`), including its three test seams. This is #45's one requirements contract. Sub-Issues [#85], [#86] and [#87] carry the detailed acceptance criteria the Maintainer accepted on 2026-11-04 at 09:24 JST. This spec covers #45's outcome and how those Sub-Issues add up to it, and it's updated as they progress. #45 stays open until all three are done. The stories are the contract, not the wording of any document that implements them. Only file names, label names, Status options and the test repository name are exact.
+> **Status:** Approved by the Maintainer on 2026-11-04 at 09:42 JST, at revision SHA-256 `0a03551c7d88833bec1ab19736099fda12d666ee59baac56a1732e0288328a90` (uncommitted, on `50071f7`), including its three test seams. Revised on 2026-11-04 at 10:35 JST with the Maintainer's #85 decisions on the language warning, the `yaml` dependency, the required fact list, and language in the Template, then generalized to name no specific website or test repository. This is #45's one requirements contract. Sub-Issues [#85], [#86] and [#87] carry the detailed acceptance criteria the Maintainer accepted on 2026-11-04 at 09:24 JST. This spec covers #45's outcome and how those Sub-Issues add up to it, and it's updated as they progress. #45 stays open until all three are done. The stories are the contract, not the wording of any document that implements them. Only file names, label names and Status options are exact.
 
 ## Problem Statement
 
@@ -47,7 +47,7 @@ The work is three Sub-Issues, done in order:
 16. As the Maintainer, I want it to hold the site name, business name, site description, production URL, redirecting hostnames, language tag, other languages, hosting provider, DNS provider and registrar, analytics, user data stored, maintainer, and client approver, so that a typical website's setup context is complete.
 17. As the Maintainer, I want every fact listed, each as a value, "none" (decided: not applicable), or visibly undecided, never a placeholder value, so that the file works as an intake form showing what's still open.
 18. As the Maintainer, I want the Template to ship the file as a blank form, so that every new repository starts from the same intake.
-19. As the Maintainer, I want the site's metadata, language, sitemap and robots.txt reference to come from the file's values, with no other place to set them, no undecided fact to render as a placeholder, and the build to keep warning while the production URL or site name is undecided, so that the facts drive the site.
+19. As the Maintainer, I want the site's metadata, language, sitemap and robots.txt reference to come from the file's values, with no other place to set them, no undecided fact to render as a placeholder, and Astro's build to keep warning while the production URL, site name, or language is undecided, so that the facts drive the site.
 20. As the Maintainer, I want the intake to prefill the site description once from the repository's GitHub Description for me to confirm, so that I type it once. The two aren't kept in sync.
 21. As the Maintainer, I want secrets and credentials never to go in the file, so that it's safe to commit.
 22. As any agent, I want SOPs and docs to point to the file instead of a "Project Fact" glossary term, and issue forms to ask for "Website facts affected", so that there's one place to look.
@@ -76,7 +76,7 @@ The work is three Sub-Issues, done in order:
 
 ### Proving it works
 
-32. As the Maintainer, I want an end-to-end run on a throwaway private repository, `joebaz/web-starter-bootstrap-test`, that an agent creates and I delete, using joebaz.com's real values, so that the runbook is proven on realistic input.
+32. As the Maintainer, I want an end-to-end run on a throwaway repository, public or private, that an agent creates and I delete, using a real website's values, so that the runbook is proven on realistic input.
 33. As the Maintainer, I want that run to show that one issue per issue form gets its label, that check mode passes after apply, and that CI passes on a pull request I push, so that "works like the Template" is demonstrated, not claimed.
 34. As the Maintainer, I want the throwaway repository's deletion confirmed, with no local clone or Project items left, so that #45's cleanup criterion is met.
 35. As the Coordinator, I want findings from implementation and the run reported to me, with any further Sub-Issues proposed, so that #45 closes only when nothing is missing.
@@ -86,7 +86,8 @@ The work is three Sub-Issues, done in order:
 - The approach is a script plus a runbook, `docs/bootstrap-website.md`, at the root of the docs so Planners don't read it on every issue. A script that rewrites files was rejected: it can't tell operational links from links that should keep pointing at the Template, and site values are business decisions.
 - The script targets the repository's own remote, never a hard-coded repository name, following the issue tracker guide.
 - Labels are defined once, in `.github/labels.yml`, which the script reads.
-- How the code reads the website facts file is a technical choice for #85's plan.
+- How the site reads the website facts file is a technical choice, made in [#85's plan](../plans/85-website-facts-file.md). Astro's build reads the file with the `yaml` package, which the Maintainer approved as a declared dependency on 2026-11-04.
+- The file must list every fact in Story 16. A Project may add facts, but only with the Maintainer's approval in pull request review (Maintainer decision, 2026-11-04).
 - The "Project Fact" glossary entry is removed with no replacement term. Roles that need site facts list the file in their Read section, and other docs link it.
 - The README's Project facts section becomes a pointer to the file.
 - No ADR is recorded (Maintainer decision).
@@ -95,7 +96,7 @@ The work is three Sub-Issues, done in order:
 
 - A good test drives an input and checks external output: built pages, generated files, or the script's report. It never re-reads configuration to compare it with itself.
 - **Seam 1, the build output:** the existing build tests. Unset and configured site behavior is tested from the tests' own inputs, never from the Template's facts file. Prior art: the build tests and the named-site fixture.
-- **Seam 2, reading the website facts file:** any new seam is decided in #85's plan, at the highest point possible; like seam 1, it uses the tests' own inputs.
+- **Seam 2, reading the website facts file:** each test fixture passes its own facts file to the site's config, and the tests check the built pages, generated files or build output. No test depends on the root `website-facts.yaml`'s values.
 - **Seam 3, check mode against a real repository:** the end-to-end run in #87 is the acceptance test for the script and runbook.
 - Smoke tests check structure (the page loads, one visible level-1 heading that the title includes, no detected accessibility violations), not Template copy. The 404 tests keep checking the default 404 copy.
 
@@ -109,10 +110,13 @@ The work is three Sub-Issues, done in order:
 
 ## Further Notes
 
-- **Open question for #85, language in the Template:** a page must declare a language. The earlier draft of #85's plan recommended the Template ship `language: en`, the language of its sample content, with the bootstrap confirming it, instead of undecided. That would amend #85's "every fact undecided" criterion for language only. It's pending a Maintainer decision when #85 is planned, along with any new dependency the reading approach needs.
-- This spec is updated as #85–#87 progress. #45 closes when all three are done.
+- **Language in the Template (Maintainer decision, 2026-11-04):** the Template ships `language` undecided, like every other fact, so #85's "every fact undecided" criterion stands. A Project's site may not be in English at all, for example a Japanese-only site. So, while it's undecided, Astro's build omits the page's `lang` attribute instead of rendering a placeholder tag, and warns.
+- Test builds still check that the root `website-facts.yaml` is valid, because each test fixture's config imports `astro.config.mjs`. No test depends on its values. [#89] removes this when it moves the config files out of the root.
+- **Open question for #87:** whether the bootstrap intake requires a language answer. While `language` is undecided, the pages have no `lang` attribute, which fails WCAG 3.1.1. Decided when #87 is planned.
+- This spec is updated as #85–#87 progress. #45 closes when all three are done. #85 is done ([#90](https://github.com/joebaz/web-starter/pull/90), merged 2026-11-04).
 
 [#48]: https://github.com/joebaz/web-starter/issues/48
 [#85]: https://github.com/joebaz/web-starter/issues/85
 [#86]: https://github.com/joebaz/web-starter/issues/86
 [#87]: https://github.com/joebaz/web-starter/issues/87
+[#89]: https://github.com/joebaz/web-starter/issues/89
