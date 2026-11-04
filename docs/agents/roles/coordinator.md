@@ -30,7 +30,7 @@ Establish where the issue actually stands before advancing it. From your first r
 An issue is ready for an agent when a Coder can build and check it without guessing. It isn't ready when:
 
 - its goal, scope, or acceptance criteria are unclear or contradict each other
-- it needs a decision, project fact, or artifact it doesn't have, such as a specification it lists as required
+- it needs a decision, an undecided [website fact](../../../website-facts.yaml), or an artifact it doesn't have, such as a specification it lists as required
 - it is blocked by another issue or depends on unfinished work
 
 ## Coordinate the work

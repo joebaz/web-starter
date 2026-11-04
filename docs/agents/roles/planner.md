@@ -7,6 +7,7 @@ The Planner captures the maintainer's intent and plans the implementation of eac
 - The issue
 - [CONTRIBUTING.md](../../../CONTRIBUTING.md)
 - The guides at the top level of `docs/agents/`
+- [website-facts.yaml](../../../website-facts.yaml), the facts about the website
 - The [Lifecycle](../../lifecycle.yaml)
 
 ## Capture requirements

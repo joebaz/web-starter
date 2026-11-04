@@ -1,14 +1,14 @@
 # Configure the sitemap and robots.txt
 
-The starter generates crawl-discovery files during `npm run build`. The production URL comes from Astro's `site` setting in [astro.config.mjs](../astro.config.mjs), the same source used by [page metadata](configure-site-and-pages.md). Use the approved production URL, never a development or preview host.
+The Template generates crawl-discovery files during `npm run build`. The production URL comes from `production_url` in [website-facts.yaml](../website-facts.yaml), the same source used by [page metadata](configure-site-and-pages.md); Astro's build sets its `site` option from it. Use the approved production URL, never a development or preview host.
 
 ## Build behavior
 
-With `site` configured, [Astro's sitemap integration](https://docs.astro.build/en/guides/integrations-guide/sitemap/) produces `dist/sitemap-index.xml` and numbered sitemap files such as `dist/sitemap-0.xml`. The index references the numbered files, which contain eligible static page URLs. Page URLs use the configured production origin and the agreed path form: `/` for the homepage, no trailing slash or `.html` suffix for other pages.
+With the production URL set, [Astro's sitemap integration](https://docs.astro.build/en/guides/integrations-guide/sitemap/) produces `dist/sitemap-index.xml` and numbered sitemap files such as `dist/sitemap-0.xml`. The index references the numbered files, which contain eligible static page URLs. Page URLs use the configured production origin and the agreed path form: `/` for the homepage, no trailing slash or `.html` suffix for other pages.
 
-The [robots.txt endpoint](../src/pages/robots.txt.ts) generates `dist/robots.txt` with `User-agent: *`, `Allow: /`, and an absolute `Sitemap` URL pointing to `sitemap-index.xml`. Keep its sitemap reference derived from `site`; do not add a second robots.txt under `public/`.
+The [robots.txt endpoint](../src/pages/robots.txt.ts) generates `dist/robots.txt` with `User-agent: *`, `Allow: /`, and an absolute `Sitemap` URL pointing to `sitemap-index.xml`. Keep its sitemap reference derived from the production URL; do not add a second robots.txt under `public/`.
 
-The template deliberately leaves `site` unset. In that state a build succeeds with a warning, omits the sitemap, and generates allow-all robots.txt without a `Sitemap` line. Set `site` when the production URL is approved and rebuild: that next build generates the sitemap and its robots.txt reference automatically. There is no separate generation step and no automated launch gate. Manually verify the files before launch.
+The Template leaves `production_url` undecided. In that state a build succeeds with a warning, omits the sitemap, and generates allow-all robots.txt without a `Sitemap` line. Set `production_url` when the production URL is approved and rebuild: that next build generates the sitemap and its robots.txt reference automatically. There is no separate generation step and no automated launch gate. Manually verify the files before launch.
 
 ## Include and exclude pages
 

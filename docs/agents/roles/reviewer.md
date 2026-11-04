@@ -6,6 +6,7 @@ The Reviewer checks a change independently, reviews its test plan, and recommend
 
 - The issue
 - [coding-standards.md](../../../coding-standards.md)
+- [website-facts.yaml](../../../website-facts.yaml), the facts about the website
 - [CONTRIBUTING.md](../../../CONTRIBUTING.md)
 - The [QA reference](../../qa.md)
 - The review steps in the Implement stage of the [Lifecycle](../../lifecycle.yaml)

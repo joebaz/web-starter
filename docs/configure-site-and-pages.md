@@ -4,14 +4,12 @@ Use this guide when implementing shared site values, shared metadata, or a new p
 
 ## Configure shared values
 
-- Set Astro's `site` in [astro.config.mjs](../astro.config.mjs) to the approved absolute production URL. The layout reads `Astro.site`; preview and development hosts do not supply this value.
-- Set `siteConfig.name` in [src/site-config.ts](../src/site-config.ts) to the approved site name. It supplies the title suffix and `og:site_name`.
-- Set `siteConfig.language` in the same module to the site's HTML language tag. The template default matches its English sample content. This setting does not configure multilingual routing.
+- Set `production_url` in [website-facts.yaml](../website-facts.yaml) to the approved absolute production URL. Astro's build sets its `site` option from it, and the layout reads `Astro.site`; preview and development hosts do not supply this value.
+- Set `site_name` in the same file to the approved site name. It supplies the title suffix and `og:site_name`.
+- Set `language` in the same file to the site's HTML language tag, such as `ja` for a Japanese-only site. It sets only the `lang` attribute; it does not configure multilingual routing.
 - The layout links to `favicon.svg` and `favicon.ico` in `public/`; replace those files to change the favicon.
 
-The template leaves the production URL and site name unset. A build still succeeds and logs warnings for missing values. Without a production URL, canonical and `og:url` tags are omitted. Without a site name, the title contains only the page title and `og:site_name` is omitted. Use approved project facts rather than adding placeholder business values.
-
-When these values change, update the homepage smoke expectations and the build tests that assert the template's unset site values to match the new configuration and content.
+The Template leaves the production URL, site name, and language undecided: each is empty in `website-facts.yaml`. Astro's build still succeeds and logs a warning for each undecided value, naming the key to set. Without a production URL, canonical and `og:url` tags are omitted. Without a site name, the title contains only the page title and `og:site_name` is omitted. Without a language, the layout omits the `lang` attribute. Record only approved values rather than placeholders.
 
 The same production URL supplies the generated sitemap and robots.txt sitemap reference. See [Configure the sitemap and robots.txt](configure-sitemap-and-robots.md) for build behavior and page exclusions.
 
@@ -54,4 +52,4 @@ The layout emits Open Graph metadata and a `twitter:card` value from the page in
 
 ## Verify changes
 
-Run the applicable checks in [CONTRIBUTING.md](../CONTRIBUTING.md#validate-your-change). Playwright supplies the reserved test domain through its server command; it is a test input and must not become the project's production URL.
+Run the applicable checks in [CONTRIBUTING.md](../CONTRIBUTING.md#validate-your-change). No test depends on the values in the root `website-facts.yaml`, but each fixture's config imports `astro.config.mjs`, so the reader module also validates the root file and an invalid root file fails the test builds. Each Playwright test builds or serves the site from a fixture, a test input the tests own under `tests/fixtures/` with its own facts file. The fixtures that set a production URL use the reserved test domain `example.com`, which must not become the project's production URL.

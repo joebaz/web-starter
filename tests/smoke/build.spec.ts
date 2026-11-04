@@ -80,15 +80,30 @@ async function xmlValues(
   );
 }
 
-test("build without a production URL or site name warns and omits dependent tags", async ({
+// Fixture configs pass their own facts files to the site's config factory, so
+// no test depends on the Template's own facts.
+const undecidedBuildArgs = [
+  "--config",
+  "tests/fixtures/undecided/astro.config.mjs",
+];
+
+test("build with an undecided site name, production URL, and language warns and omits dependent tags", async ({
   page,
 }) => {
-  const { outDir, output } = await build();
+  const { outDir, output } = await build(undecidedBuildArgs);
 
-  expect(output).toContain("Production URL is not set");
-  expect(output).toContain("Site name is not set");
+  expect(output).toContain(
+    "Production URL is undecided. Set `production_url` in tests/fixtures/undecided/website-facts.yaml",
+  );
+  expect(output).toContain(
+    "Site name is undecided. Set `site_name` in tests/fixtures/undecided/website-facts.yaml",
+  );
+  expect(output).toContain(
+    "Language is undecided. Set `language` in tests/fixtures/undecided/website-facts.yaml",
+  );
 
   await openBuiltPage(page, outDir, "index.html");
+  expect(await page.locator("html").getAttribute("lang")).toBeNull();
   await expect(page).toHaveTitle("Astro Web Starter");
   await expect(page.locator('meta[property="og:title"]')).toHaveAttribute(
     "content",
@@ -100,7 +115,7 @@ test("build without a production URL or site name warns and omits dependent tags
 });
 
 test("build without a production URL allows crawling and omits the sitemap", async () => {
-  const { outDir } = await build();
+  const { outDir } = await build(undecidedBuildArgs);
 
   const files = await readdir(outDir);
   expect(files.filter((file) => file.startsWith("sitemap"))).toEqual([]);
@@ -110,7 +125,7 @@ test("build without a production URL allows crawling and omits the sitemap", asy
 });
 
 test("template build includes the custom 404 page", async ({ page }) => {
-  const { outDir } = await build();
+  const { outDir } = await build(undecidedBuildArgs);
 
   await openBuiltPage(page, outDir, "404.html");
   await expect(
@@ -121,18 +136,17 @@ test("template build includes the custom 404 page", async ({ page }) => {
 const configuredBuildArgs = [
   "--config",
   "tests/fixtures/named-site/astro.config.mjs",
-  "--site",
-  "https://example.com",
 ];
 
-// The fixture config builds the homepage and the fixture pages with a
-// site name.
+// The named-site fixture's facts file decides the site name, production URL,
+// and language, and its config builds the homepage and the fixture pages.
 test("pages render their metadata with a site name, non-root path, and image", async ({
   page,
 }) => {
   const { outDir } = await build(configuredBuildArgs);
 
   await openBuiltPage(page, outDir, "index.html");
+  await expect(page.locator("html")).toHaveAttribute("lang", "fr");
   await expect(page).toHaveTitle("Astro Web Starter | Example Site");
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
     "href",
@@ -227,3 +241,36 @@ test("robots.txt allows crawling and references the sitemap's production URL", a
     "User-agent: *\nAllow: /\n\nSitemap: https://example.com/sitemap-index.xml\n",
   );
 });
+
+// Each invalid fixture's facts file breaks one rule the reader module checks.
+for (const { fixture, message } of [
+  {
+    fixture: "invalid-production-url",
+    message:
+      "tests/fixtures/invalid-production-url/website-facts.yaml: `production_url` must be an absolute http or https URL, or empty while undecided.",
+  },
+  {
+    fixture: "missing-key",
+    message:
+      "tests/fixtures/missing-key/website-facts.yaml: `maintainer` is missing.",
+  },
+]) {
+  test(`build fails on an invalid facts file: ${fixture}`, async () => {
+    const outDir = await mkdtemp(path.join(tmpdir(), "web-starter-build-"));
+    outDirs.push(outDir);
+    const output = await execFileAsync("npx", [
+      "astro",
+      "build",
+      "--outDir",
+      outDir,
+      "--config",
+      `tests/fixtures/${fixture}/astro.config.mjs`,
+    ]).then(
+      () => "The build succeeded.",
+      (error: { stdout: string; stderr: string }) =>
+        error.stdout + error.stderr,
+    );
+
+    expect(output).toContain(message);
+  });
+}

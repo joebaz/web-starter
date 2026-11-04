@@ -44,10 +44,10 @@ body:
       required: false
 
   - type: textarea
-    id: project_facts_affected
+    id: website_facts_affected
     attributes:
-      label: Project facts affected
-      description: List changes to current approved values in configuration or the README `Project facts` section. Leave empty if none change.
+      label: Website facts affected
+      description: List changes to facts in `website-facts.yaml` at the repository root. Leave empty if none change.
     validations:
       required: false
 

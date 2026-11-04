@@ -7,6 +7,7 @@ The Architect looks after the overall health of the codebase and the System Desi
 - [coding-standards.md](../../../coding-standards.md)
 - The root [GLOSSARY.md](../../../GLOSSARY.md), and the ADRs in `docs/adr/` if there are any
 - The issue and the code it touches
+- [website-facts.yaml](../../../website-facts.yaml), the facts about the website
 - The approved intent of the Template or Project, prior decisions, any vision documents, and existing System Design or architecture documents when present
 - The [Lifecycle](../../lifecycle.yaml)
 

@@ -1,6 +1,6 @@
 ---
 import "../styles/global.css";
-import { siteConfig } from "../site-config";
+import { language, siteName } from "virtual:website-facts";
 
 interface Props {
   title: string;
@@ -10,12 +10,12 @@ interface Props {
 }
 
 const { title, description, image } = Astro.props;
-const { name: siteName, language } = siteConfig;
 
-// Canonical and social URLs need the production URL, so they are omitted
-// until `site` is set. File-format builds report paths such as `/about.html`,
-// and `/index.html` for the homepage; canonical paths drop trailing slashes
-// and `.html`.
+// The site name, language, and production URL (`Astro.site`) come from
+// website-facts.yaml; the layout omits tags that need an undecided fact.
+// Canonical and social URLs need the production URL. File-format builds
+// report paths such as `/about.html`, and `/index.html` for the homepage;
+// canonical paths drop trailing slashes and `.html`.
 const pagePath = Astro.url.pathname.replace(/\/+$/, "").replace(/\.html$/, "");
 const canonicalPath = pagePath === "" || pagePath === "/index" ? "/" : pagePath;
 const canonicalUrl = Astro.site
@@ -28,7 +28,7 @@ const socialImage =
 ---
 
 <!doctype html>
-<html lang={language}>
+<html lang={language ?? undefined}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
