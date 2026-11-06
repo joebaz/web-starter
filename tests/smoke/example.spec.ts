@@ -1,22 +1,19 @@
 import { expect, test } from "@playwright/test";
 import { expectAccessible } from "../support/accessibility";
 
-test("homepage renders", async ({ page }) => {
-  await page.goto("/");
-
-  await expect(page).toHaveTitle("Astro Web Starter");
-  await expect(
-    page.getByRole("heading", { name: "Astro Web Starter", level: 1 }),
-  ).toBeVisible();
-});
-
-test("homepage has no detected accessibility violations", async ({ page }) => {
+test("homepage renders with no detected accessibility violations", async ({
+  page,
+}) => {
   const response = await page.goto("/");
 
   expect(response?.status()).toBe(200);
-  await expect(
-    page.getByRole("heading", { name: "Astro Web Starter", level: 1 }),
-  ).toBeVisible();
+  const heading = page.getByRole("heading", { level: 1 });
+  await expect(heading).toHaveCount(1);
+  await expect(heading).toBeVisible();
+  const headingText = (await heading.innerText()).replace(/\s+/g, " ").trim();
+  expect(headingText).not.toBe("");
+  // The approved structural rule requires the homepage title to include its h1.
+  expect(await page.title()).toContain(headingText);
 
   await expectAccessible(page);
 });

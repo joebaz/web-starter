@@ -30,9 +30,10 @@ test("homepage link opens the homepage", async ({ page }) => {
 
   expect((await homepageResponse).status()).toBe(200);
   await expect(page).toHaveURL("/");
-  await expect(
-    page.getByRole("heading", { name: "Astro Web Starter", level: 1 }),
-  ).toBeVisible();
+  const heading = page.getByRole("heading", { level: 1 });
+  await expect(heading).toHaveCount(1);
+  await expect(heading).toBeVisible();
+  expect((await heading.innerText()).replace(/\s+/g, " ").trim()).not.toBe("");
 });
 
 test("missing URL page has no detected accessibility violations", async ({

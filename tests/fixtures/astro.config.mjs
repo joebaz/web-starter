@@ -5,12 +5,13 @@ import { mergeConfig } from "astro/config";
 import { createConfig, sitemapExclusions } from "../../astro.config.mjs";
 
 const fixturePage = new URL("./about.astro", import.meta.url);
+const noImagePage = new URL("./no-image.astro", import.meta.url);
 
-// `/excluded` is left out of the sitemap through the exclusion list projects
+// `/test-fixtures/excluded` is left out of the sitemap through the exclusion list projects
 // edit. Other fixture configs import this module, so the push stays at module
 // level, where it runs once, rather than in the factory, which runs once per
 // fixture.
-sitemapExclusions.push("/excluded");
+sitemapExclusions.push("/test-fixtures/excluded");
 
 /**
  * The site's configuration for a fixture's facts file, plus non-root fixture
@@ -24,12 +25,22 @@ export function createFixtureConfig(factsFile) {
         name: "fixture-routes",
         hooks: {
           "astro:config:setup": ({ injectRoute }) => {
-            injectRoute({ pattern: "/about", entrypoint: fixturePage });
             injectRoute({
-              pattern: "/articles/index",
+              pattern: "/test-fixtures/about",
               entrypoint: fixturePage,
             });
-            injectRoute({ pattern: "/excluded", entrypoint: fixturePage });
+            injectRoute({
+              pattern: "/test-fixtures/articles/index",
+              entrypoint: fixturePage,
+            });
+            injectRoute({
+              pattern: "/test-fixtures/excluded",
+              entrypoint: fixturePage,
+            });
+            injectRoute({
+              pattern: "/test-fixtures/no-image",
+              entrypoint: noImagePage,
+            });
           },
         },
       },

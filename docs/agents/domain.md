@@ -12,7 +12,7 @@ If work conflicts with an ADR, identify the ADR and explain the conflict.
 
 ## Scope and entry format
 
-The glossary defines reusable website-project terminology and this Template's shared agent-role and debt vocabulary. Add business-specific vocabulary in each derived Project when its meaning is agreed; do not invent business facts in the Template. Keep one root glossary and adapt its entries to the Project's context rather than creating multiple glossary contexts by default.
+The glossary defines reusable website-project terminology and the Template's shared agent-role and debt vocabulary. Add business-specific vocabulary in each derived Project when its meaning is agreed; do not invent business facts in the Template. Keep one root glossary and adapt its entries to the Project's context rather than creating multiple glossary contexts by default.
 
 Include a term when its meaning affects the work or causes confusion. Do not build a general programming, web, or tool dictionary.
 

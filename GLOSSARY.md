@@ -1,6 +1,6 @@
 # Glossary
 
-Terms used when working with this Template and Projects built from it.
+Terms used when working with the Template and Projects built from it.
 
 ## Projects and websites
 

@@ -102,12 +102,12 @@ test("build with an undecided site name, production URL, and language warns and 
     "Language is undecided. Set `language` in tests/fixtures/undecided/website-facts.yaml",
   );
 
-  await openBuiltPage(page, outDir, "index.html");
+  await openBuiltPage(page, outDir, "test-fixtures/about.html");
   expect(await page.locator("html").getAttribute("lang")).toBeNull();
-  await expect(page).toHaveTitle("Astro Web Starter");
+  await expect(page).toHaveTitle("About");
   await expect(page.locator('meta[property="og:title"]')).toHaveAttribute(
     "content",
-    "Astro Web Starter",
+    "About",
   );
   await expect(page.locator('link[rel="canonical"]')).toHaveCount(0);
   await expect(page.locator('meta[property="og:url"]')).toHaveCount(0);
@@ -124,7 +124,7 @@ test("build without a production URL allows crawling and omits the sitemap", asy
   );
 });
 
-test("template build includes the custom 404 page", async ({ page }) => {
+test("build includes the custom 404 page", async ({ page }) => {
   const { outDir } = await build(undecidedBuildArgs);
 
   await openBuiltPage(page, outDir, "404.html");
@@ -147,7 +147,6 @@ test("pages render their metadata with a site name, non-root path, and image", a
 
   await openBuiltPage(page, outDir, "index.html");
   await expect(page.locator("html")).toHaveAttribute("lang", "fr");
-  await expect(page).toHaveTitle("Astro Web Starter | Example Site");
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
     "href",
     "https://example.com/",
@@ -157,7 +156,7 @@ test("pages render their metadata with a site name, non-root path, and image", a
     "https://example.com/",
   );
 
-  await openBuiltPage(page, outDir, "about.html");
+  await openBuiltPage(page, outDir, "test-fixtures/about.html");
   await expect(page).toHaveTitle("About | Example Site");
   await expect(page.locator('meta[name="description"]')).toHaveAttribute(
     "content",
@@ -165,11 +164,11 @@ test("pages render their metadata with a site name, non-root path, and image", a
   );
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
     "href",
-    "https://example.com/about",
+    "https://example.com/test-fixtures/about",
   );
   await expect(page.locator('meta[property="og:url"]')).toHaveAttribute(
     "content",
-    "https://example.com/about",
+    "https://example.com/test-fixtures/about",
   );
   await expect(page.locator('meta[property="og:title"]')).toHaveAttribute(
     "content",
@@ -196,41 +195,56 @@ test("pages render their metadata with a site name, non-root path, and image", a
     "summary_large_image",
   );
 
-  await openBuiltPage(page, outDir, "articles/index.html");
+  await openBuiltPage(page, outDir, "test-fixtures/articles/index.html");
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
     "href",
-    "https://example.com/articles/index",
+    "https://example.com/test-fixtures/articles/index",
   );
 });
 
-// The fixture config excludes `/excluded` from the sitemap. Sitemap URLs follow
+// The fixture config excludes `/test-fixtures/excluded` from the sitemap. Sitemap URLs follow
 // the canonical URL form, and endpoints such as robots.txt are not pages.
 test("sitemap lists built pages at their production URLs, except excluded pages", async ({
   page,
 }) => {
   const { outDir } = await build(configuredBuildArgs);
 
-  expect(
-    await xmlValues(
-      page,
-      outDir,
-      "sitemap-index.xml",
-      "sitemapindex > sitemap > loc",
-    ),
-  ).toEqual(["https://example.com/sitemap-0.xml"]);
-  expect(
-    await xmlValues(page, outDir, "sitemap-0.xml", "urlset > url > loc"),
-  ).toEqual([
-    "https://example.com/",
-    "https://example.com/about",
-    "https://example.com/articles/index",
-  ]);
+  const sitemapUrls = await xmlValues(
+    page,
+    outDir,
+    "sitemap-index.xml",
+    "sitemapindex > sitemap > loc",
+  );
+  expect(sitemapUrls).toContain("https://example.com/sitemap-0.xml");
+  const pageUrls: (string | null)[] = [];
+  for (const sitemapUrl of sitemapUrls) {
+    expect(sitemapUrl).not.toBeNull();
+    const file = new URL(sitemapUrl ?? "").pathname.slice(1);
+    pageUrls.push(
+      ...(await xmlValues(page, outDir, file, "urlset > url > loc")),
+    );
+  }
+  expect(pageUrls).toEqual(
+    expect.arrayContaining([
+      "https://example.com/",
+      "https://example.com/test-fixtures/about",
+      "https://example.com/test-fixtures/articles/index",
+      "https://example.com/test-fixtures/no-image",
+    ]),
+  );
+  for (const excludedUrl of [
+    "https://example.com/test-fixtures/excluded",
+    "https://example.com/404",
+    "https://example.com/robots.txt",
+  ]) {
+    expect(pageUrls).not.toContain(excludedUrl);
+  }
 
   // Exclusion removes the page from the sitemap only.
-  await openBuiltPage(page, outDir, "excluded.html");
+  await openBuiltPage(page, outDir, "test-fixtures/excluded.html");
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
     "href",
-    "https://example.com/excluded",
+    "https://example.com/test-fixtures/excluded",
   );
 });
 
