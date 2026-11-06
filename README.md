@@ -35,11 +35,11 @@ Command definitions and dependency versions are in [package.json](package.json).
 
 ## Agent workflow and skills
 
-Start with [AGENTS.md](AGENTS.md), which points to the [role SOPs](docs/agents/roles/), [Lifecycle](docs/lifecycle.yaml), [coding standards](coding-standards.md), and [glossary](GLOSSARY.md). The Wiki's [Agent setup](https://github.com/joebaz/web-starter/wiki/Agent-Setup) describes the external skills and tool settings used by the roles. Configure those skills in the agent tool; they are not npm dependencies or files installed by this repository.
-
-Paseo is optional; standard Node.js and npm tooling also supports development, tests, and builds. The Wiki's [Paseo setup](https://github.com/joebaz/web-starter/wiki/Paseo-Setup) describes its system prompt and agent profiles.
+Start with [AGENTS.md](AGENTS.md) for repository guidance and the [role SOPs](docs/agents/roles/). The SOPs describe each role's work in the [Lifecycle](docs/lifecycle.yaml). Consult the [coding standards](coding-standards.md) for implementation conventions and the [glossary](GLOSSARY.md) for shared terminology. The Wiki's [Agent setup](https://github.com/joebaz/web-starter/wiki/Agent-Setup) describes the external skills and tool settings used by the roles. Configure those skills in the agent tool; they are not npm dependencies or files installed by this repository.
 
 This repository supports [Paseo](https://paseo.sh/) for isolated, agent-assisted work. [paseo.json](paseo.json) contains committed configuration for worktree setup, scripts, and branch-name generation.
+
+Paseo is optional; standard Node.js and npm tooling also supports development, tests, and builds. The Wiki's [Paseo setup](https://github.com/joebaz/web-starter/wiki/Paseo-Setup) describes its system prompt and agent profiles.
 
 The configured worktree setup hook runs `npm ci` to install dependencies from the lockfile.
 
@@ -95,6 +95,7 @@ See [CONTRIBUTING](CONTRIBUTING.md#validate-your-change) for which checks run an
 | `README.md`                        | Human-facing repository overview                                                     |
 | `coding-standards.md`              | Implementation conventions scoped to the requested change                            |
 | `astro.config.mjs`                 | Astro configuration                                                                  |
+| `docs/`                            | Repository guidance, role SOPs, plans, and specs                                     |
 | `eslint.config.mjs`                | ESLint configuration                                                                 |
 | `package.json`                     | Dependencies, Node compatibility, and commands                                       |
 | `package-lock.json`                | Locked dependency versions                                                           |
@@ -105,8 +106,10 @@ See [CONTRIBUTING](CONTRIBUTING.md#validate-your-change) for which checks run an
 | `src/`                             | Site source processed by Astro                                                       |
 | `src/pages/`                       | File-based routes; `index.astro` provides the homepage                               |
 | `src/styles/`                      | Shared styles; `global.css` loads Tailwind                                           |
+| `tests/fixtures/`                  | Independent facts and page inputs for tests                                          |
 | `tests/lint/`                      | Node tests for the ESLint accessibility configuration                                |
 | `tests/smoke/`                     | Browser smoke tests                                                                  |
+| `tests/support/`                   | Shared Playwright helpers                                                            |
 | `tsconfig.json`                    | TypeScript configuration                                                             |
 | `website-facts.yaml`               | Facts about the website, as an intake form                                           |
 | `dist/`                            | Generated deployment output, ignored by Git                                          |
@@ -121,6 +124,6 @@ The [issue tracker guide](docs/agents/issue-tracker.md) explains where issues, s
 
 ## Build and deployment
 
-`npm run build` produces `dist/`. Review [site configuration](docs/configure-site-and-pages.md) for the output and metadata settings before configuring deployment for the selected host.
+`npm run build` produces `dist/`. Review [site configuration](docs/configure-site-and-pages.md) for shared metadata and page setup before configuring deployment for the selected host.
 
 Record the chosen host as `hosting_provider` in [website-facts.yaml](website-facts.yaml). Follow the human [site launch checklist](https://github.com/joebaz/web-starter/wiki) to set up hosting and check the live site.

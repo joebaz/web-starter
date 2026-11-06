@@ -30,7 +30,9 @@ Create a `*.spec.ts` file in `tests/smoke/`, or add a test to an existing spec. 
 import { expect, test } from "@playwright/test";
 import { expectAccessible } from "../support/accessibility";
 
-test("homepage has no detected accessibility violations", async ({ page }) => {
+test("homepage renders with no detected accessibility violations", async ({
+  page,
+}) => {
   const response = await page.goto("/");
 
   expect(response?.status()).toBe(200);
@@ -39,7 +41,6 @@ test("homepage has no detected accessibility violations", async ({ page }) => {
   await expect(heading).toBeVisible();
   const headingText = (await heading.innerText()).replace(/\s+/g, " ").trim();
   expect(headingText).not.toBe("");
-  // The approved structural rule requires the homepage title to include its h1.
   expect(await page.title()).toContain(headingText);
 
   await expectAccessible(page);
@@ -50,7 +51,7 @@ An **assertion** compares what the test observed with what it expected. Playwrig
 
 - `expect(response?.status()).toBe(200)` checks the response already received. A 404 fails immediately.
 - `toHaveCount(1)` requires exactly one level-1 heading, and `toBeVisible()` waits for it to be visible before the scan starts.
-- The heading text is normalized by collapsing whitespace runs and trimming it. The next assertions require nonempty text and a document title that includes it, as the approved homepage structural rule requires.
+- The heading text is normalized by collapsing whitespace runs and trimming it. The next assertions require nonempty text and a document title that includes it.
 - Inside `expectAccessible`, `expect(report).toEqual([])` requires an empty list of violations. It checks the completed scan once; it does not retry until violations disappear.
 
 These assertions confirm the homepage's structure. Add other readiness assertions when the state being scanned needs more content to load. See [Playwright's assertion guide](https://playwright.dev/docs/test-assertions) for matcher and retry behavior.

@@ -81,7 +81,7 @@ async function xmlValues(
 }
 
 // Fixture configs pass their own facts files to the site's config factory, so
-// no test depends on the Template's own facts.
+// no test depends on the values in the root website-facts.yaml.
 const undecidedBuildArgs = [
   "--config",
   "tests/fixtures/undecided/astro.config.mjs",
@@ -218,8 +218,10 @@ test("sitemap lists built pages at their production URLs, except excluded pages"
   expect(sitemapUrls).toContain("https://example.com/sitemap-0.xml");
   const pageUrls: (string | null)[] = [];
   for (const sitemapUrl of sitemapUrls) {
-    expect(sitemapUrl).not.toBeNull();
-    const file = new URL(sitemapUrl ?? "").pathname.slice(1);
+    if (sitemapUrl === null) {
+      throw new Error("Sitemap index entry is missing a URL.");
+    }
+    const file = new URL(sitemapUrl).pathname.slice(1);
     pageUrls.push(
       ...(await xmlValues(page, outDir, file, "urlset > url > loc")),
     );

@@ -12,7 +12,6 @@ test("homepage renders with no detected accessibility violations", async ({
   await expect(heading).toBeVisible();
   const headingText = (await heading.innerText()).replace(/\s+/g, " ").trim();
   expect(headingText).not.toBe("");
-  // The approved structural rule requires the homepage title to include its h1.
   expect(await page.title()).toContain(headingText);
 
   await expectAccessible(page);
