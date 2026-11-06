@@ -36,7 +36,7 @@ A customizable starting point for coding informational websites for small and me
 
 ## Styling and browser support
 
-- Use the project's established styling approach; this starter uses Tailwind and Astro scoped styles.
+- Use the project's established styling approach; this repository uses Tailwind and Astro scoped styles.
 - Keep shared theme values and intentional global rules in `src/styles/global.css`; keep component-specific rules with their component.
 - Reuse existing scales and tokens, adding only those needed by the approved design.
 - With Tailwind's CSS-first configuration, keep `@import "tailwindcss"` and use `@theme` for values that should generate utilities; use ordinary custom properties otherwise. See [theme variables and examples](https://tailwindcss.com/docs/theme).
@@ -115,8 +115,8 @@ See [Core Web Vitals](https://web.dev/articles/vitals) for the definitions of th
 - Escape content by default; use raw HTML injection only with explicit trusted sources or sanitization. See [Astro's `set:html` behavior](https://docs.astro.build/en/reference/directives-reference/#sethtml).
 - Preserve configured security protections when changing scripts, styles, or embeds; resolve [CSP](https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CSP) violations without weakening the policy merely to suppress errors.
 
-> **Pending reference — [#31](https://github.com/joebaz/web-starter/issues/31):** Repository security and privacy guidance, including requirements for any approved forms, is not yet defined. Use the safeguards and consent behavior approved for the task; flag missing requirements before implementing dependent behavior.
+> **Pending reference — Template issue [#31](https://github.com/joebaz/web-starter/issues/31):** Repository security and privacy guidance, including requirements for any approved forms, is not yet defined. Use the safeguards and consent behavior approved for the task; flag missing requirements before implementing dependent behavior.
 
 - Handle expected failures explicitly using the project's established error-handling approach.
 
-> **Pending reference — [#30](https://github.com/joebaz/web-starter/issues/30):** Repository error-handling guidance is not yet defined. Use behavior explicitly approved for the task; flag missing decisions before implementing dependent behavior.
+> **Pending reference — Template issue [#30](https://github.com/joebaz/web-starter/issues/30):** Repository error-handling guidance is not yet defined. Use behavior explicitly approved for the task; flag missing decisions before implementing dependent behavior.

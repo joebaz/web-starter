@@ -9,7 +9,7 @@ Use this guide when implementing shared site values, shared metadata, or a new p
 - Set `language` in the same file to the site's HTML language tag, such as `ja` for a Japanese-only site. It sets only the `lang` attribute; it does not configure multilingual routing.
 - The layout links to `favicon.svg` and `favicon.ico` in `public/`; replace those files to change the favicon.
 
-The Template leaves the production URL, site name, and language undecided: each is empty in `website-facts.yaml`. Astro's build still succeeds and logs a warning for each undecided value, naming the key to set. Without a production URL, canonical and `og:url` tags are omitted. Without a site name, the title contains only the page title and `og:site_name` is omitted. Without a language, the layout omits the `lang` attribute. Record only approved values rather than placeholders.
+While the production URL, site name, or language is undecided, leave its value empty in `website-facts.yaml`. Astro's build still succeeds and logs a warning for each undecided value, naming the key to set. Without a production URL, canonical and `og:url` tags are omitted. Without a site name, the title contains only the page title and `og:site_name` is omitted. Without a language, the layout omits the `lang` attribute. Record only approved values rather than placeholders.
 
 The same production URL supplies the generated sitemap and robots.txt sitemap reference. See [Configure the sitemap and robots.txt](configure-sitemap-and-robots.md) for build behavior and page exclusions.
 

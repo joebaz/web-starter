@@ -1,34 +1,45 @@
+<!-- template-only:start -->
+
 # Astro Web Starter
 
-A private template for informational websites for small and medium-sized businesses, built with Astro, React, Tailwind CSS, and TypeScript. Each project establishes its content architecture and hosting; the starter currently builds a static site.
+This repository is the [web-starter Template](https://github.com/joebaz/web-starter) for informational website projects.
+<!-- template-only:end -->
+
+This repository uses Astro, React, Tailwind CSS, and TypeScript. The sections below describe its tools, commands, agent workflow, and documentation.
 
 ## Requirements
 
-- Node.js 22.22.3 or later, below 23, as declared in [package.json](package.json)
+- A Node.js version within the `engines` range in [package.json](package.json)
 - npm
-- Playwright browsers
+- Playwright browsers, installed with `npx playwright install`
 
-The repository's `.nvmrc` declares Node 22. A configured zsh/nvm auto-switch hook selects that major version when entering the directory; an older installed Node 22 release may still fall below the required 22.22.3 minimum. The repository's `.npmrc` enables `engine-strict`, so npm rejects Node versions outside the declared range.
-
-[CONTRIBUTING.md](CONTRIBUTING.md) describes local setup and the contribution workflow.
+The repository's `.nvmrc` selects the Node major version, and `.npmrc` enables `engine-strict` to enforce the supported range. See [CONTRIBUTING.md](CONTRIBUTING.md#set-up-a-local-checkout) for setup.
 
 ## Commands
 
-| Command                  | Purpose                                                                                  |
-| ------------------------ | ---------------------------------------------------------------------------------------- |
-| `npm install`            | Installs project dependencies from the manifest and lockfile                             |
-| `npm run dev`            | Starts the local Astro development server                                                |
-| `npm test`               | Runs lint configuration tests, then browser smoke tests in Chromium, Firefox, and WebKit |
-| `npm run test:lint`      | Runs only the lint configuration tests                                                   |
-| `npm run build`          | Builds the static site into `dist/`                                                      |
-| `npm run preview`        | Previews the completed `dist/` build locally                                             |
-| `npx playwright install` | Installs Playwright browser binaries                                                     |
+| Command                  | Purpose                                               |
+| ------------------------ | ----------------------------------------------------- |
+| `npm install`            | Installs dependencies from the manifest and lockfile  |
+| `npm run dev`            | Starts the local Astro development server             |
+| `npm run format`         | Formats repository files                              |
+| `npm run format:check`   | Checks formatting without changing files              |
+| `npm run lint`           | Runs ESLint, including accessibility source rules     |
+| `npm run check`          | Runs Astro's type checker                             |
+| `npm test`               | Runs lint configuration tests and browser smoke tests |
+| `npm run test:lint`      | Runs only the lint configuration tests                |
+| `npm run build`          | Builds the site into `dist/`                          |
+| `npm run preview`        | Previews the completed build locally                  |
+| `npx playwright install` | Installs Playwright browser binaries                  |
 
-Command definitions and dependency versions are in [package.json](package.json).
+Command definitions and dependency versions are in [package.json](package.json). Follow [development-server management](CONTRIBUTING.md#manage-development-servers) when starting or stopping a server.
 
-## Paseo
+## Agent workflow and skills
+
+Start with [AGENTS.md](AGENTS.md) for repository guidance and the [role SOPs](docs/agents/roles/). The SOPs describe each role's work in the [Lifecycle](docs/lifecycle.yaml). Consult the [coding standards](coding-standards.md) for implementation conventions and the [glossary](GLOSSARY.md) for shared terminology. The Wiki's [Agent setup](https://github.com/joebaz/web-starter/wiki/Agent-Setup) describes the external skills and tool settings used by the roles. Configure those skills in the agent tool; they are not npm dependencies or files installed by this repository.
 
 This repository supports [Paseo](https://paseo.sh/) for isolated, agent-assisted work. [paseo.json](paseo.json) contains committed configuration for worktree setup, scripts, and branch-name generation.
+
+Paseo is optional; standard Node.js and npm tooling also supports development, tests, and builds. The Wiki's [Paseo setup](https://github.com/joebaz/web-starter/wiki/Paseo-Setup) describes its system prompt and agent profiles.
 
 The configured worktree setup hook runs `npm ci` to install dependencies from the lockfile.
 
@@ -40,13 +51,9 @@ The configured worktree setup hook runs `npm ci` to install dependencies from th
 
 Paseo's local configuration, worktrees, logs, and credentials live outside the repository at `~/.paseo/`.
 
-Agents follow [role SOPs](docs/agents/roles/) in any tool. The Wiki's [Agent setup](https://github.com/joebaz/web-starter/wiki/Agent-Setup) covers the skills and tool settings that go with them.
+## Testing and CI
 
-Paseo, an agent orchestration tool (https://paseo.sh), is optional. The Wiki's [Paseo setup](https://github.com/joebaz/web-starter/wiki/Paseo-Setup) covers its system prompt and agent profiles. The website can be developed, tested, and built using standard Node.js and npm tooling, directly or through another coding agent or orchestrator. Deployment depends on the hosting provider selected for each project.
-
-## Testing
-
-`npm test` first runs the lint configuration tests in `tests/lint/` with Node's test runner. It then removes stale Playwright output, runs the configured browser tests, and removes output after a successful run. Playwright manages a dedicated Astro test server built from a fixture, a test input the tests own under `tests/fixtures/` with its own facts file, which uses the reserved test domain `example.com`; see [playwright.config.ts](playwright.config.ts) for its command and port. No test depends on the values in the root `website-facts.yaml`, but each fixture's config imports `astro.config.mjs`, so the reader module also validates the root file and an invalid root file fails the test builds.
+`npm test` first runs the lint configuration tests in `tests/lint/` with Node's test runner. It then removes stale Playwright output, runs the configured browser tests, and removes output after a successful run. Playwright manages a dedicated Astro test server built from a fixture, a test input the tests own under `tests/fixtures/` with its own facts file, which uses the reserved test domain `example.com`; see [playwright.config.ts](playwright.config.ts) for its command and port. Injected fixture pages use the reserved `/test-fixtures` prefix and own their exact copy and metadata inputs. The homepage smoke check verifies structure rather than fixed copy; the default 404 checks retain their exact copy assertions. No test depends on the values in the root `website-facts.yaml`, but each fixture's config imports `astro.config.mjs`, so the reader module also validates the root file and an invalid root file fails the test builds.
 
 If a test fails, the final cleanup does not run. Fresh failure evidence remains in `test-results/` for diagnosis, including a screenshot. Routine successful runs do not create an HTML report. Generated Playwright output is ignored by Git.
 
@@ -57,49 +64,6 @@ For adding page scans and interactive-state checks, see [Accessibility smoke tes
 The [QA reference](docs/qa.md) sets the browser, accessibility, performance, and phone coverage that test plans must meet.
 
 For human checks before launch, see the Wiki's [Accessibility review](https://github.com/joebaz/web-starter/wiki/Accessibility-Review).
-
-## Launch checklist
-
-For repository setup and page implementation, follow [Configure a site and add pages](docs/configure-site-and-pages.md).
-
-For generated crawl-discovery files and page exclusions, follow [Configure the sitemap and robots.txt](docs/configure-sitemap-and-robots.md).
-
-The human-facing [site launch checklist](https://github.com/joebaz/web-starter/wiki) covers project setup, project-specific choices, launch verification, and operating notes. Agent instructions and project-owned agent references live in the repository.
-
-## Project structure
-
-| Path                               | Purpose                                                                              |
-| ---------------------------------- | ------------------------------------------------------------------------------------ |
-| `.github/ISSUE_TEMPLATE/`          | Forms for content, documentation, fix, and feature issues                            |
-| `.github/pull_request_template.md` | Pull request summary, scope, and validation fields                                   |
-| `.github/workflows/ci.yml`         | Validation CI: formatting for documentation-only changes, full baseline otherwise    |
-| `.gitignore`                       | Exclusions for generated output, dependencies, environment files, and test artifacts |
-| `.npmrc`                           | npm configuration enforcing the declared Node version range                          |
-| `.nvmrc`                           | Node major version selection                                                         |
-| `AGENTS.md`                        | Instructions directing agents to repository guidance                                 |
-| `CLAUDE.md`                        | Symlink to `AGENTS.md` for Claude Code                                               |
-| `CONTRIBUTING.md`                  | Local setup and contribution workflow                                                |
-| `GLOSSARY.md`                      | Definitions of project terms                                                         |
-| `README.md`                        | Human-facing repository overview                                                     |
-| `coding-standards.md`              | Implementation conventions scoped to the requested change                            |
-| `astro.config.mjs`                 | Astro configuration                                                                  |
-| `eslint.config.mjs`                | ESLint configuration                                                                 |
-| `package.json`                     | Dependencies, Node compatibility, and commands                                       |
-| `package-lock.json`                | Locked dependency versions                                                           |
-| `paseo.json`                       | Worktree setup, scripts, and branch-name generation                                  |
-| `playwright.config.ts`             | Browser projects, server startup, retries, and failure artifacts                     |
-| `prettier.config.mjs`              | Formatting configuration                                                             |
-| `public/`                          | Static files copied to the build unchanged                                           |
-| `src/`                             | Site source processed by Astro                                                       |
-| `src/pages/`                       | File-based routes; `index.astro` provides the homepage                               |
-| `src/styles/`                      | Shared styles; `global.css` loads Tailwind                                           |
-| `tests/lint/`                      | Node tests for the ESLint accessibility configuration                                |
-| `tests/smoke/`                     | Browser smoke tests                                                                  |
-| `tsconfig.json`                    | TypeScript configuration                                                             |
-| `website-facts.yaml`               | Facts about the website, as an intake form                                           |
-| `dist/`                            | Generated deployment output, ignored by Git                                          |
-
-## CI
 
 Validation tools:
 
@@ -113,14 +77,53 @@ Validation tools:
 
 See [CONTRIBUTING](CONTRIBUTING.md#validate-your-change) for which checks run and when.
 
+## Repository structure and docs
+
+| Path                               | Purpose                                                                              |
+| ---------------------------------- | ------------------------------------------------------------------------------------ |
+| `.github/ISSUE_TEMPLATE/`          | Forms for content, documentation, fix, and feature issues                            |
+| `.github/labels.yml`               | Canonical label names, colors, and descriptions                                      |
+| `.github/pull_request_template.md` | Pull request summary, scope, and validation fields                                   |
+| `.github/workflows/ci.yml`         | Validation CI: formatting for documentation-only changes, full baseline otherwise    |
+| `.gitignore`                       | Exclusions for generated output, dependencies, environment files, and test artifacts |
+| `.npmrc`                           | npm configuration enforcing the declared Node version range                          |
+| `.nvmrc`                           | Node major version selection                                                         |
+| `AGENTS.md`                        | Instructions directing agents to repository guidance                                 |
+| `CLAUDE.md`                        | Symlink to `AGENTS.md` for Claude Code                                               |
+| `CONTRIBUTING.md`                  | Local setup and contribution workflow                                                |
+| `GLOSSARY.md`                      | Definitions of project terms                                                         |
+| `README.md`                        | Human-facing repository overview                                                     |
+| `coding-standards.md`              | Implementation conventions scoped to the requested change                            |
+| `astro.config.mjs`                 | Astro configuration                                                                  |
+| `docs/`                            | Repository guidance, role SOPs, plans, and specs                                     |
+| `eslint.config.mjs`                | ESLint configuration                                                                 |
+| `package.json`                     | Dependencies, Node compatibility, and commands                                       |
+| `package-lock.json`                | Locked dependency versions                                                           |
+| `paseo.json`                       | Worktree setup, scripts, and branch-name generation                                  |
+| `playwright.config.ts`             | Browser projects, server startup, retries, and failure artifacts                     |
+| `prettier.config.mjs`              | Formatting configuration                                                             |
+| `public/`                          | Static files copied to the build unchanged                                           |
+| `src/`                             | Site source processed by Astro                                                       |
+| `src/pages/`                       | File-based routes; `index.astro` provides the homepage                               |
+| `src/styles/`                      | Shared styles; `global.css` loads Tailwind                                           |
+| `tests/fixtures/`                  | Independent facts and page inputs for tests                                          |
+| `tests/lint/`                      | Node tests for the ESLint accessibility configuration                                |
+| `tests/smoke/`                     | Browser smoke tests                                                                  |
+| `tests/support/`                   | Shared Playwright helpers                                                            |
+| `tsconfig.json`                    | TypeScript configuration                                                             |
+| `website-facts.yaml`               | Facts about the website, as an intake form                                           |
+| `dist/`                            | Generated deployment output, ignored by Git                                          |
+
+For shared metadata and page setup, see [Configure a site and add pages](docs/configure-site-and-pages.md). For generated crawl-discovery files and exclusions, see [Configure the sitemap and robots.txt](docs/configure-sitemap-and-robots.md).
+
+The [issue tracker guide](docs/agents/issue-tracker.md) explains where issues, specs, and plans live. The human-facing [site launch checklist](https://github.com/joebaz/web-starter/wiki) covers setup, Project choices, launch verification, and operating notes.
+
 ## Website facts
 
 [website-facts.yaml](website-facts.yaml) is the only place for facts about the website.
 
-## Deployment
+## Build and deployment
 
-`npm run build` creates a static site in `dist/`. The template has no hosting-specific code or configuration, so projects can choose or change hosts without code changes.
+`npm run build` produces `dist/`. Review [site configuration](docs/configure-site-and-pages.md) for shared metadata and page setup before configuring deployment for the selected host.
 
-Projects can add server-side features or hosting-specific code as needed; explain why in the project's README.
-
-Record the chosen host as `hosting_provider` in [website-facts.yaml](website-facts.yaml). Use the human launch checklist to set up hosting and check the live site.
+Record the chosen host as `hosting_provider` in [website-facts.yaml](website-facts.yaml). Follow the human [site launch checklist](https://github.com/joebaz/web-starter/wiki) to set up hosting and check the live site.

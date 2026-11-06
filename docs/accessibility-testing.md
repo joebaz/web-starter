@@ -30,13 +30,18 @@ Create a `*.spec.ts` file in `tests/smoke/`, or add a test to an existing spec. 
 import { expect, test } from "@playwright/test";
 import { expectAccessible } from "../support/accessibility";
 
-test("homepage has no detected accessibility violations", async ({ page }) => {
+test("homepage renders with no detected accessibility violations", async ({
+  page,
+}) => {
   const response = await page.goto("/");
 
   expect(response?.status()).toBe(200);
-  await expect(
-    page.getByRole("heading", { name: "Astro Web Starter", level: 1 }),
-  ).toBeVisible();
+  const heading = page.getByRole("heading", { level: 1 });
+  await expect(heading).toHaveCount(1);
+  await expect(heading).toBeVisible();
+  const headingText = (await heading.innerText()).replace(/\s+/g, " ").trim();
+  expect(headingText).not.toBe("");
+  expect(await page.title()).toContain(headingText);
 
   await expectAccessible(page);
 });
@@ -45,12 +50,13 @@ test("homepage has no detected accessibility violations", async ({ page }) => {
 An **assertion** compares what the test observed with what it expected. Playwright's `expect(...)` describes the observed value or element; the following matcher, such as `toBe(200)`, states the expectation. A failed assertion fails the test; a successful one lets it continue. In this example:
 
 - `expect(response?.status()).toBe(200)` checks the response already received. A 404 fails immediately.
-- `await expect(...).toBeVisible()` repeatedly checks for the heading until it is visible or the assertion times out. `await` keeps the scan from starting before that check finishes.
+- `toHaveCount(1)` requires exactly one level-1 heading, and `toBeVisible()` waits for it to be visible before the scan starts.
+- The heading text is normalized by collapsing whitespace runs and trimming it. The next assertions require nonempty text and a document title that includes it.
 - Inside `expectAccessible`, `expect(report).toEqual([])` requires an empty list of violations. It checks the completed scan once; it does not retry until violations disappear.
 
-The heading's visibility confirms only that condition. Add other readiness assertions when the state being scanned needs more content to load. See [Playwright's assertion guide](https://playwright.dev/docs/test-assertions) for matcher and retry behavior.
+These assertions confirm the homepage's structure. Add other readiness assertions when the state being scanned needs more content to load. See [Playwright's assertion guide](https://playwright.dev/docs/test-assertions) for matcher and retry behavior.
 
-Replace the URL and readiness assertions with the page's expected content. Assertions should confirm that the intended page loaded, rather than allowing an error page to pass the scan. For a 404 test, navigate to a missing URL, assert HTTP status 404, and wait for the custom page's heading, as in [`not-found.spec.ts`](../tests/smoke/not-found.spec.ts). Loading `/404` directly does not exercise missing-URL handling.
+For other pages, replace the URL and structural checks with readiness assertions for that page's expected content. Assertions should confirm that the intended page loaded, rather than allowing an error page to pass the scan. For a 404 test, navigate to a missing URL, assert HTTP status 404, and wait for the custom page's heading, as in [`not-found.spec.ts`](../tests/smoke/not-found.spec.ts). Loading `/404` directly does not exercise missing-URL handling.
 
 Tests are discovered by the existing [Playwright configuration](../playwright.config.ts); no separate command or CI job is needed for each new page. Run the full workflow with `npm test`. During development, use `npx playwright test --grep accessibility` to select tests whose titles contain `accessibility`, optionally adding `--project chromium` for a single browser. Playwright manages the test server for both commands.
 
@@ -58,7 +64,7 @@ Tests are discovered by the existing [Playwright configuration](../playwright.co
 
 Navigate, perform the interaction, assert the expected state, and then scan. Scan each important state explicitly: a check on the initial page cannot inspect content that is still hidden or has not rendered.
 
-For example, a project that adds a contact dialog could test its open state like this. The starter does not include this page or dialog; adapt the URL and locators to the implemented interaction.
+For example, a project that adds a contact dialog could test its open state like this. This is a hypothetical example; adapt the URL and locators to the implemented interaction.
 
 ```ts
 import { expect, test } from "@playwright/test";
@@ -79,7 +85,7 @@ Use separate tests or repeated helper calls for other relevant states, such as e
 
 ## Investigate failures and limits
 
-Failures identify the violated rules and affected elements, with guidance links, selectors, and HTML snippets. The scan step points to the helper's calling line, identifying which state failed when a test scans several states. Use these details to investigate the rendered markup. Review the screenshot and any trace retained in `test-results/`; see the [README testing overview](../README.md#testing) for failure artifacts. Fix the cause and rerun the affected tests rather than suppressing rules or excluding content to obtain a pass.
+Failures identify the violated rules and affected elements, with guidance links, selectors, and HTML snippets. The scan step points to the helper's calling line, identifying which state failed when a test scans several states. Use these details to investigate the rendered markup. Review the screenshot and any trace retained in `test-results/`; see the [README testing overview](../README.md#testing-and-ci) for failure artifacts. Fix the cause and rerun the affected tests rather than suppressing rules or excluding content to obtain a pass.
 
 [`accessibility-helper.spec.ts`](../tests/smoke/accessibility-helper.spec.ts) verifies that an unlabeled control fails with its rule ID and selector, and that corrected markup passes. Its example documents exist only in memory and are not published as site pages.
 

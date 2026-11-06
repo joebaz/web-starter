@@ -1,6 +1,6 @@
 # QA reference
 
-This reference sets the template-wide bar that every test plan must meet. An agent designs each test plan from the issue's intent, using test-driven development or otherwise; this reference sets constraints on that plan, not the steps to follow.
+This reference sets the repository-wide bar that every test plan must meet. An agent designs each test plan from the issue's intent, using test-driven development or otherwise; this reference sets constraints on that plan, not the steps to follow.
 
 Run the required commands for the change type in [Validate your change](../CONTRIBUTING.md#validate-your-change). When a check below cannot be done, report it as not done and why rather than claiming a pass.
 
