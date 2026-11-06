@@ -113,7 +113,8 @@ The work is three Sub-Issues, done in order:
 - **Language in the Template (Maintainer decision, 2026-11-04):** the Template ships `language` undecided, like every other fact, so #85's "every fact undecided" criterion stands. A Project's site may not be in English at all, for example a Japanese-only site. So, while it's undecided, Astro's build omits the page's `lang` attribute instead of rendering a placeholder tag, and warns.
 - Test builds still check that the root `website-facts.yaml` is valid, because each test fixture's config imports `astro.config.mjs`. No test depends on its values. [#89] removes this when it moves the config files out of the root.
 - **Open question for #87:** whether the bootstrap intake requires a language answer. While `language` is undecided, the pages have no `lang` attribute, which fails WCAG 3.1.1. Decided when #87 is planned.
-- This spec is updated as #85–#87 progress. #45 closes when all three are done. #85 is done ([#90](https://github.com/joebaz/web-starter/pull/90), merged 2026-11-04).
+- This spec is updated as #85–#87 progress. #45 closes when all three are done. #85 is done ([#90](https://github.com/joebaz/web-starter/pull/90), merged 2026-11-04). #86 is done ([#92](https://github.com/joebaz/web-starter/pull/92), merged 2026-11-06).
+- `AGENTS.md` already tells agents in a repository that hasn't been bootstrapped to follow `docs/bootstrap-website.md`. #87 creates that runbook; until then, the pointer leads nowhere.
 
 [#48]: https://github.com/joebaz/web-starter/issues/48
 [#85]: https://github.com/joebaz/web-starter/issues/85
