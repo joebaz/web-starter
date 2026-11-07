@@ -42,7 +42,7 @@ const REQUIRED_STATUS_NAMES = ["Parking", "Todo", "In progress", "Done"];
  * @property {number} number
  * @property {string} url
  * @property {{ __typename: string, login?: string }} [owner]
- * @property {{ nodes?: ProjectFieldNode[] }} [fields]
+ * @property {{ pageInfo?: { hasNextPage: boolean, endCursor?: string }, nodes?: ProjectFieldNode[] }} [fields]
  */
 
 /**
@@ -128,7 +128,7 @@ function parseOriginUrl(remoteUrl) {
 }
 
 /**
- * Parse owner and repository name from the origin remote URL.
+ * Resolve the origin remote URL from git and parse owner and repository name.
  * @returns {{ owner: string, repo: string }}
  */
 function resolveOriginTarget() {
@@ -246,6 +246,55 @@ function labelAttributesMatch(observed, canonical) {
 }
 
 /**
+ * Reconcile current repository labels against canonical labels.
+ * Factors label diffing shared between check mode and apply mode.
+ * @param {CanonicalLabel[]} canonicalLabels
+ * @param {RepoLabel[]} repoLabels
+ * @returns {{
+ *   additions: CanonicalLabel[],
+ *   updates: Array<{ canonical: CanonicalLabel, existing: RepoLabel }>,
+ *   stockDeletions: RepoLabel[],
+ *   preservedCustom: RepoLabel[]
+ * }}
+ */
+function diffLabels(canonicalLabels, repoLabels) {
+  const canonicalMap = new Map(
+    canonicalLabels.map((l) => [l.name.toLowerCase(), l]),
+  );
+  const repoMap = new Map(repoLabels.map((l) => [l.name.toLowerCase(), l]));
+
+  /** @type {CanonicalLabel[]} */
+  const additions = [];
+  /** @type {Array<{ canonical: CanonicalLabel, existing: RepoLabel }>} */
+  const updates = [];
+  /** @type {RepoLabel[]} */
+  const stockDeletions = [];
+  /** @type {RepoLabel[]} */
+  const preservedCustom = [];
+
+  for (const [nameLower, canonical] of canonicalMap.entries()) {
+    const existing = repoMap.get(nameLower);
+    if (!existing) {
+      additions.push(canonical);
+    } else if (!labelAttributesMatch(existing, canonical)) {
+      updates.push({ canonical, existing });
+    }
+  }
+
+  for (const [nameLower, existing] of repoMap.entries()) {
+    if (!canonicalMap.has(nameLower)) {
+      if (existing.default === true) {
+        stockDeletions.push(existing);
+      } else {
+        preservedCustom.push(existing);
+      }
+    }
+  }
+
+  return { additions, updates, stockDeletions, preservedCustom };
+}
+
+/**
  * Run canonical labels check.
  * Distinguishes stock default labels to delete vs preserved custom labels.
  * @param {string} owner
@@ -257,57 +306,16 @@ function checkLabels(owner, repo, repoRoot) {
   try {
     const canonicalLabels = loadCanonicalLabels(repoRoot);
     const repoLabels = fetchRepoLabels(owner, repo);
-
-    const canonicalMap = new Map(
-      canonicalLabels.map((l) => [l.name.toLowerCase(), l]),
+    const { additions, updates, stockDeletions, preservedCustom } = diffLabels(
+      canonicalLabels,
+      repoLabels,
     );
-    const repoMap = new Map(repoLabels.map((l) => [l.name.toLowerCase(), l]));
-
-    /** @type {CanonicalLabel[]} */
-    const missingLabels = [];
-    /** @type {Array<{ name: string, expected: { name: string, color: string, description: string }, observed: { name: string, color: string, description: string } }>} */
-    const mismatchedLabels = [];
-    /** @type {RepoLabel[]} */
-    const stockLabelsToDelete = [];
-    /** @type {RepoLabel[]} */
-    const preservedCustomLabels = [];
-
-    for (const [nameLower, canonical] of canonicalMap.entries()) {
-      const observed = repoMap.get(nameLower);
-      if (!observed) {
-        missingLabels.push(canonical);
-      } else if (!labelAttributesMatch(observed, canonical)) {
-        mismatchedLabels.push({
-          name: canonical.name,
-          expected: {
-            name: canonical.name,
-            color: canonical.color,
-            description: canonical.description,
-          },
-          observed: {
-            name: observed.name,
-            color: observed.color,
-            description: observed.description || "",
-          },
-        });
-      }
-    }
-
-    for (const [nameLower, observed] of repoMap.entries()) {
-      if (!canonicalMap.has(nameLower)) {
-        if (observed.default === true) {
-          stockLabelsToDelete.push(observed);
-        } else {
-          preservedCustomLabels.push(observed);
-        }
-      }
-    }
 
     const hasMismatches =
-      missingLabels.length > 0 ||
-      mismatchedLabels.length > 0 ||
-      stockLabelsToDelete.length > 0 ||
-      preservedCustomLabels.length > 0;
+      additions.length > 0 ||
+      updates.length > 0 ||
+      stockDeletions.length > 0 ||
+      preservedCustom.length > 0;
 
     if (!hasMismatches) {
       console.log(
@@ -317,33 +325,33 @@ function checkLabels(owner, repo, repoRoot) {
     }
 
     console.log(`[FAIL] Labels: Differences detected:`);
-    if (missingLabels.length > 0) {
+    if (additions.length > 0) {
       console.log(`  - Additions (missing canonical labels to create):`);
-      for (const item of missingLabels) {
+      for (const item of additions) {
         console.log(
           `    * ${item.name} (color: #${normalizeColor(item.color)}, desc: "${item.description}")`,
         );
       }
     }
-    if (mismatchedLabels.length > 0) {
+    if (updates.length > 0) {
       console.log(`  - Updates (canonical labels needing modification):`);
-      for (const item of mismatchedLabels) {
+      for (const item of updates) {
         console.log(
-          `    * ${item.name}: expected (name: "${item.expected.name}", color: #${normalizeColor(item.expected.color)}, desc: "${item.expected.description}"), observed (name: "${item.observed.name}", color: #${normalizeColor(item.observed.color)}, desc: "${item.observed.description}")`,
+          `    * ${item.canonical.name}: expected (name: "${item.canonical.name}", color: #${normalizeColor(item.canonical.color)}, desc: "${item.canonical.description}"), observed (name: "${item.existing.name}", color: #${normalizeColor(item.existing.color)}, desc: "${item.existing.description}")`,
         );
       }
     }
-    if (stockLabelsToDelete.length > 0) {
+    if (stockDeletions.length > 0) {
       console.log(`  - Deletions (GitHub stock default labels to delete):`);
-      for (const item of stockLabelsToDelete) {
+      for (const item of stockDeletions) {
         console.log(`    * ${item.name}`);
       }
     }
-    if (preservedCustomLabels.length > 0) {
+    if (preservedCustom.length > 0) {
       console.log(
         `  - Preserved custom labels (non-default labels preserved for separate review):`,
       );
-      for (const item of preservedCustomLabels) {
+      for (const item of preservedCustom) {
         console.log(`    * ${item.name}`);
       }
     }
@@ -381,6 +389,80 @@ function checkDeleteBranchOnMerge(owner, repo, repoMetadata) {
     `[FAIL] Delete-branch-on-merge: Disabled on repository ${owner}/${repo} (expected: true, observed: false).`,
   );
   return { status: "mismatch" };
+}
+
+/**
+ * Fetch all fields for a project node, paginating if needed.
+ * @param {string} projectId
+ * @param {ProjectFieldNode[]} initialNodes
+ * @param {boolean} hasMore
+ * @param {string | null} cursor
+ * @returns {ProjectFieldNode[]}
+ */
+function fetchAllProjectFields(projectId, initialNodes, hasMore, cursor) {
+  const fields = [...initialNodes];
+  let hasNext = hasMore;
+  let currentCursor = cursor;
+
+  const fieldsQuery = `
+    query($projectId: ID!, $after: String) {
+      node(id: $projectId) {
+        ... on ProjectV2 {
+          fields(first: 50, after: $after) {
+            pageInfo {
+              hasNextPage
+              endCursor
+            }
+            nodes {
+              ... on ProjectV2SingleSelectField {
+                name
+                options { name }
+              }
+            }
+          }
+        }
+      }
+    }
+  `;
+
+  while (hasNext) {
+    /** @type {string[]} */
+    const args = [
+      "api",
+      "graphql",
+      "-f",
+      `query=${fieldsQuery}`,
+      "-f",
+      `projectId=${projectId}`,
+    ];
+    if (currentCursor) {
+      args.push("-f", `after=${currentCursor}`);
+    }
+
+    const output = runSubprocess("gh", args);
+    /** @type {{ data?: { node?: { fields?: { pageInfo?: { hasNextPage: boolean, endCursor?: string }, nodes?: ProjectFieldNode[] } } }, errors?: Array<{ message: string }> }} */
+    const res = JSON.parse(output);
+
+    if (res.errors && res.errors.length > 0) {
+      throw new Error(
+        `GraphQL error querying project fields: ${res.errors.map((e) => e.message).join("; ")}`,
+      );
+    }
+
+    const fieldsData = res.data?.node?.fields;
+    if (!fieldsData || !Array.isArray(fieldsData.nodes)) {
+      throw new Error(`Malformed fields data for project ${projectId}`);
+    }
+
+    for (const f of fieldsData.nodes) {
+      fields.push(f);
+    }
+
+    hasNext = Boolean(fieldsData.pageInfo?.hasNextPage);
+    currentCursor = fieldsData.pageInfo?.endCursor || null;
+  }
+
+  return fields;
 }
 
 /**
@@ -458,17 +540,49 @@ function fetchLinkedProjects(owner, repo) {
     }
 
     const projectsData = response.data?.repository?.projectsV2;
-    if (!projectsData) {
-      throw new Error(`Repository data missing from GraphQL response.`);
+    if (
+      !projectsData ||
+      !Array.isArray(projectsData.nodes) ||
+      !projectsData.pageInfo ||
+      typeof projectsData.pageInfo.hasNextPage !== "boolean"
+    ) {
+      throw new Error(
+        `Malformed GraphQL response: missing projectsV2 nodes or pageInfo.`,
+      );
     }
 
-    const nodes = projectsData.nodes || [];
-    for (const proj of nodes) {
+    for (const proj of projectsData.nodes) {
+      if (!proj || typeof proj !== "object" || typeof proj.id !== "string") {
+        throw new Error(
+          `Malformed project node in GraphQL response: ${JSON.stringify(proj)}`,
+        );
+      }
+
+      // Check if project fields require further pagination
+      if (!proj.fields || !Array.isArray(proj.fields.nodes)) {
+        throw new Error(
+          `Malformed fields data in project #${proj.number} (${proj.title})`,
+        );
+      }
+
+      if (proj.fields.pageInfo?.hasNextPage) {
+        const allFields = fetchAllProjectFields(
+          proj.id,
+          proj.fields.nodes,
+          proj.fields.pageInfo.hasNextPage,
+          proj.fields.pageInfo.endCursor || null,
+        );
+        proj.fields = {
+          ...proj.fields,
+          nodes: allFields,
+        };
+      }
+
       allProjects.push(proj);
     }
 
-    hasNextPage = Boolean(projectsData.pageInfo?.hasNextPage);
-    afterCursor = projectsData.pageInfo?.endCursor || null;
+    hasNextPage = projectsData.pageInfo.hasNextPage;
+    afterCursor = projectsData.pageInfo.endCursor || null;
   }
 
   return allProjects;
@@ -678,7 +792,7 @@ function checkContributionGuideContactUrl(owner, repo, repoRoot, repoMetadata) {
 
 /**
  * Run CI check for checked-out local HEAD.
- * Handles paginated runs via --slurp to avoid JSON parse errors.
+ * Handles paginated runs via --slurp and verifies response shape.
  * @param {string} owner
  * @param {string} repo
  * @returns {{ status: "pass" | "mismatch" | "error" }}
@@ -702,12 +816,27 @@ function checkCiRuns(owner, repo) {
       `/repos/${owner}/${repo}/actions/runs?head_sha=${headSha}`,
     ]);
 
-    /** @type {Array<{ total_count?: number, workflow_runs?: WorkflowRun[] }> | { total_count?: number, workflow_runs?: WorkflowRun[] }} */
     const parsed = JSON.parse(runsOutput);
+    if (!Array.isArray(parsed)) {
+      throw new Error(
+        `Unexpected API response format for Actions runs: expected JSON array from --slurp, received ${typeof parsed}`,
+      );
+    }
+
+    for (const page of parsed) {
+      if (
+        !page ||
+        typeof page !== "object" ||
+        !Array.isArray(page.workflow_runs)
+      ) {
+        throw new Error(
+          `Malformed API response for Actions runs: page missing workflow_runs array (${JSON.stringify(page)})`,
+        );
+      }
+    }
+
     /** @type {WorkflowRun[]} */
-    const workflowRuns = Array.isArray(parsed)
-      ? parsed.flatMap((p) => p.workflow_runs || [])
-      : parsed.workflow_runs || [];
+    const workflowRuns = parsed.flatMap((p) => p.workflow_runs);
 
     if (workflowRuns.length === 0) {
       console.log(
@@ -857,6 +986,26 @@ function runApplyMode(owner, repo, repoRoot, repoMetadata) {
   /** @type {string[]} */
   const deletedStockNames = [];
 
+  /**
+   * Helper to execute a single mutation and track outcome.
+   * @param {string} desc
+   * @param {() => void} action
+   * @returns {boolean}
+   */
+  function executeMutation(desc, action) {
+    attemptedEffects.push(desc);
+    try {
+      console.log(`${desc}...`);
+      action();
+      successfulEffects.push(desc);
+      return true;
+    } catch (error) {
+      console.error(`Failed to ${desc}: ${formatErrorMessage(error)}`);
+      failedEffects.push(`${desc}: ${formatErrorMessage(error)}`);
+      return false;
+    }
+  }
+
   /** @type {CanonicalLabel[]} */
   let canonicalLabels;
   try {
@@ -885,34 +1034,27 @@ function runApplyMode(owner, repo, repoRoot, repoMetadata) {
     return 2;
   }
 
-  const existingMap = new Map(
-    initialLabels.map((l) => [l.name.toLowerCase(), l]),
-  );
-  const canonicalMap = new Map(
-    canonicalLabels.map((l) => [l.name.toLowerCase(), l]),
+  const { additions, updates, stockDeletions, preservedCustom } = diffLabels(
+    canonicalLabels,
+    initialLabels,
   );
 
   // 1. Enable delete-on-merge if needed
   if (repoMetadata.delete_branch_on_merge !== true) {
-    attemptedEffects.push("Enable delete_branch_on_merge");
-    try {
-      console.log(`Enabling delete_branch_on_merge on ${owner}/${repo}...`);
-      runSubprocess("gh", [
-        "api",
-        "-X",
-        "PATCH",
-        `/repos/${owner}/${repo}`,
-        "-F",
-        "delete_branch_on_merge=true",
-      ]);
-      successfulEffects.push("Enabled delete_branch_on_merge");
-    } catch (error) {
-      console.error(
-        `Failed to set delete_branch_on_merge: ${formatErrorMessage(error)}`,
-      );
-      failedEffects.push(
-        `Enable delete_branch_on_merge: ${formatErrorMessage(error)}`,
-      );
+    const ok = executeMutation(
+      `enable delete_branch_on_merge on ${owner}/${repo}`,
+      () => {
+        runSubprocess("gh", [
+          "api",
+          "-X",
+          "PATCH",
+          `/repos/${owner}/${repo}`,
+          "-F",
+          "delete_branch_on_merge=true",
+        ]);
+      },
+    );
+    if (!ok) {
       reportApplyOutcome(successfulEffects, attemptedEffects, failedEffects);
       return 2;
     }
@@ -920,52 +1062,11 @@ function runApplyMode(owner, repo, repoRoot, repoMetadata) {
     console.log(`delete_branch_on_merge is already enabled.`);
   }
 
-  // 2. Reconcile labels
-  for (const canonical of canonicalLabels) {
-    const existing = existingMap.get(canonical.name.toLowerCase());
-    const normalizedCanonicalColor = normalizeColor(canonical.color);
-
-    if (existing) {
-      if (!labelAttributesMatch(existing, canonical)) {
-        attemptedEffects.push(`Update label "${canonical.name}"`);
-        try {
-          console.log(`Updating canonical label "${canonical.name}"...`);
-          runSubprocess("gh", [
-            "api",
-            "-X",
-            "PATCH",
-            `/repos/${owner}/${repo}/labels/${encodeURIComponent(existing.name)}`,
-            "-f",
-            `new_name=${canonical.name}`,
-            "-f",
-            `color=${normalizedCanonicalColor}`,
-            "-f",
-            `description=${canonical.description}`,
-          ]);
-          successfulEffects.push(`Updated label "${canonical.name}"`);
-        } catch (error) {
-          console.error(
-            `Failed to update label "${canonical.name}": ${formatErrorMessage(error)}`,
-          );
-          failedEffects.push(
-            `Update label "${canonical.name}": ${formatErrorMessage(error)}`,
-          );
-          reportApplyOutcome(
-            successfulEffects,
-            attemptedEffects,
-            failedEffects,
-          );
-          return 2;
-        }
-      } else {
-        console.log(
-          `Canonical label "${canonical.name}" is already up to date.`,
-        );
-      }
-    } else {
-      attemptedEffects.push(`Create label "${canonical.name}"`);
-      try {
-        console.log(`Creating canonical label "${canonical.name}"...`);
+  // 2. Reconcile labels: additions
+  for (const canonical of additions) {
+    const ok = executeMutation(
+      `create canonical label "${canonical.name}"`,
+      () => {
         runSubprocess("gh", [
           "api",
           "-X",
@@ -974,64 +1075,68 @@ function runApplyMode(owner, repo, repoRoot, repoMetadata) {
           "-f",
           `name=${canonical.name}`,
           "-f",
-          `color=${normalizedCanonicalColor}`,
+          `color=${normalizeColor(canonical.color)}`,
           "-f",
           `description=${canonical.description}`,
         ]);
-        successfulEffects.push(`Created label "${canonical.name}"`);
-      } catch (error) {
-        console.error(
-          `Failed to create label "${canonical.name}": ${formatErrorMessage(error)}`,
-        );
-        failedEffects.push(
-          `Create label "${canonical.name}": ${formatErrorMessage(error)}`,
-        );
-        reportApplyOutcome(successfulEffects, attemptedEffects, failedEffects);
-        return 2;
-      }
+      },
+    );
+    if (!ok) {
+      reportApplyOutcome(successfulEffects, attemptedEffects, failedEffects);
+      return 2;
     }
   }
 
-  // Delete ONLY GitHub stock labels (default === true) that are NOT in canonical set
-  for (const existing of initialLabels) {
-    const isCanonical = canonicalMap.has(existing.name.toLowerCase());
-    if (!isCanonical) {
-      if (existing.default === true) {
-        deletedStockNames.push(existing.name);
-        attemptedEffects.push(`Delete stock default label "${existing.name}"`);
-        try {
-          console.log(
-            `Deleting GitHub stock default label "${existing.name}"...`,
-          );
-          runSubprocess("gh", [
-            "api",
-            "-X",
-            "DELETE",
-            `/repos/${owner}/${repo}/labels/${encodeURIComponent(existing.name)}`,
-          ]);
-          successfulEffects.push(
-            `Deleted stock default label "${existing.name}"`,
-          );
-        } catch (error) {
-          console.error(
-            `Failed to delete label "${existing.name}": ${formatErrorMessage(error)}`,
-          );
-          failedEffects.push(
-            `Delete stock default label "${existing.name}": ${formatErrorMessage(error)}`,
-          );
-          reportApplyOutcome(
-            successfulEffects,
-            attemptedEffects,
-            failedEffects,
-          );
-          return 2;
-        }
-      } else {
-        console.log(
-          `Preserving non-default custom label "${existing.name}" for separate review.`,
-        );
-      }
+  // Reconcile labels: updates
+  for (const { canonical, existing } of updates) {
+    const ok = executeMutation(
+      `update canonical label "${canonical.name}"`,
+      () => {
+        runSubprocess("gh", [
+          "api",
+          "-X",
+          "PATCH",
+          `/repos/${owner}/${repo}/labels/${encodeURIComponent(existing.name)}`,
+          "-f",
+          `new_name=${canonical.name}`,
+          "-f",
+          `color=${normalizeColor(canonical.color)}`,
+          "-f",
+          `description=${canonical.description}`,
+        ]);
+      },
+    );
+    if (!ok) {
+      reportApplyOutcome(successfulEffects, attemptedEffects, failedEffects);
+      return 2;
     }
+  }
+
+  // Delete ONLY GitHub stock default labels that are not in canonical set
+  for (const stock of stockDeletions) {
+    deletedStockNames.push(stock.name);
+    const ok = executeMutation(
+      `delete GitHub stock default label "${stock.name}"`,
+      () => {
+        runSubprocess("gh", [
+          "api",
+          "-X",
+          "DELETE",
+          `/repos/${owner}/${repo}/labels/${encodeURIComponent(stock.name)}`,
+        ]);
+      },
+    );
+    if (!ok) {
+      reportApplyOutcome(successfulEffects, attemptedEffects, failedEffects);
+      return 2;
+    }
+  }
+
+  // Preserved custom labels
+  for (const custom of preservedCustom) {
+    console.log(
+      `Preserving non-default custom label "${custom.name}" for separate review.`,
+    );
   }
 
   // 3. Read back and verify mutations
@@ -1091,22 +1196,10 @@ function runApplyMode(owner, repo, repoRoot, repoMetadata) {
           `Canonical label "${canonical.name}" missing from repository after apply`,
         );
       }
-    } else {
-      if (
-        normalizeColor(exactObserved.color) !== normalizeColor(canonical.color)
-      ) {
-        readbackFailures.push(
-          `Canonical label "${canonical.name}" color mismatch (expected: #${normalizeColor(canonical.color)}, observed: #${normalizeColor(exactObserved.color)})`,
-        );
-      }
-      if (
-        (exactObserved.description || "").trim() !==
-        (canonical.description || "").trim()
-      ) {
-        readbackFailures.push(
-          `Canonical label "${canonical.name}" description mismatch (expected: "${canonical.description}", observed: "${exactObserved.description}")`,
-        );
-      }
+    } else if (!labelAttributesMatch(exactObserved, canonical)) {
+      readbackFailures.push(
+        `Canonical label "${canonical.name}" attributes mismatch (expected color: #${normalizeColor(canonical.color)}, desc: "${canonical.description}"; observed color: #${normalizeColor(exactObserved.color)}, desc: "${exactObserved.description}")`,
+      );
     }
   }
 
