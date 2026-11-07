@@ -2,6 +2,12 @@
 
 This runbook guides setting up a new website repository created from the [web-starter Template](https://github.com/joebaz/web-starter). It specifies each step, its responsible actor, and required approvals.
 
+## Scope: setup now, content later
+
+Bootstrap prepares the repository; it does not build the website. Leave the Template's existing pages and content in place during bootstrap. Plan website content separately after bootstrap: homepage personalization, new pages, page copy, images, and design.
+
+Bootstrap still covers the steps in this runbook, including the required facts, which the site reads for its metadata, and the sitemap and 404 choices confirmed during intake.
+
 ## Prerequisites and tools
 
 ### Responsibility markers
@@ -18,7 +24,7 @@ The bootstrap process follows the canonical [Lifecycle](lifecycle.yaml). The Lif
 
 - **Node.js**: Compatible with the `engines` specification in [package.json](../package.json). The repository's `.nvmrc` selects the Node.js major version, while `.npmrc` enforces the supported version range through `engine-strict`.
 - **npm**: Standard Node package manager.
-- **GitHub CLI (`gh`)**: Installed and authenticated (`gh auth status`) with access to the owning account and the `project` scope (`gh auth refresh -s project`). Credential operations are human-owned Maintainer actions; agents never modify credentials. For setup instructions, see [CONTRIBUTING.md](../CONTRIBUTING.md#set-up-a-local-checkout) and the Wiki's [Agent setup](https://github.com/joebaz/web-starter/wiki/Agent-Setup).
+- **GitHub CLI (`gh`)**: Installed and authenticated (`gh auth status`) with access to the owning account and the `project` scope (`gh auth refresh -s project`). The authenticated account belongs to the Maintainer; credential operations are human-owned Maintainer actions; agents never modify credentials. For setup instructions, see [CONTRIBUTING.md](../CONTRIBUTING.md#set-up-a-local-checkout) and the Wiki's [Agent setup](https://github.com/joebaz/web-starter/wiki/Agent-Setup).
 - **Playwright browsers**: Installed with `npx playwright install`. Required for running `npm test`.
 - **Agent workspace**: Repository opened in Paseo (project and Local workspace) or the Maintainer's agent environment.
 
@@ -43,7 +49,7 @@ The bootstrap process follows the canonical [Lifecycle](lifecycle.yaml). The Lif
      gh api user --jq .login
      gh api /repos/<owner>/<repo> --jq .owner.login
      ```
-     The authenticated user and repository owner may match for a personal repository or differ for an organization repository; confirm the authenticated account is the Maintainer.
+     The authenticated user belongs to the Maintainer, while the repository owner and name are derived from the origin remote. They may match for a personal repository or differ for an organization repository.
 
 3. **Create local branch before editing** (`Agent — Coordinator`):
    - Before making any file edit, create a local feature branch:
@@ -95,9 +101,9 @@ The Planner conducts intake under the canonical Define stage.
      - `business_name`: Legal or operating business name.
      - `maintainer`: Responsible technical maintainer.
      - `client_approver`: Business client contact/approver. Must name a person. If there is no separate client, use the Maintainer (never `none`).
-     - `language`: Valid HTML language tag (e.g. `en`, `es`, `ja`). **If undecided, pause bootstrap until chosen. Never assume English.** Reference the existing reader and build diagnostic (`astro.config.mjs` / `src/website-facts.ts` or `npm run build`); do not edit site files before plan approval.
+     - `language`: Valid HTML language tag (for example, `en`, `es`, `ja`). **If undecided, pause bootstrap until chosen. Never assume English.** Reference the existing reader and build diagnostic (`astro.config.mjs` / `src/website-facts.ts` or `npm run build`); do not edit site files before plan approval.
    - If any of these six required facts is undecided, bootstrap cannot complete; pause until the missing answer is supplied.
-   - All other facts defined in [website-facts.yaml](../website-facts.yaml) (`production_url`, `redirecting_hostnames`, `other_languages`, `hosting_provider`, `dns_provider`, `domain_registrar`, `analytics`, `user_data_stored`) may remain blank (undecided) and do not block minimal repository bootstrap.
+   - All other facts defined in [website-facts.yaml](../website-facts.yaml) (`production_url`, `redirecting_hostnames`, `other_languages`, `hosting_provider`, `dns_provider`, `domain_registrar`, `analytics`, `user_data_stored`) may remain blank (undecided) or set to explicit `none` if decided not applicable; they do not block minimal repository bootstrap.
    - Never put secrets or credentials into [website-facts.yaml](../website-facts.yaml).
 
 2. **One-time sitemap and 404 choices** (`Agent — Planner`):
@@ -116,7 +122,7 @@ The Planner conducts intake under the canonical Define stage.
 
 ## Plan stage
 
-Implementation planning, Architect assessment, and Maintainer plan approval follow the canonical [Lifecycle](lifecycle.yaml). No file edits or administrative setup may run before the Plan stage is approved.
+Implementation planning, Architect assessment, and Maintainer plan approval follow the canonical [Lifecycle](lifecycle.yaml). No implementation edits or administrative setup may run before the Plan stage is approved.
 
 ---
 
@@ -151,6 +157,7 @@ Implementation planning, Architect assessment, and Maintainer plan approval foll
      - All stock default labels were deleted.
      - Any partial failure reports successful, attempted, and failed/unknown outcomes and exits with code `2`.
    - **Decision on preserved custom labels**: If non-default custom labels existed in the repository, apply mode preserves them for separate review. Because `bootstrap:check` expects an exact match with the canonical set, preserved custom labels will continue to cause check mode to report a mismatch until the Maintainer decides on each one (either deleting it via `gh label delete <name>` or adding it to `.github/labels.yml`).
+3. **Apply category label** (`Agent — Coordinator`):
    - Apply the canonical lowercase `feature` label to the bootstrap issue now that labels exist:
      ```sh
      gh issue edit <bootstrap-issue-number> --add-label "feature"
@@ -166,19 +173,44 @@ Implementation planning, Architect assessment, and Maintainer plan approval foll
      ```
      If the repository is owned by an Organization, pause and route the conflict through the Coordinator to the Maintainer. A user-level same-owner Project is required; do not silently create or substitute an organization Project.
    - Obtain explicit written approval from the Maintainer to create a user-level GitHub Project and link it to the repository.
-2. **Create and configure GitHub Project** (`Agent — Coder — written approval required`):
-   - Create the Project and capture its number and ID:
+
+2. **Create, configure, link, and record GitHub Project** (`Agent — Coder — written approval required`):
+   - Execute the Project creation, initial recording, configuration, repository link, readback verification, and full recording in a single coherent shell block:
      ```sh
-     PROJECT_JSON=$(gh project create --owner <user> --title "<repo-name>" --format json)
-     PROJECT_NUMBER=$(echo "$PROJECT_JSON" | jq -r .number)
-     PROJECT_ID=$(echo "$PROJECT_JSON" | jq -r .id)
-     ```
-   - Discover the `Status` single-select field ID:
-     ```sh
-     STATUS_FIELD_ID=$(gh project field-list "$PROJECT_NUMBER" --owner <user> --format json --jq '.fields[] | select(.name=="Status") | .id')
-     ```
-   - Configure the four contract-required Status names using GraphQL mutation `updateProjectV2Field` with real JSON via a temporary input file:
-     ```sh
+     set -eu
+
+     BOOTSTRAP_PROJECT_OWNER="<user>"
+     OWNER="<owner>"
+     REPO="<repo>"
+     REPO_FULL="<owner/repo>"
+     BOOTSTRAP_ISSUE="<bootstrap-issue-number>"
+
+     # Guard: fail before any operation if variables are unbound
+     for var in "$BOOTSTRAP_PROJECT_OWNER" "$OWNER" "$REPO" "$REPO_FULL" "$BOOTSTRAP_ISSUE"; do
+       case "$var" in ""|\<*\>) echo "Error: Unbound variable" >&2; exit 2 ;; esac
+     done
+
+     # Step A: Create Project and capture output JSON once
+     CREATE_JSON=$(gh project create --owner "$BOOTSTRAP_PROJECT_OWNER" --title "$REPO" --format json)
+     PROJECT_NUMBER=$(node -e 'console.log(JSON.parse(process.argv[1]).number)' "$CREATE_JSON")
+     PROJECT_ID=$(node -e 'console.log(JSON.parse(process.argv[1]).id)' "$CREATE_JSON")
+     PROJECT_URL=$(node -e 'console.log(JSON.parse(process.argv[1]).url)' "$CREATE_JSON")
+
+     test -n "$PROJECT_NUMBER" && test -n "$PROJECT_ID" || exit 2
+
+     # Step B: Record creation identity IMMEDIATELY before configuring
+     # If subsequent configuration or linking fails, recovery has project identity and must NOT rerun create
+     gh issue comment "$BOOTSTRAP_ISSUE" --body "Created GitHub Project:
+     - Project number: $PROJECT_NUMBER
+     - Project ID: $PROJECT_ID
+     - Project URL: $PROJECT_URL"
+
+     # Step C: Discover Status field ID
+     FIELDS_JSON=$(gh project field-list "$PROJECT_NUMBER" --owner "$BOOTSTRAP_PROJECT_OWNER" --format json)
+     STATUS_FIELD_ID=$(node -e 'const fs = JSON.parse(process.argv[1]).fields; const s = fs.find(f => f.name === "Status"); if (!s) process.exit(1); console.log(s.id);' "$FIELDS_JSON")
+     test -n "$STATUS_FIELD_ID" || exit 2
+
+     # Step D: Configure Status names via GraphQL mutation with real JSON input file
      MUTATION_FILE=$(mktemp /tmp/update-status-options.XXXXXX)
      cat << EOF > "$MUTATION_FILE"
      {
@@ -198,67 +230,126 @@ Implementation planning, Architect assessment, and Maintainer plan approval foll
      MUTATION_RES=$(gh api graphql --input "$MUTATION_FILE")
      rm -f "$MUTATION_FILE"
 
-     IN_PROGRESS_OPTION_ID=$(echo "$MUTATION_RES" | jq -r '.data.updateProjectV2Field.projectV2Field.options[] | select(.name=="In progress") | .id')
+     IN_PROGRESS_OPTION_ID=$(node -e 'const res = JSON.parse(process.argv[1]); const opt = res.data.updateProjectV2Field.projectV2Field.options.find(o => o.name === "In progress"); if (!opt) process.exit(1); console.log(opt.id);' "$MUTATION_RES")
+     test -n "$IN_PROGRESS_OPTION_ID" || exit 2
+
+     # Step E: Link Project to repository
+     gh project link "$PROJECT_NUMBER" --owner "$BOOTSTRAP_PROJECT_OWNER" --repo "$REPO_FULL"
+
+     # Step F: Read back and verify linkage and Status options
+     gh api graphql -f query='query($owner: String!, $repo: String!) { repository(owner: $owner, name: $repo) { projectsV2(first: 20) { nodes { id number title fields(first: 50) { nodes { ... on ProjectV2SingleSelectField { name options { id name } } } } } } } }' -f owner="$OWNER" -f repo="$REPO"
+
+     # Step G: Record complete configured Project identity and field/option IDs in bootstrap issue
+     gh issue comment "$BOOTSTRAP_ISSUE" --body "Configured and linked GitHub Project:
+     - Project number: $PROJECT_NUMBER
+     - Project ID: $PROJECT_ID
+     - Project URL: $PROJECT_URL
+     - Status field ID: $STATUS_FIELD_ID
+     - In progress option ID: $IN_PROGRESS_OPTION_ID"
      ```
-     _(Note: Order and color are creation details; the acceptance requirement is the exact four Status names)._
-   - Link the Project to the repository:
-     ```sh
-     gh project link "$PROJECT_NUMBER" --owner <user> --repo <owner/repo>
-     ```
-   - Read back the project linkage and status field options to verify:
-     ```sh
-     gh api graphql -f query='query($owner: String!, $repo: String!) { repository(owner: $owner, name: $repo) { projectsV2(first: 5) { nodes { id number title fields(first: 20) { nodes { ... on ProjectV2SingleSelectField { name options { id name } } } } } } } }' -f owner=<owner> -f repo=<repo>
-     ```
+   - **Recovery and retry guard**: Never re-run `gh project create` on missing variables, failure, or retry. If shell state is lost or an error occurs during configuration or linking, rediscover the Project read-only using `gh project list --owner <project-owner>` and `gh project field-list <project-number> --owner <project-owner>` by the recorded Project identity. Stop and report if multiple or ambiguous Projects exist.
+
 3. **Fulfill deferred Project status action** (`Agent — Coordinator`):
-   - Add the bootstrap issue to the new Project and capture the item ID:
+   - The Coordinator executes the deferred Project status update in a single self-contained shell block that first binds the literal Project and issue values recorded in the bootstrap issue comment before mutating:
      ```sh
-     ITEM_ID=$(gh project item-add "$PROJECT_NUMBER" --owner <user> --url <issue-url> --format json --jq .id)
-     ```
-   - Update the item's Status to `In progress`:
-     ```sh
+     set -eu
+
+     BOOTSTRAP_PROJECT_OWNER="<user>"
+     ISSUE_URL="<bootstrap-issue-url>"
+     PROJECT_NUMBER="<recorded-project-number>"
+     PROJECT_ID="<recorded-project-id>"
+     STATUS_FIELD_ID="<recorded-status-field-id>"
+     IN_PROGRESS_OPTION_ID="<recorded-in-progress-option-id>"
+
+     # Guard: fail before any mutation if any required literal is missing or a placeholder
+     for var_val in "$BOOTSTRAP_PROJECT_OWNER" "$ISSUE_URL" "$PROJECT_NUMBER" "$PROJECT_ID" "$STATUS_FIELD_ID" "$IN_PROGRESS_OPTION_ID"; do
+       case "$var_val" in
+         ""|\<*\>)
+           echo "Error: Missing required literal value from bootstrap issue comment" >&2
+           exit 2
+           ;;
+       esac
+     done
+
+     ITEM_ID=$(gh project item-add "$PROJECT_NUMBER" --owner "$BOOTSTRAP_PROJECT_OWNER" --url "$ISSUE_URL" --format json --jq .id)
+     test -n "$ITEM_ID" || exit 2
+
      gh project item-edit --id "$ITEM_ID" --field-id "$STATUS_FIELD_ID" --project-id "$PROJECT_ID" --single-select-option-id "$IN_PROGRESS_OPTION_ID"
-     ```
-   - Read back the item's status to confirm `In progress`:
-     ```sh
+
+     # Read back the item's status to confirm In progress
      gh api graphql -f query='query($id: ID!) { node(id: $id) { ... on ProjectV2Item { fieldValueByName(name: "Status") { ... on ProjectV2ItemFieldSingleSelectValue { name } } } } }' -f id="$ITEM_ID"
      ```
 
 ### Wiki setup
 
-1. **Check eligibility and initialize** (`Agent — Coder` & `Maintainer`):
+1. **Check wiki eligibility** (`Agent — Coder`):
    - Agent checks `has_wiki` and plan eligibility via the GitHub API:
      ```sh
      gh api /repos/<owner>/<repo> --jq '{has_wiki: .has_wiki, private: .private}'
      ```
      Public repositories include wikis on all plans; private repositories require a GitHub Pro, Team, or Enterprise plan. If unavailable, the agent reports via the Coordinator to the Maintainer; never silently alter repository settings.
-   - Maintainer navigates to the GitHub repository web UI Wiki tab and creates the first page (e.g. Home) so GitHub initializes the wiki git repository.
-2. **Prepare wiki content and link retargeting** (`Agent — Coder`):
-   - Create unique temporary directories for source and target checkouts:
+
+2. **Initialize wiki repository** (`Maintainer`):
+   - Maintainer navigates to the GitHub repository web UI Wiki tab and creates the first page (for example, Home) so GitHub initializes the wiki git repository.
+
+3. **Clone, copy, retarget, and record wiki pages** (`Agent — Coder`):
+   - Execute the wiki preparation sequence in a single coherent shell block:
      ```sh
+     set -eu
+
+     OWNER="<owner>"
+     REPO="<repo>"
+     DEFAULT_BRANCH="<default-branch>"
+     BOOTSTRAP_ISSUE="<bootstrap-issue-number>"
+
+     # Guard: fail before any operation if variables are unbound
+     for var in "$OWNER" "$REPO" "$DEFAULT_BRANCH" "$BOOTSTRAP_ISSUE"; do
+       case "$var" in ""|\<*\>) echo "Error: Unbound variable" >&2; exit 2 ;; esac
+     done
+
      SRC_WIKI=$(mktemp -d -t web-starter-source-wiki-XXXXXX)
      TGT_WIKI=$(mktemp -d -t target-wiki-XXXXXX)
-     ```
-   - Clone both the template wiki and target wiki:
-     ```sh
-     git clone https://github.com/joebaz/web-starter.wiki.git "$SRC_WIKI"
-     git clone https://github.com/<owner>/<repo>.wiki.git "$TGT_WIKI"
-     ```
-   - Discover the branch name for both wikis:
-     ```sh
+
+     git clone "https://github.com/joebaz/web-starter.wiki.git" "$SRC_WIKI"
+     git clone "https://github.com/$OWNER/$REPO.wiki.git" "$TGT_WIKI"
+
      SRC_BRANCH=$(git -C "$SRC_WIKI" branch --show-current)
      TGT_BRANCH=$(git -C "$TGT_WIKI" branch --show-current)
-     ```
-   - Copy markdown pages into the target wiki checkout, preserving the target's `.git` directory and history:
-     ```sh
+
+     # Guard: verify non-empty target directory and expected git remote before operating
+     test -n "$TGT_WIKI" && test -d "$TGT_WIKI/.git" || exit 2
+     git -C "$TGT_WIKI" remote get-url origin | grep -q "github\.com[/:]$OWNER/$REPO\.wiki" || exit 2
+
      cp "$SRC_WIKI"/*.md "$TGT_WIKI/"
+
+     # Retarget operational repository links in copied wiki pages
+     # In Agent-Setup.md, update agent roles link to target repository default branch
+     node -e '
+       const fs = require("node:fs");
+       const path = process.argv[1] + "/Agent-Setup.md";
+       if (fs.existsSync(path)) {
+         let content = fs.readFileSync(path, "utf8");
+         content = content.replace(
+           /https:\/\/github\.com\/joebaz\/web-starter\/blob\/main\/AGENTS\.md#roles/g,
+           `https://github.com/${process.argv[2]}/${process.argv[3]}/blob/${process.argv[4]}/AGENTS.md#roles`
+         );
+         fs.writeFileSync(path, content, "utf8");
+       }
+     ' "$TGT_WIKI" "$OWNER" "$REPO" "$DEFAULT_BRANCH"
+
+     # Review local diff in target wiki checkout
+     git -C "$TGT_WIKI" diff
+
+     # Record BOTH source and target checkout paths and target branch in bootstrap issue comment
+     gh issue comment "$BOOTSTRAP_ISSUE" --body "Wiki prepared for Maintainer review and publishing:
+     - Source wiki checkout path: $SRC_WIKI
+     - Target wiki checkout path: $TGT_WIKI
+     - Target wiki branch: $TGT_BRANCH"
      ```
-   - Retarget operational repository links in the copied wiki pages:
-     - In `Agent-Setup.md`, update `[agent roles](https://github.com/joebaz/web-starter/blob/main/AGENTS.md#roles)` to:
-       `[agent roles](https://github.com/<owner>/<repo>/blob/<default-branch>/AGENTS.md#roles)`
-     - Retarget operational wiki and repository links to the new repository while keeping Template provenance references intact.
-   - Review local diff in `$TGT_WIKI`.
-3. **Publish wiki** (`Maintainer`):
-   - Provide concrete literal path and branch commands to the Maintainer (do not rely on cross-shell environment variables):
+   - If subsequent operations or agents inspect the prepared wiki, they bind the concrete literal checkout paths recorded in the bootstrap issue comment rather than relying on cross-shell persistence.
+
+4. **Publish wiki** (`Maintainer`):
+   - The Maintainer executes publishing using the concrete literal path and branch recorded in the bootstrap issue (do not rely on cross-shell environment variables):
      Verify working tree and remote:
      ```sh
      git -C <target-wiki-path> remote -v
@@ -267,11 +358,35 @@ Implementation planning, Architect assessment, and Maintainer plan approval foll
      Stage and commit pages with quoted pathspec:
      ```sh
      git -C <target-wiki-path> add -- '*.md'
-     git -C <target-wiki-path> commit -m "docs: bootstrap repository wiki from template"
+     git -C <target-wiki-path> commit -m "Bootstrap repository wiki from template"
      git -C <target-wiki-path> push origin <wiki-branch>
      ```
-   - Remove the temporary directories:
+     Substitute the actual resolved checkout directory for `<target-wiki-path>` and the discovered branch name for `<wiki-branch>` recorded in the bootstrap issue comment. Quoting `'*.md'` ensures the pathspec is evaluated inside the target wiki checkout rather than globbed by the current working directory.
+
+5. **Clean up temporary directories** (`Agent — Coder`):
+   - After the Maintainer confirms the wiki is published, clean up temporary directories. The Coder binds the literal paths recorded in the bootstrap issue comment at the start of the block and validates them before removal:
      ```sh
+     set -eu
+
+     # Bind literal paths from the bootstrap issue comment:
+     SRC_WIKI="<recorded-source-wiki-path>"
+     TGT_WIKI="<recorded-target-wiki-path>"
+     OWNER="<owner>"
+     REPO="<repo>"
+
+     # Guard: fail before removal if any path is empty or a placeholder
+     for var in "$SRC_WIKI" "$TGT_WIKI" "$OWNER" "$REPO"; do
+       case "$var" in ""|\<*\>) echo "Error: Unbound variable for wiki cleanup" >&2; exit 2 ;; esac
+     done
+
+     # Guard: verify paths exist, are directories, contain .git, and match expected remotes
+     test -d "$SRC_WIKI/.git" || exit 2
+     git -C "$SRC_WIKI" remote get-url origin | grep -q "github\.com[/:]joebaz/web-starter\.wiki" || exit 2
+
+     test -d "$TGT_WIKI/.git" || exit 2
+     git -C "$TGT_WIKI" remote get-url origin | grep -q "github\.com[/:]$OWNER/$REPO\.wiki" || exit 2
+
+     # Remove verified temporary directories
      rm -rf "$SRC_WIKI" "$TGT_WIKI"
      ```
 
@@ -280,7 +395,7 @@ Implementation planning, Architect assessment, and Maintainer plan approval foll
 Perform only the specified bootstrap modifications (`Agent — Coder`):
 
 1. **[website-facts.yaml](../website-facts.yaml)**:
-   - Fill in approved intake values. Keep all existing keys intact. Undecided optional facts remain blank.
+   - Fill in approved intake values. Keep all existing keys intact. Undecided optional facts remain blank or explicit `none`.
 2. **[README.md](../README.md)**:
    - Update the top-level heading to the repository name.
    - Replace the marked `<!-- template-only:start --> ... <!-- template-only:end -->` block with a generic opening linking back to the [web-starter Template](https://github.com/joebaz/web-starter):
@@ -304,14 +419,14 @@ Perform only the specified bootstrap modifications (`Agent — Coder`):
      ```sh
      ls -la docs/plans docs/specs
      ```
-   - Remove only Template-specific plans and specs (such as `docs/plans/87-bootstrap-website.md`). Keep [docs/plans/README.md](plans/README.md) and any target-owned Task Artifacts (including the bootstrap plan). Note: there is no `docs/specs/README.md`.
+   - Remove only Template-specific plans and specs (such as `docs/plans/87-bootstrap-website.md`). Keep [docs/plans/README.md](plans/README.md) and repository Task Artifacts (including the bootstrap plan). Note: there is no `docs/specs/README.md`.
    - In [docs/lifecycle.yaml](lifecycle.yaml), update the `authority` reference for `specs/15-lifecycle.md` to point to the Template's published URL:
      `https://github.com/joebaz/web-starter/blob/main/docs/specs/15-lifecycle.md`
    - Inspect retained documentation links across the repository and repoint any links into the removed Template history to valid destinations.
 7. **Retained Template links**:
    - Find all Template references:
      ```sh
-     rg "web-starter" --glob '!docs/plans/**' --glob '!docs/specs/**'
+     git grep "web-starter" -- ':!docs/plans' ':!docs/specs'
      ```
    - Explicitly retain Template reference notes and provenance links:
      - Pending reference notes for Template issues [#30](https://github.com/joebaz/web-starter/issues/30) and [#31](https://github.com/joebaz/web-starter/issues/31) in [coding-standards.md](../coding-standards.md).
@@ -330,16 +445,20 @@ Perform only the specified bootstrap modifications (`Agent — Coder`):
 The remainder of the bootstrap process completes through the canonical [Lifecycle](lifecycle.yaml), which governs independent review, Maintainer sign-off, publishing, merge, and retro.
 
 1. **Run local validation checks** (`Agent — Coder`):
-   - Run the standard feature checks:
+   - Run the required checks specified in [CONTRIBUTING.md#validate-your-change](../CONTRIBUTING.md#validate-your-change):
      ```sh
      npm run format:check
      npm run lint
      npm run check
      npm test
      npm run build
+     ```
+   - Verify that built HTML output contains the configured `lang` attribute and valid metadata.
+   - Run the early bootstrap setup check:
+     ```sh
      npm run bootstrap:check
      ```
-   - Verify that built HTML output contains the configured `lang` attribute and valid metadata. Note that `bootstrap:check` CI runs will report missing or pending until the pull request branch is pushed and CI runs.
+     In early bootstrap, `bootstrap:check` is expected to exit with code `1` because GitHub Project setup, contact URL, and pull request CI are pending.
 
 2. **Verify publishing evidence** (`Agent — Coordinator`):
    - Verify a clean working tree:
@@ -348,9 +467,12 @@ The remainder of the bootstrap process completes through the canonical [Lifecycl
      ```
    - Verify local `HEAD` commit equals pull request `headRefOid`:
      ```sh
+     PR_NUMBER="<pr-number>"
+     case "$PR_NUMBER" in ""|\<*\>) echo "Error: Unbound PR_NUMBER" >&2; exit 2 ;; esac
+
      LOCAL_HEAD=$(git rev-parse HEAD)
-     PR_HEAD=$(gh pr view <pr-number> --json headRefOid --jq .headRefOid)
-     test "$LOCAL_HEAD" = "$PR_HEAD"
+     PR_HEAD=$(gh pr view "$PR_NUMBER" --json headRefOid --jq .headRefOid)
+     test "$LOCAL_HEAD" = "$PR_HEAD" || exit 2
      ```
    - Inspect GitHub Actions CI runs for the pull request event on the current head commit:
      ```sh
@@ -361,4 +483,4 @@ The remainder of the bootstrap process completes through the canonical [Lifecycl
      ```sh
      npm run bootstrap:check
      ```
-     Verify that `bootstrap:check` exits `0`.
+     Verify that `bootstrap:check` exits with code `0`.

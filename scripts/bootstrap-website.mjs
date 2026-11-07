@@ -459,7 +459,17 @@ function fetchAllProjectFields(projectId, initialNodes, hasMore, cursor) {
     }
 
     hasNext = Boolean(fieldsData.pageInfo?.hasNextPage);
-    currentCursor = fieldsData.pageInfo?.endCursor || null;
+    if (hasNext) {
+      const nextCursor = fieldsData.pageInfo?.endCursor;
+      if (!nextCursor || typeof nextCursor !== "string" || !nextCursor.trim()) {
+        throw new Error(
+          `GraphQL pagination error: fields hasNextPage is true but endCursor is missing or empty for project ${projectId}`,
+        );
+      }
+      currentCursor = nextCursor.trim();
+    } else {
+      currentCursor = null;
+    }
   }
 
   return fields;
@@ -582,7 +592,17 @@ function fetchLinkedProjects(owner, repo) {
     }
 
     hasNextPage = projectsData.pageInfo.hasNextPage;
-    afterCursor = projectsData.pageInfo.endCursor || null;
+    if (hasNextPage) {
+      const nextCursor = projectsData.pageInfo.endCursor;
+      if (!nextCursor || typeof nextCursor !== "string" || !nextCursor.trim()) {
+        throw new Error(
+          `GraphQL pagination error: projectsV2 hasNextPage is true but endCursor is missing or empty.`,
+        );
+      }
+      afterCursor = nextCursor.trim();
+    } else {
+      afterCursor = null;
+    }
   }
 
   return allProjects;
