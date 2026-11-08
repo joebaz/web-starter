@@ -4,7 +4,7 @@
 
 This repository is the [web-starter Template](https://github.com/joebaz/web-starter) for informational website projects.
 
-## Bootstrap a new website
+## Getting Started
 
 1. On GitHub, select **Use this template** > **Create a new repository**, then choose its owner, name, and visibility.
 2. Clone the new repository and open it in your agent tool. Its machine setup is listed under [Requirements](#requirements) and in the Wiki's [Agent setup](https://github.com/joebaz/web-starter/wiki/Agent-Setup). [Paseo](https://paseo.sh/) is optional.
