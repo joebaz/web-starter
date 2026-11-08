@@ -2,7 +2,20 @@
 
 # Astro Web Starter
 
-This repository is the [web-starter Template](https://github.com/joebaz/web-starter) for informational website projects. To set up a new website repository created from this Template, follow [docs/bootstrap-website.md](docs/bootstrap-website.md).
+This repository is the [web-starter Template](https://github.com/joebaz/web-starter) for informational website projects.
+
+## Bootstrap a new website
+
+1. On GitHub, select **Use this template** > **Create a new repository**, then choose its owner, name, and visibility.
+2. Clone the new repository and open it in your agent tool. Its machine setup is listed under [Requirements](#requirements) and in the Wiki's [Agent setup](https://github.com/joebaz/web-starter/wiki/Agent-Setup). [Paseo](https://paseo.sh/) is optional.
+3. In a fresh agent session, send this prompt, replacing `<site-name>` with the website's name:
+
+   ```text
+   Bootstrap this repo for a new website called <site-name>.
+   ```
+
+The agent then guides you through intake questions and approvals; you make the commits and publish the changes. Bootstrap sets up the repository; website content comes later. The full procedure is in [docs/bootstrap-website.md](docs/bootstrap-website.md).
+
 <!-- template-only:end -->
 
 This repository uses Astro, React, Tailwind CSS, and TypeScript. The sections below describe its tools, commands, agent workflow, and documentation.
