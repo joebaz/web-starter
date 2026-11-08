@@ -134,7 +134,9 @@ The Planner conducts intake under the canonical Define stage.
 
 ## Plan stage
 
-Implementation planning, Architect assessment, and Maintainer plan approval follow the canonical [Lifecycle](lifecycle.yaml). No implementation edits or administrative setup may run before the Plan stage is approved.
+Implementation planning and Maintainer plan approval follow the canonical [Lifecycle](lifecycle.yaml). No implementation edits or administrative setup may run before the Plan stage is approved.
+
+For bootstrap only, skip the Lifecycle's Architect steps: `plan-assessment`, `recommendations-review`, and `signed-off-assessment`. This runbook is an established procedure. Report problems for a Template fix through its normal issue and approval process. Repairs to the new repository still need its normal approvals. This takes precedence over the Lifecycle's Architect requirements, including plan approval and sign-off waiting on an assessment. The Reviewer's independent review, CI, the Maintainer's approvals and sign-off, and Maintainer-only actions all still apply.
 
 ---
 
