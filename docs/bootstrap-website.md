@@ -20,11 +20,23 @@ Every step in this runbook is assigned to an actor:
 
 The bootstrap process follows the canonical [Lifecycle](lifecycle.yaml). The Lifecycle owns the stage sequence, handoffs, and approval gates; this runbook maps bootstrap activities to those stages.
 
+### Maintainer handoffs
+
+Once the new repository is open in an agent tool, the Coordinator handles everything the Maintainer needs to do, answer, or approve, in its own session. Other roles give the Coordinator the details. The Coordinator records each result in the bootstrap issue. For bootstrap, this replaces the Coordinator SOP's [Hand back](agents/roles/coordinator.md#hand-back) notice that sends the Maintainer to another session. The Maintainer can still talk to another role directly; that role then tells the Coordinator what was decided, naming the artifact and revision. Approvals, commits, pushes, merges, and publishing stay with the Maintainer.
+
+For each handoff, the Coordinator gives:
+
+- what it is for and the expected result
+- where it applies, checked just before: working directory, repository, branch, and remote, or the artifact and revision
+- the exact commands or GitHub steps, with every value filled in
+
+The Maintainer never fills in placeholders, relies on another shell's variables, or switches sessions. Placeholders such as `<owner>` in this runbook are for agents to fill.
+
 ### Once-per-machine tools (`skip if done`)
 
 - **Node.js**: Compatible with the `engines` specification in [package.json](../package.json). The repository's `.nvmrc` selects the Node.js major version, while `.npmrc` enforces the supported version range through `engine-strict`.
 - **npm**: Standard Node package manager.
-- **GitHub CLI (`gh`)**: Installed and authenticated (`gh auth status`) with access to the owning account and the `project` scope (`gh auth refresh -s project`). The authenticated account belongs to the Maintainer; credential operations are human-owned Maintainer actions; agents never modify credentials. For setup instructions, see [CONTRIBUTING.md](../CONTRIBUTING.md#set-up-a-local-checkout) and the Wiki's [Agent setup](https://github.com/joebaz/web-starter/wiki/Agent-Setup).
+- **GitHub CLI (`gh`)**: Installed and authenticated (`gh auth status`) with access to the owning account and the `project` scope (`gh auth refresh -s project`). The authenticated account belongs to the Maintainer; credential operations are human-owned Maintainer actions; agents never modify credentials. If sign-in or the `project` scope is missing, the Coordinator gives the Maintainer the command. For setup instructions, see [CONTRIBUTING.md](../CONTRIBUTING.md#set-up-a-local-checkout) and the Wiki's [Agent setup](https://github.com/joebaz/web-starter/wiki/Agent-Setup).
 - **Playwright browsers**: Installed with `npx playwright install`. Required for running `npm test`.
 - **Agent workspace**: Repository opened in Paseo (project and Local workspace) or the Maintainer's agent environment.
 
@@ -94,7 +106,7 @@ The bootstrap process follows the canonical [Lifecycle](lifecycle.yaml). The Lif
 The Planner conducts intake under the canonical Define stage.
 
 1. **Intake for website facts** (`Agent — Planner`):
-   - Interview the Maintainer to gather facts defined in [website-facts.yaml](../website-facts.yaml).
+   - Through the Coordinator, ask the Maintainer for the facts defined in [website-facts.yaml](../website-facts.yaml).
    - Six facts are **mandatory** to complete bootstrap setup:
      - `site_name`: Public name of the website. Prefilled once from the repository name. If the initial prompt already named the site, present that name alongside the repository-name prefill and confirm once; do not overwrite or ask twice. Repository name and site name are distinct facts (though they may share the same value).
      - `site_description`: Brief description of the website. Prefilled once from the repository's GitHub Description for Maintainer confirmation or replacement. If empty, ask the Maintainer directly. Never kept in continuous sync with the GitHub Description afterward.
@@ -107,7 +119,7 @@ The Planner conducts intake under the canonical Define stage.
    - Never put secrets or credentials into [website-facts.yaml](../website-facts.yaml).
 
 2. **One-time sitemap and 404 choices** (`Agent — Planner`):
-   - Ask the Maintainer once regarding:
+   - Through the Coordinator, ask the Maintainer once regarding:
      - `sitemapExclusions` in [astro.config.mjs](../astro.config.mjs) (default is none).
      - 404 page copy in [src/pages/404.astro](../src/pages/404.astro) (title, description, explanation, homepage link label). Confirm retaining defaults if that is the choice.
    - Retaining no sitemap exclusions and default 404 copy is an easy explicit choice revisable later. Bootstrap is minimal repository setup, not a full site implementation roadmap.
@@ -135,13 +147,13 @@ Implementation planning, Architect assessment, and Maintainer plan approval foll
      ```sh
      npm run bootstrap:check
      ```
-   - Present the exact effects reported by check mode to the Maintainer in chat or the bootstrap issue:
+   - Give the Coordinator the exact effects check mode reports, to show the Maintainer:
      - Exact label additions to create from [.github/labels.yml](../.github/labels.yml) (name, color, description).
      - Exact label updates to modify (name casing, color, description).
      - Exact GitHub stock default labels (`default === true`) to delete.
      - Preserved custom labels (`default !== true`) noted as kept for separate review.
      - `delete_branch_on_merge` repository setting to enable.
-   - Obtain explicit written approval before proceeding.
+   - Get the Maintainer's written approval through the Coordinator before continuing.
 2. **Execute and verify apply mode** (`Agent — Coder — written approval required`):
    - Run the setup script in apply mode:
      ```sh
@@ -156,7 +168,7 @@ Implementation planning, Architect assessment, and Maintainer plan approval foll
      - All canonical labels exist with exact case names, colors, and descriptions.
      - All stock default labels were deleted.
      - Any partial failure reports successful, attempted, and failed/unknown outcomes and exits with code `2`.
-   - **Decision on preserved custom labels**: If non-default custom labels existed in the repository, apply mode preserves them for separate review. Because `bootstrap:check` expects an exact match with the canonical set, preserved custom labels will continue to cause check mode to report a mismatch until the Maintainer decides on each one (either deleting it via `gh label delete <name>` or adding it to `.github/labels.yml`).
+   - **Decision on preserved custom labels**: If non-default custom labels existed in the repository, apply mode preserves them for separate review. Because `bootstrap:check` expects an exact match with the canonical set, preserved custom labels will continue to cause check mode to report a mismatch until the Maintainer decides on each one (either deleting it via `gh label delete <name>` or adding it to `.github/labels.yml`). The Coordinator asks for that decision.
 3. **Apply category label** (`Agent — Coordinator`):
    - Apply the canonical lowercase `feature` label to the bootstrap issue now that labels exist:
      ```sh
@@ -172,7 +184,7 @@ Implementation planning, Architect assessment, and Maintainer plan approval foll
      gh api /repos/<owner>/<repo> --jq .owner.type
      ```
      If the repository is owned by an Organization, pause and route the conflict through the Coordinator to the Maintainer. A user-level same-owner Project is required; do not silently create or substitute an organization Project.
-   - Obtain explicit written approval from the Maintainer to create a user-level GitHub Project and link it to the repository.
+   - Get the Maintainer's written approval, through the Coordinator, to create a user-level GitHub Project and link it to the repository.
 
 2. **Create, configure, link, and record GitHub Project** (`Agent — Coder — written approval required`):
    - Execute the Project creation, initial recording, configuration, repository link, readback verification, and full recording in a single coherent shell block:
@@ -290,7 +302,7 @@ Implementation planning, Architect assessment, and Maintainer plan approval foll
      Public repositories include wikis on all plans; private repositories require a GitHub Pro, Team, or Enterprise plan. If unavailable, the agent reports via the Coordinator to the Maintainer; never silently alter repository settings.
 
 2. **Initialize wiki repository** (`Maintainer`):
-   - Maintainer navigates to the GitHub repository web UI Wiki tab and creates the first page (for example, Home) so GitHub initializes the wiki git repository.
+   - The Coordinator gives the Maintainer the wiki's address, `https://github.com/<owner>/<repo>/wiki`, filled in. The Maintainer creates the first page there (for example, Home) so GitHub sets up the wiki repository, then tells the Coordinator.
 
 3. **Clone, copy, retarget, and record wiki pages** (`Agent — Coder`):
    - Execute the wiki preparation sequence in a single coherent shell block:
@@ -349,19 +361,16 @@ Implementation planning, Architect assessment, and Maintainer plan approval foll
    - If subsequent operations or agents inspect the prepared wiki, they bind the concrete literal checkout paths recorded in the bootstrap issue comment rather than relying on cross-shell persistence.
 
 4. **Publish wiki** (`Maintainer`):
-   - The Maintainer executes publishing using the concrete literal path and branch recorded in the bootstrap issue (do not rely on cross-shell environment variables):
-     Verify working tree and remote:
+   - The Coder reads the wiki path and branch recorded in the bootstrap issue, checks that checkout, and gives the Coordinator these commands with both values filled in:
      ```sh
      git -C <target-wiki-path> remote -v
      git -C <target-wiki-path> status
-     ```
-     Stage and commit pages with quoted pathspec:
-     ```sh
      git -C <target-wiki-path> add -- '*.md'
      git -C <target-wiki-path> commit -m "Bootstrap repository wiki from template"
      git -C <target-wiki-path> push origin <wiki-branch>
      ```
-     Substitute the actual resolved checkout directory for `<target-wiki-path>` and the discovered branch name for `<wiki-branch>` recorded in the bootstrap issue comment. Quoting `'*.md'` ensures the pathspec is evaluated inside the target wiki checkout rather than globbed by the current working directory.
+     Quoting `'*.md'` makes Git, not the shell, match the pages inside the wiki checkout.
+   - The Coordinator gives the Maintainer the filled-in commands, then confirms the published pages after the push.
 
 5. **Clean up temporary directories** (`Agent — Coder`):
    - After the Maintainer confirms the wiki is published, clean up temporary directories. The Coder binds the literal paths recorded in the bootstrap issue comment at the start of the block and validates them before removal:
@@ -460,7 +469,11 @@ The remainder of the bootstrap process completes through the canonical [Lifecycl
      ```
      In early bootstrap, `bootstrap:check` is expected to exit with code `1` because GitHub Project setup, contact URL, and pull request CI are pending.
 
-2. **Verify publishing evidence** (`Agent — Coordinator`):
+2. **Commit and push** (`Maintainer`):
+   - When the Lifecycle calls for it, the Coordinator checks the working directory, branch, remote, and changed files, then gives the Maintainer the exact commands, including the commit message.
+   - After the push, the Coordinator confirms the pushed commit matches local `HEAD`.
+
+3. **Verify publishing evidence** (`Agent — Coordinator`):
    - Verify a clean working tree:
      ```sh
      git status --porcelain
@@ -484,3 +497,6 @@ The remainder of the bootstrap process completes through the canonical [Lifecycl
      npm run bootstrap:check
      ```
      Verify that `bootstrap:check` exits with code `0`.
+
+4. **Merge** (`Maintainer`):
+   - When the Lifecycle calls for it, the Coordinator gives the Maintainer the pull request URL and its checked head commit. After the merge, it confirms the result on the default branch.
