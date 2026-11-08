@@ -2,7 +2,7 @@
 
 # Astro Web Starter
 
-This repository is the [web-starter Template](https://github.com/joebaz/web-starter) for informational website projects.
+This repository is the [web-starter Template](https://github.com/joebaz/web-starter) for informational website projects. To set up a new website repository created from this Template, follow [docs/bootstrap-website.md](docs/bootstrap-website.md).
 <!-- template-only:end -->
 
 This repository uses Astro, React, Tailwind CSS, and TypeScript. The sections below describe its tools, commands, agent workflow, and documentation.
@@ -17,19 +17,21 @@ The repository's `.nvmrc` selects the Node major version, and `.npmrc` enables `
 
 ## Commands
 
-| Command                  | Purpose                                               |
-| ------------------------ | ----------------------------------------------------- |
-| `npm install`            | Installs dependencies from the manifest and lockfile  |
-| `npm run dev`            | Starts the local Astro development server             |
-| `npm run format`         | Formats repository files                              |
-| `npm run format:check`   | Checks formatting without changing files              |
-| `npm run lint`           | Runs ESLint, including accessibility source rules     |
-| `npm run check`          | Runs Astro's type checker                             |
-| `npm test`               | Runs lint configuration tests and browser smoke tests |
-| `npm run test:lint`      | Runs only the lint configuration tests                |
-| `npm run build`          | Builds the site into `dist/`                          |
-| `npm run preview`        | Previews the completed build locally                  |
-| `npx playwright install` | Installs Playwright browser binaries                  |
+| Command                   | Purpose                                               |
+| ------------------------- | ----------------------------------------------------- |
+| `npm install`             | Installs dependencies from the manifest and lockfile  |
+| `npm run dev`             | Starts the local Astro development server             |
+| `npm run format`          | Formats repository files                              |
+| `npm run format:check`    | Checks formatting without changing files              |
+| `npm run lint`            | Runs ESLint, including accessibility source rules     |
+| `npm run check`           | Runs Astro's type checker                             |
+| `npm test`                | Runs lint configuration tests and browser smoke tests |
+| `npm run test:lint`       | Runs only the lint configuration tests                |
+| `npm run build`           | Builds the site into `dist/`                          |
+| `npm run preview`         | Previews the completed build locally                  |
+| `npm run bootstrap:check` | Checks GitHub and local setup for a repository        |
+| `npm run bootstrap:apply` | Applies labels and delete-on-merge after approval     |
+| `npx playwright install`  | Installs Playwright browser binaries                  |
 
 Command definitions and dependency versions are in [package.json](package.json). Follow [development-server management](CONTRIBUTING.md#manage-development-servers) when starting or stopping a server.
 
@@ -103,6 +105,7 @@ See [CONTRIBUTING](CONTRIBUTING.md#validate-your-change) for which checks run an
 | `playwright.config.ts`             | Browser projects, server startup, retries, and failure artifacts                     |
 | `prettier.config.mjs`              | Formatting configuration                                                             |
 | `public/`                          | Static files copied to the build unchanged                                           |
+| `scripts/`                         | Repository scripts, including the bootstrap script                                   |
 | `src/`                             | Site source processed by Astro                                                       |
 | `src/pages/`                       | File-based routes; `index.astro` provides the homepage                               |
 | `src/styles/`                      | Shared styles; `global.css` loads Tailwind                                           |

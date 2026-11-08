@@ -15,7 +15,9 @@
     "format:check": "prettier --check .",
     "lint": "eslint .",
     "test": "npm run test:lint && rm -rf test-results playwright-report && playwright test && rm -rf test-results playwright-report",
-    "test:lint": "node --test \"tests/lint/*.test.mjs\""
+    "test:lint": "node --test \"tests/lint/*.test.mjs\"",
+    "bootstrap:check": "node scripts/bootstrap-website.mjs check",
+    "bootstrap:apply": "node scripts/bootstrap-website.mjs apply"
   },
   "dependencies": {
     "@astrojs/react": "^6.0.5",
