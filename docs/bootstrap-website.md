@@ -14,8 +14,7 @@ Bootstrap still covers the steps in this runbook, including the required facts, 
 
 Every step in this runbook is assigned to an actor:
 
-- `Maintainer`: Human-only actions (credentials, account and repository settings, business decisions, written approvals, git commits, pushes, merges, wiki pushes, repository deletion).
-- `Agent — <role> — written approval required`: Agent operations requiring explicit written approval from the Maintainer in the issue or chat before execution.
+- `Maintainer`: Human-only actions (credentials, account and repository settings outside the [pre-approved setup](#pre-approved-setup), business decisions, written approvals, git commits, pushes, merges, wiki pushes, repository deletion).
 - `Agent — <role>`: Agent operations performed under that role's standard operating procedure.
 
 The bootstrap process follows the canonical [Lifecycle](lifecycle.yaml). The Lifecycle owns the stage sequence, handoffs, and approval gates; this runbook maps bootstrap activities to those stages.
@@ -82,9 +81,9 @@ The Maintainer never fills in placeholders, relies on another shell's variables,
      - [ ] Sitemap and 404 choices confirmed
      - [ ] GitHub Project deferral recorded
 
-     ## Implementation and approvals
-     - [ ] Labels and delete-on-merge written approval and apply
-     - [ ] GitHub Project creation written approval, creation, and link
+     ## Implementation
+     - [ ] Labels and delete-on-merge applied and verified
+     - [ ] GitHub Project created, linked, and verified
      - [ ] Wiki initialized, copied, and published
      - [ ] Repository files updated and validated
 
@@ -97,13 +96,13 @@ The Maintainer never fills in placeholders, relies on another shell's variables,
      gh issue create --title "Bootstrap website repository" --body-file "$ISSUE_BODY"
      rm -f "$ISSUE_BODY"
      ```
-   - Record the issue number and URL. Do not assign category labels on creation; labels do not exist yet. Record all intake answers, check results, and written approvals as comments in this issue.
+   - Record the issue number and URL. Do not assign category labels on creation; labels do not exist yet. Record all intake answers, progress, check results, and any Maintainer decisions as comments in this issue.
 
 ---
 
 ## Intake and choices
 
-The Planner conducts intake under the canonical Define stage.
+The Planner collects the answers below through the Coordinator. Ask only these questions; there is no requirements interview. The answers are the bootstrap's requirements and need no separate approval.
 
 1. **Intake for website facts** (`Agent — Planner`):
    - Through the Coordinator, ask the Maintainer for the facts defined in [website-facts.yaml](../website-facts.yaml).
@@ -113,7 +112,7 @@ The Planner conducts intake under the canonical Define stage.
      - `business_name`: Legal or operating business name.
      - `maintainer`: Responsible technical maintainer.
      - `client_approver`: Business client contact/approver. Must name a person. If there is no separate client, use the Maintainer (never `none`).
-     - `language`: Valid HTML language tag (for example, `en`, `es`, `ja`). **If undecided, pause bootstrap until chosen. Never assume English.** Reference the existing reader and build diagnostic (`astro.config.mjs` / `src/website-facts.ts` or `npm run build`); do not edit site files before plan approval.
+     - `language`: Valid HTML language tag (for example, `en`, `es`, `ja`). **If undecided, pause bootstrap until chosen. Never assume English.** Reference the existing reader and build diagnostic (`astro.config.mjs` / `src/website-facts.ts` or `npm run build`); do not edit site files during intake.
    - If any of these six required facts is undecided, bootstrap cannot complete; pause until the missing answer is supplied.
    - All other facts defined in [website-facts.yaml](../website-facts.yaml) (`production_url`, `redirecting_hostnames`, `other_languages`, `hosting_provider`, `dns_provider`, `domain_registrar`, `analytics`, `user_data_stored`) may remain blank (undecided) or set to explicit `none` if decided not applicable; they do not block minimal repository bootstrap.
    - Never put secrets or credentials into [website-facts.yaml](../website-facts.yaml).
@@ -128,40 +127,52 @@ The Planner conducts intake under the canonical Define stage.
 3. **Fresh-bootstrap Project-status deferral** (`Agent — Coordinator`):
    - Verify that no linked GitHub Project exists yet.
    - Record `Project not created yet` in the bootstrap issue and execution checkpoint.
-   - This approved deferral permits planning to proceed to the Plan stage without a premature `In progress` Project status move.
+   - This lets bootstrap continue without a premature `In progress` Project status move.
 
 ---
 
-## Plan stage
+## No separate plan
 
-Implementation planning and Maintainer plan approval follow the canonical [Lifecycle](lifecycle.yaml). No implementation edits or administrative setup may run before the Plan stage is approved.
+Bootstrap works like an installer: this runbook is the plan, and starting a bootstrap approves it. Once intake is complete, go straight to Implementation and report progress in the bootstrap issue. Don't write a bootstrap plan or spec, and don't ask the Maintainer to approve requirements or a plan.
 
-For bootstrap only, skip the Lifecycle's Architect steps: `plan-assessment`, `recommendations-review`, and `signed-off-assessment`. This runbook is an established procedure. Report problems for a Template fix through its normal issue and approval process. Repairs to the new repository still need its normal approvals. This takes precedence over the Lifecycle's Architect requirements, including plan approval and sign-off waiting on an assessment. The Reviewer's independent review, CI, the Maintainer's approvals and sign-off, and Maintainer-only actions all still apply.
+For bootstrap only, this takes precedence over the Lifecycle's requirements approval in Define, its Plan stage, its Architect steps (`plan-assessment`, `recommendations-review`, and `signed-off-assessment`), and any later step that waits on a plan, plan approval, or assessment.
+
+If an answer or situation falls outside this runbook, ask the Maintainer through the Coordinator before going on. Report problems with the runbook for a Template fix through its normal issue and approval process; repairs to the new repository still need its normal approvals. The Reviewer's independent review, CI, the Maintainer's sign-off, and Maintainer-only actions all still apply.
 
 ---
 
 ## Implementation
 
+### Pre-approved setup
+
+Starting a bootstrap pre-approves two standard operations. After intake, the agent runs them without asking:
+
+- The setup script's apply mode: it creates or updates the labels in [.github/labels.yml](../.github/labels.yml), deletes GitHub's stock labels (`default: true`) that aren't in that file, and turns on the `delete_branch_on_merge` repository setting.
+- A new user-level GitHub Project owned by the repository owner and named after the repository, with the four required Status options, linked to the repository, with the bootstrap issue set to `In progress`.
+
+Before each, the agent checks the repository on `github.com`, the signed-in account, admin access, and that the target isn't a Template. It records the planned effects in the bootstrap issue, runs the operation, and verifies the result. If anything is unexpected, ambiguous, outside these operations, or fails, such as an existing or ambiguous Project or a permission error, it stops and reports through the Coordinator.
+
+Pre-approval covers nothing else. Deleting or changing custom labels, changing an existing Project, and other repository settings need the Maintainer's explicit decision. Sign-in and token changes, secrets, commits, pushes, merges, and the wiki stay with the Maintainer.
+
 ### Labels and delete-on-merge
 
-1. **Present apply effects for written approval** (`Agent — Coder — written approval required`):
+1. **Record apply effects** (`Agent — Coder`):
    - Run the setup script in read-only check mode:
      ```sh
      npm run bootstrap:check
      ```
-   - Give the Coordinator the exact effects check mode reports, to show the Maintainer:
+   - Record the exact effects check mode reports in the bootstrap issue:
      - Exact label additions to create from [.github/labels.yml](../.github/labels.yml) (name, color, description).
      - Exact label updates to modify (name casing, color, description).
      - Exact GitHub stock default labels (`default === true`) to delete.
      - Preserved custom labels (`default !== true`) noted as kept for separate review.
      - `delete_branch_on_merge` repository setting to enable.
-   - Get the Maintainer's written approval through the Coordinator before continuing.
-2. **Execute and verify apply mode** (`Agent — Coder — written approval required`):
+2. **Execute and verify apply mode** (`Agent — Coder`):
    - Run the setup script in apply mode:
      ```sh
      npm run bootstrap:apply
      ```
-   - Immediately repeat the command once under the same approval to verify repeatability:
+   - Immediately run it once more to verify repeatability:
      ```sh
      npm run bootstrap:apply
      ```
@@ -179,16 +190,17 @@ For bootstrap only, skip the Lifecycle's Architect steps: `plan-assessment`, `re
 
 ### GitHub Project setup
 
-1. **Prerequisites and approval** (`Agent — Coder — written approval required`):
+1. **Prerequisites** (`Agent — Coder`):
    - Verify prerequisites: repository admin access, `project` token scope (`gh auth status`), and user account ownership.
    - Check the repository owner type:
      ```sh
      gh api /repos/<owner>/<repo> --jq .owner.type
      ```
      If the repository is owned by an Organization, pause and route the conflict through the Coordinator to the Maintainer. A user-level same-owner Project is required; do not silently create or substitute an organization Project.
-   - Get the Maintainer's written approval, through the Coordinator, to create a user-level GitHub Project and link it to the repository.
+   - Check that the owner has no Project named after the repository. If one exists, stop and report; don't reuse or change it.
+   - Record the planned Project in the bootstrap issue: owner, title, Status options, and repository link.
 
-2. **Create, configure, link, and record GitHub Project** (`Agent — Coder — written approval required`):
+2. **Create, configure, link, and record GitHub Project** (`Agent — Coder`):
    - Execute the Project creation, initial recording, configuration, repository link, readback verification, and full recording in a single coherent shell block:
      ```sh
      set -eu
@@ -426,11 +438,16 @@ Perform only the specified bootstrap modifications (`Agent — Coder`):
    - Update the `"name"` field in [package.json](../package.json) to match the normalized repository name (valid lowercase npm package name: lowercase, URL-friendly, converted spaces/underscores to hyphens). If the repository name is ambiguous or cannot be cleanly normalized, surface it to the Maintainer.
    - Refresh [package-lock.json](../package-lock.json) with `npm install --package-lock-only`. Verify package name matches in both files; no dependency upgrades.
 6. **[docs/plans/](plans/) & [docs/specs/](specs/)**:
-   - Inventory existing plans and specs before removing:
+   - Bootstrap leaves both folders empty except for a `.gitkeep` file. This is a bootstrap-only exception to keeping Task Artifacts; later work adds plans and specs here as usual.
+   - Compare the folders with what the Template supplied in the repository's first commit:
      ```sh
-     ls -la docs/plans docs/specs
+     git rev-list --max-parents=0 HEAD
+     git ls-tree -r --name-only "$(git rev-list --max-parents=0 HEAD)" -- docs/plans docs/specs
+     ls -A docs/plans docs/specs
      ```
-   - Remove only Template-specific plans and specs (such as `docs/plans/87-bootstrap-website.md`). Keep [docs/plans/README.md](plans/README.md) and repository Task Artifacts (including the bootstrap plan). Note: there is no `docs/specs/README.md`.
+     The first command must print exactly one commit. Expect only the Template's files. If an earlier bootstrap attempt left its own plan or spec, post its text to the bootstrap issue, read the comment back to check it matches, and include it in the removal. If anything else is there, such as a plan for new site work, or there is more than one first commit, stop and ask the Maintainer through the Coordinator.
+   - Remove those files, including the plans guide `docs/plans/README.md`, and add an empty `.gitkeep` to each folder.
+   - The plans guide stays available from the Template. Point its links in `docs/agents/issue-tracker.md` and `docs/agents/roles/planner.md` to `https://github.com/joebaz/web-starter/blob/main/docs/plans/README.md`.
    - In [docs/lifecycle.yaml](lifecycle.yaml), update the `authority` reference for `specs/15-lifecycle.md` to point to the Template's published URL:
      `https://github.com/joebaz/web-starter/blob/main/docs/specs/15-lifecycle.md`
    - Inspect retained documentation links across the repository and repoint any links into the removed Template history to valid destinations.
@@ -447,7 +464,12 @@ Perform only the specified bootstrap modifications (`Agent — Coder`):
 8. **[astro.config.mjs](../astro.config.mjs), [src/pages/404.astro](../src/pages/404.astro), and smoke tests**:
    - Apply any custom sitemap exclusions or 404 copy choices confirmed during intake. Update [tests/smoke/not-found.spec.ts](../tests/smoke/not-found.spec.ts) and [tests/smoke/build.spec.ts](../tests/smoke/build.spec.ts) if 404 text was modified.
 9. **[AGENTS.md](../AGENTS.md)**:
-   - At the completion of all bootstrap file modifications, remove the single bullet pointing to `docs/bootstrap-website.md`. Preserve all other guidance and the [CLAUDE.md](../CLAUDE.md) symlink.
+   - Do this last, once all other bootstrap file changes are done.
+   - Confirm `docs/plans/` and `docs/specs/` still hold only `.gitkeep`:
+     ```sh
+     ls -A docs/plans docs/specs
+     ```
+   - Remove the single bullet in [AGENTS.md](../AGENTS.md) pointing to `docs/bootstrap-website.md`. Preserve all other guidance and the [CLAUDE.md](../CLAUDE.md) symlink.
 
 ---
 
