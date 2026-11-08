@@ -14,7 +14,7 @@ This repository is the [web-starter Template](https://github.com/joebaz/web-star
    Bootstrap this repo for a new website called <site-name>.
    ```
 
-The agent then guides you through intake questions and approvals; you make the commits and publish the changes. Bootstrap sets up the repository; website content comes later. The full procedure is in [docs/bootstrap-website.md](docs/bootstrap-website.md).
+The agent asks you a few setup questions, then does the work, including commits, pushes, and the pull request; you give final sign-off and merge. Bootstrap sets up the repository; website content comes later. The full procedure is in [docs/bootstrap-website.md](docs/bootstrap-website.md).
 
 <!-- template-only:end -->
 

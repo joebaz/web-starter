@@ -14,14 +14,14 @@ Bootstrap still covers the steps in this runbook, including the required facts, 
 
 Every step in this runbook is assigned to an actor:
 
-- `Maintainer`: Human-only actions (credentials, account and repository settings outside the [pre-approved setup](#pre-approved-setup), business decisions, written approvals, git commits, pushes, merges, wiki pushes, repository deletion).
+- `Maintainer`: Human-only actions (credentials and sign-in, account and repository settings outside the [pre-approved setup](#pre-approved-setup), business decisions, the wiki's first page, final sign-off, merges, repository deletion).
 - `Agent — <role>`: Agent operations performed under that role's standard operating procedure.
 
 The bootstrap process follows the canonical [Lifecycle](lifecycle.yaml). The Lifecycle owns the stage sequence, handoffs, and approval gates; this runbook maps bootstrap activities to those stages.
 
 ### Maintainer handoffs
 
-Once the new repository is open in an agent tool, the Coordinator handles everything the Maintainer needs to do, answer, or approve, in its own session. Other roles give the Coordinator the details. The Coordinator records each result in the bootstrap issue. For bootstrap, this replaces the Coordinator SOP's [Hand back](agents/roles/coordinator.md#hand-back) notice that sends the Maintainer to another session. The Maintainer can still talk to another role directly; that role then tells the Coordinator what was decided, naming the artifact and revision. Approvals, commits, pushes, merges, and publishing stay with the Maintainer.
+Once the new repository is open in an agent tool, the Coordinator handles everything the Maintainer needs to do, answer, or approve, in its own session. Other roles give the Coordinator the details. The Coordinator records each result in the bootstrap issue. For bootstrap, this replaces the Coordinator SOP's [Hand back](agents/roles/coordinator.md#hand-back) notice that sends the Maintainer to another session. The Maintainer can still talk to another role directly; that role then tells the Coordinator what was decided, naming the artifact and revision. Sign-in, business decisions, final sign-off, and merges stay with the Maintainer; agents do the Git work, as [Agent Git publishing](#agent-git-publishing) describes.
 
 For each handoff, the Coordinator gives:
 
@@ -152,7 +152,16 @@ Starting a bootstrap pre-approves two standard operations. After intake, the age
 
 Before each, the agent checks the repository on `github.com`, the signed-in account, admin access, and that the target isn't a Template. It records the planned effects in the bootstrap issue, runs the operation, and verifies the result. If anything is unexpected, ambiguous, outside these operations, or fails, such as an existing or ambiguous Project or a permission error, it stops and reports through the Coordinator.
 
-Pre-approval covers nothing else. Deleting or changing custom labels, changing an existing Project, and other repository settings need the Maintainer's explicit decision. Sign-in and token changes, secrets, commits, pushes, merges, and the wiki stay with the Maintainer.
+Apart from these and [Agent Git publishing](#agent-git-publishing), pre-approval covers nothing else. Deleting or changing custom labels, changing an existing Project, and other repository settings need the Maintainer's explicit decision. Sign-in and token changes, secrets, the wiki's first page, final sign-off, and merges stay with the Maintainer.
+
+### Agent Git publishing
+
+Starting a bootstrap also pre-approves the routine Git work, so the Maintainer never runs Git commands. For bootstrap only, this takes precedence over the rules in `AGENTS.md`, the role SOPs, and the Lifecycle that leave commits and pushes to the Maintainer. Agents:
+
+- commit and push the prepared pages to the new repository's wiki
+- after validation, the Reviewer's independent review, and the Maintainer's sign-off, commit exactly the reviewed and signed-off changes to the bootstrap branch, push it, and open its pull request. The Maintainer signs off in conversation; the agent does the Git work.
+
+Before each commit or push, the agent checks the working directory, remote, and branch against the recorded target, reviews `git status` including untracked files, and stages only the files bootstrap changed. It never stages secrets or the `.agent-state/` checkpoint, and pushes only the bootstrap branch and the recorded wiki branch, never the Template or the site repository's default branch. It never force-pushes, merges, approves the pull request, enables auto-merge, or changes Git or credential settings. If history, branches, or files look unexpected, or a push is rejected, it stops and reports through the Coordinator instead of stashing, resetting, rebasing, or deleting anything.
 
 ### Labels and delete-on-merge
 
@@ -363,19 +372,20 @@ Pre-approval covers nothing else. Deleting or changing custom labels, changing a
        }
      ' "$TGT_WIKI" "$OWNER" "$REPO" "$DEFAULT_BRANCH"
 
-     # Review local diff in target wiki checkout
+     # Review changes in target wiki checkout, including new untracked pages
+     git -C "$TGT_WIKI" status --short
      git -C "$TGT_WIKI" diff
 
      # Record BOTH source and target checkout paths and target branch in bootstrap issue comment
-     gh issue comment "$BOOTSTRAP_ISSUE" --body "Wiki prepared for Maintainer review and publishing:
+     gh issue comment "$BOOTSTRAP_ISSUE" --body "Wiki prepared for publishing:
      - Source wiki checkout path: $SRC_WIKI
      - Target wiki checkout path: $TGT_WIKI
      - Target wiki branch: $TGT_BRANCH"
      ```
    - If subsequent operations or agents inspect the prepared wiki, they bind the concrete literal checkout paths recorded in the bootstrap issue comment rather than relying on cross-shell persistence.
 
-4. **Publish wiki** (`Maintainer`):
-   - The Coder reads the wiki path and branch recorded in the bootstrap issue, checks that checkout, and gives the Coordinator these commands with both values filled in:
+4. **Publish wiki** (`Agent — Coder`):
+   - The Coder reads the wiki path and branch recorded in the bootstrap issue, checks that checkout as [Agent Git publishing](#agent-git-publishing) describes, and runs these commands with both values filled in:
      ```sh
      git -C <target-wiki-path> remote -v
      git -C <target-wiki-path> status
@@ -384,10 +394,10 @@ Pre-approval covers nothing else. Deleting or changing custom labels, changing a
      git -C <target-wiki-path> push origin <wiki-branch>
      ```
      Quoting `'*.md'` makes Git, not the shell, match the pages inside the wiki checkout.
-   - The Coordinator gives the Maintainer the filled-in commands, then confirms the published pages after the push.
+   - The Coder checks that the pushed commit is on the remote wiki branch and the pages appear on the wiki, then records the result in the bootstrap issue.
 
 5. **Clean up temporary directories** (`Agent — Coder`):
-   - After the Maintainer confirms the wiki is published, clean up temporary directories. The Coder binds the literal paths recorded in the bootstrap issue comment at the start of the block and validates them before removal:
+   - After the wiki push is verified, clean up temporary directories. The Coder binds the literal paths recorded in the bootstrap issue comment at the start of the block and validates them before removal:
      ```sh
      set -eu
 
@@ -493,9 +503,10 @@ The remainder of the bootstrap process completes through the canonical [Lifecycl
      ```
      In early bootstrap, `bootstrap:check` is expected to exit with code `1` because GitHub Project setup, contact URL, and pull request CI are pending.
 
-2. **Commit and push** (`Maintainer`):
-   - When the Lifecycle calls for it, the Coordinator checks the working directory, branch, remote, and changed files, then gives the Maintainer the exact commands, including the commit message.
-   - After the push, the Coordinator confirms the pushed commit matches local `HEAD`.
+2. **Commit, push, and open the pull request** (`Agent — Coordinator`):
+   - After validation, the Reviewer's independent review, and the Maintainer's sign-off, the Coordinator commits the bootstrap changes, pushes the bootstrap branch, and opens a pull request into the default branch with `Closes #<bootstrap-issue-number>`, as [Agent Git publishing](#agent-git-publishing) describes.
+   - The Maintainer's sign-off covers the exact reviewed changes, not a later commit. The Coordinator commits exactly those changes, records the commit SHA in the bootstrap issue, and checks that the commit's changes match the signed-off diff. Any change after sign-off goes back through review and sign-off. For bootstrap only, this takes the place of the Lifecycle's sign-off on an existing commit.
+   - It confirms the pushed commit matches local `HEAD` and records the pull request URL in the bootstrap issue.
 
 3. **Verify publishing evidence** (`Agent — Coordinator`):
    - Verify a clean working tree:
@@ -523,4 +534,4 @@ The remainder of the bootstrap process completes through the canonical [Lifecycl
      Verify that `bootstrap:check` exits with code `0`.
 
 4. **Merge** (`Maintainer`):
-   - When the Lifecycle calls for it, the Coordinator gives the Maintainer the pull request URL and its checked head commit. After the merge, it confirms the result on the default branch.
+   - Once CI passes, the Coordinator gives the Maintainer the pull request URL and its checked head commit to merge in GitHub. After the merge, it confirms the result on the default branch.
