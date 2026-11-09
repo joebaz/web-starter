@@ -90,6 +90,7 @@ The Maintainer never fills in placeholders, relies on another shell's variables,
      ## Publishing
      - [ ] Pull request opened and CI passed
      - [ ] Read-only bootstrap check passed
+     - [ ] Project status set to Done and verified
      - [ ] Merged and Lifecycle closed
      EOF
 
@@ -546,3 +547,9 @@ The remainder of the bootstrap process completes through the canonical [Lifecycl
 
 4. **Merge** (`Maintainer`):
    - Once CI passes, the Coordinator gives the Maintainer the pull request URL and its checked head commit to merge in GitHub. After the merge, it confirms the result on the default branch.
+
+5. **Close out** (`Agent — Coordinator`):
+   - After the merge, check that the bootstrap issue is closed and the bootstrap branch was deleted on GitHub.
+   - Set the bootstrap issue's Project Status to `Done` if it isn't already, using the Project recorded in the bootstrap issue and the Coordinator SOP's [status method](agents/roles/coordinator.md#change-github-project-status). Change only that item; don't remove or archive anything.
+   - Read back the issue's Project membership and `Done` status, then record the result in the bootstrap issue and the execution checkpoint.
+   - Report bootstrap complete only after this readback. If any check fails or can't be verified, report it as pending instead.
