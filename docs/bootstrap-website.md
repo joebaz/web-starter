@@ -6,7 +6,7 @@ This runbook guides setting up a new website repository created from the [web-st
 
 Bootstrap prepares the repository; it does not build the website. Leave the Template's existing pages and content in place during bootstrap. Plan website content separately after bootstrap: homepage personalization, new pages, page copy, images, and design.
 
-Bootstrap still covers the steps in this runbook, including the required facts, which the site reads for its metadata, and the sitemap and 404 choices confirmed during intake.
+Bootstrap still covers the steps in this runbook, including the required facts, which the site reads for its metadata, and the sitemap and 404 choices made during intake.
 
 ## Prerequisites and tools
 
@@ -77,8 +77,8 @@ The Maintainer never fills in placeholders, relies on another shell's variables,
      Tracking end-to-end bootstrap setup for this repository.
 
      ## Intake and decisions
-     - [ ] Six required website facts confirmed
-     - [ ] Sitemap and 404 choices confirmed
+     - [ ] Six required website facts recorded
+     - [ ] Sitemap and 404 choices recorded
      - [ ] GitHub Project deferral recorded
 
      ## Implementation
@@ -90,6 +90,7 @@ The Maintainer never fills in placeholders, relies on another shell's variables,
      ## Publishing
      - [ ] Pull request opened and CI passed
      - [ ] Read-only bootstrap check passed
+     - [ ] Project status set to Done and verified
      - [ ] Merged and Lifecycle closed
      EOF
 
@@ -102,29 +103,40 @@ The Maintainer never fills in placeholders, relies on another shell's variables,
 
 ## Intake and choices
 
-The Planner collects the answers below through the Coordinator. Ask only these questions; there is no requirements interview. The answers are the bootstrap's requirements and need no separate approval.
+The Coordinator asks the intake questions in plain chat, one at a time: each message holds exactly one question, in bold, and the Coordinator waits for the reply before asking the next. Don't use question tools or forms, such as `AskUserQuestion` or `request_user_input`, and don't send a list of questions. For bootstrap, this takes precedence over any role SOP or tool guidance that suggests otherwise.
+
+The Planner works out which questions are needed. Ask only for answers that are still missing, with no requirements interview, and don't guess the other facts. The answers are the bootstrap's requirements and need no separate approval.
 
 1. **Intake for website facts** (`Agent — Planner`):
-   - Through the Coordinator, ask the Maintainer for the facts defined in [website-facts.yaml](../website-facts.yaml).
+   - Fill in the facts defined in [website-facts.yaml](../website-facts.yaml) from the sources below, then ask for each required fact that is still missing.
    - Six facts are **mandatory** to complete bootstrap setup:
-     - `site_name`: Public name of the website. Prefilled once from the repository name. If the initial prompt already named the site, present that name alongside the repository-name prefill and confirm once; do not overwrite or ask twice. Repository name and site name are distinct facts (though they may share the same value).
-     - `site_description`: Brief description of the website. Prefilled once from the repository's GitHub Description for Maintainer confirmation or replacement. If empty, ask the Maintainer directly. Never kept in continuous sync with the GitHub Description afterward.
+     - `site_name`: Public name of the website. Use the name given in the bootstrap prompt or an earlier answer; a literal placeholder such as `<site-name>` is not a name. Otherwise, use the repository name. Don't ask to confirm it. Repository name and site name stay distinct facts, though they may share the same value.
+     - `site_description`: Brief description of the website. Use the repository's GitHub Description if it isn't empty, without asking to confirm it. Ask only if it's empty. Never kept in sync with the GitHub Description afterward.
      - `business_name`: Legal or operating business name.
      - `maintainer`: Responsible technical maintainer.
      - `client_approver`: Business client contact/approver. Must name a person. If there is no separate client, use the Maintainer (never `none`).
      - `language`: Valid HTML language tag (for example, `en`, `es`, `ja`). **If undecided, pause bootstrap until chosen. Never assume English.** Reference the existing reader and build diagnostic (`astro.config.mjs` / `src/website-facts.ts` or `npm run build`); do not edit site files during intake.
+   - Record in the bootstrap issue which site name and description were used and where they came from.
    - If any of these six required facts is undecided, bootstrap cannot complete; pause until the missing answer is supplied.
    - All other facts defined in [website-facts.yaml](../website-facts.yaml) (`production_url`, `redirecting_hostnames`, `other_languages`, `hosting_provider`, `dns_provider`, `domain_registrar`, `analytics`, `user_data_stored`) may remain blank (undecided) or set to explicit `none` if decided not applicable; they do not block minimal repository bootstrap.
    - Never put secrets or credentials into [website-facts.yaml](../website-facts.yaml).
 
 2. **One-time sitemap and 404 choices** (`Agent — Planner`):
-   - Through the Coordinator, ask the Maintainer once regarding:
-     - `sitemapExclusions` in [astro.config.mjs](../astro.config.mjs) (default is none).
-     - 404 page copy in [src/pages/404.astro](../src/pages/404.astro) (title, description, explanation, homepage link label). Confirm retaining defaults if that is the choice.
+   - Ask these as two separate questions, one at a time:
+     - whether to exclude any pages from the sitemap, set by `sitemapExclusions` in [astro.config.mjs](../astro.config.mjs) (default is none)
+     - whether to keep the default 404 page text in [src/pages/404.astro](../src/pages/404.astro) (title, description, explanation, homepage link label), or what to use instead
    - Retaining no sitemap exclusions and default 404 copy is an easy explicit choice revisable later. Bootstrap is minimal repository setup, not a full site implementation roadmap.
    - If custom 404 copy is chosen, update exact-copy assertions in [tests/smoke/not-found.spec.ts](../tests/smoke/not-found.spec.ts) and [tests/smoke/build.spec.ts](../tests/smoke/build.spec.ts) during implementation.
 
-3. **Fresh-bootstrap Project-status deferral** (`Agent — Coordinator`):
+3. **Facts readout** (`Agent — Coordinator`):
+   - Once the required answers are in, and before the facts file is written, show the Maintainer one readout of [website-facts.yaml](../website-facts.yaml). This is one combined review, not a confirmation of each fact. Facts can still change later through normal issues.
+   - Introduce the readout with: “Agents use this file to understand your website and how it’s run. The website also uses some values for its name, language, and web address.”
+   - List every key in the file by its exact name with its value. Mark blank values as undecided and show `none` as written. A short note on where each value came from, such as the repository, the bootstrap prompt, or chat, helps.
+   - Ask **Please review and confirm or suggest edits** and wait for the reply.
+   - Apply any corrections; the latest answer wins. Required facts must stay filled, and `language` must be a valid tag. If there are no changes, continue. Show the readout again only if a correction needs a follow-up question.
+   - Record the final readout and any corrections in the bootstrap issue.
+
+4. **Fresh-bootstrap Project-status deferral** (`Agent — Coordinator`):
    - Verify that no linked GitHub Project exists yet.
    - Record `Project not created yet` in the bootstrap issue and execution checkpoint.
    - This lets bootstrap continue without a premature `In progress` Project status move.
@@ -428,7 +440,7 @@ Before each commit or push, the agent checks the working directory, remote, and 
 Perform only the specified bootstrap modifications (`Agent — Coder`):
 
 1. **[website-facts.yaml](../website-facts.yaml)**:
-   - Fill in approved intake values. Keep all existing keys intact. Undecided optional facts remain blank or explicit `none`.
+   - Write the final values from the facts readout recorded in the bootstrap issue, then check that the file matches that record. Keep all existing keys intact. Undecided optional facts remain blank or explicit `none`.
 2. **[README.md](../README.md)**:
    - Update the top-level heading to the repository name.
    - Replace the marked `<!-- template-only:start --> ... <!-- template-only:end -->` block with a generic opening linking back to the [web-starter Template](https://github.com/joebaz/web-starter):
@@ -472,7 +484,7 @@ Perform only the specified bootstrap modifications (`Agent — Coder`):
      - Remote historical design record link in [docs/lifecycle.yaml](lifecycle.yaml).
    - Do not perform broad search-and-replace of `web-starter`.
 8. **[astro.config.mjs](../astro.config.mjs), [src/pages/404.astro](../src/pages/404.astro), and smoke tests**:
-   - Apply any custom sitemap exclusions or 404 copy choices confirmed during intake. Update [tests/smoke/not-found.spec.ts](../tests/smoke/not-found.spec.ts) and [tests/smoke/build.spec.ts](../tests/smoke/build.spec.ts) if 404 text was modified.
+   - Apply any custom sitemap exclusions or 404 copy chosen during intake. Update [tests/smoke/not-found.spec.ts](../tests/smoke/not-found.spec.ts) and [tests/smoke/build.spec.ts](../tests/smoke/build.spec.ts) if 404 text was modified.
 9. **[AGENTS.md](../AGENTS.md)**:
    - Do this last, once all other bootstrap file changes are done.
    - Confirm `docs/plans/` and `docs/specs/` still hold only `.gitkeep`:
@@ -535,3 +547,9 @@ The remainder of the bootstrap process completes through the canonical [Lifecycl
 
 4. **Merge** (`Maintainer`):
    - Once CI passes, the Coordinator gives the Maintainer the pull request URL and its checked head commit to merge in GitHub. After the merge, it confirms the result on the default branch.
+
+5. **Close out** (`Agent — Coordinator`):
+   - After the merge, check that the bootstrap issue is closed and the bootstrap branch was deleted on GitHub.
+   - Set the bootstrap issue's Project Status to `Done` if it isn't already, using the Project recorded in the bootstrap issue and the Coordinator SOP's [status method](agents/roles/coordinator.md#change-github-project-status). Change only that item; don't remove or archive anything.
+   - Read back the issue's Project membership and `Done` status, then record the result in the bootstrap issue and the execution checkpoint.
+   - Report bootstrap complete only after this readback. If any check fails or can't be verified, report it as pending instead.
