@@ -14,15 +14,14 @@ Bootstrap still covers the steps in this runbook, including the required facts, 
 
 Every step in this runbook is assigned to an actor:
 
-- `Maintainer`: Human-only actions (credentials, account and repository settings, business decisions, written approvals, git commits, pushes, merges, wiki pushes, repository deletion).
-- `Agent — <role> — written approval required`: Agent operations requiring explicit written approval from the Maintainer in the issue or chat before execution.
+- `Maintainer`: Human-only actions (credentials and sign-in, account and repository settings outside the [pre-approved setup](#pre-approved-setup), business decisions, the wiki's first page, final sign-off, merges, repository deletion).
 - `Agent — <role>`: Agent operations performed under that role's standard operating procedure.
 
 The bootstrap process follows the canonical [Lifecycle](lifecycle.yaml). The Lifecycle owns the stage sequence, handoffs, and approval gates; this runbook maps bootstrap activities to those stages.
 
 ### Maintainer handoffs
 
-Once the new repository is open in an agent tool, the Coordinator handles everything the Maintainer needs to do, answer, or approve, in its own session. Other roles give the Coordinator the details. The Coordinator records each result in the bootstrap issue. For bootstrap, this replaces the Coordinator SOP's [Hand back](agents/roles/coordinator.md#hand-back) notice that sends the Maintainer to another session. The Maintainer can still talk to another role directly; that role then tells the Coordinator what was decided, naming the artifact and revision. Approvals, commits, pushes, merges, and publishing stay with the Maintainer.
+Once the new repository is open in an agent tool, the Coordinator handles everything the Maintainer needs to do, answer, or approve, in its own session. Other roles give the Coordinator the details. The Coordinator records each result in the bootstrap issue. For bootstrap, this replaces the Coordinator SOP's [Hand back](agents/roles/coordinator.md#hand-back) notice that sends the Maintainer to another session. The Maintainer can still talk to another role directly; that role then tells the Coordinator what was decided, naming the artifact and revision. Sign-in, business decisions, final sign-off, and merges stay with the Maintainer; agents do the Git work, as [Agent Git publishing](#agent-git-publishing) describes.
 
 For each handoff, the Coordinator gives:
 
@@ -82,9 +81,9 @@ The Maintainer never fills in placeholders, relies on another shell's variables,
      - [ ] Sitemap and 404 choices confirmed
      - [ ] GitHub Project deferral recorded
 
-     ## Implementation and approvals
-     - [ ] Labels and delete-on-merge written approval and apply
-     - [ ] GitHub Project creation written approval, creation, and link
+     ## Implementation
+     - [ ] Labels and delete-on-merge applied and verified
+     - [ ] GitHub Project created, linked, and verified
      - [ ] Wiki initialized, copied, and published
      - [ ] Repository files updated and validated
 
@@ -97,13 +96,13 @@ The Maintainer never fills in placeholders, relies on another shell's variables,
      gh issue create --title "Bootstrap website repository" --body-file "$ISSUE_BODY"
      rm -f "$ISSUE_BODY"
      ```
-   - Record the issue number and URL. Do not assign category labels on creation; labels do not exist yet. Record all intake answers, check results, and written approvals as comments in this issue.
+   - Record the issue number and URL. Do not assign category labels on creation; labels do not exist yet. Record all intake answers, progress, check results, and any Maintainer decisions as comments in this issue.
 
 ---
 
 ## Intake and choices
 
-The Planner conducts intake under the canonical Define stage.
+The Planner collects the answers below through the Coordinator. Ask only these questions; there is no requirements interview. The answers are the bootstrap's requirements and need no separate approval.
 
 1. **Intake for website facts** (`Agent — Planner`):
    - Through the Coordinator, ask the Maintainer for the facts defined in [website-facts.yaml](../website-facts.yaml).
@@ -113,7 +112,7 @@ The Planner conducts intake under the canonical Define stage.
      - `business_name`: Legal or operating business name.
      - `maintainer`: Responsible technical maintainer.
      - `client_approver`: Business client contact/approver. Must name a person. If there is no separate client, use the Maintainer (never `none`).
-     - `language`: Valid HTML language tag (for example, `en`, `es`, `ja`). **If undecided, pause bootstrap until chosen. Never assume English.** Reference the existing reader and build diagnostic (`astro.config.mjs` / `src/website-facts.ts` or `npm run build`); do not edit site files before plan approval.
+     - `language`: Valid HTML language tag (for example, `en`, `es`, `ja`). **If undecided, pause bootstrap until chosen. Never assume English.** Reference the existing reader and build diagnostic (`astro.config.mjs` / `src/website-facts.ts` or `npm run build`); do not edit site files during intake.
    - If any of these six required facts is undecided, bootstrap cannot complete; pause until the missing answer is supplied.
    - All other facts defined in [website-facts.yaml](../website-facts.yaml) (`production_url`, `redirecting_hostnames`, `other_languages`, `hosting_provider`, `dns_provider`, `domain_registrar`, `analytics`, `user_data_stored`) may remain blank (undecided) or set to explicit `none` if decided not applicable; they do not block minimal repository bootstrap.
    - Never put secrets or credentials into [website-facts.yaml](../website-facts.yaml).
@@ -128,38 +127,61 @@ The Planner conducts intake under the canonical Define stage.
 3. **Fresh-bootstrap Project-status deferral** (`Agent — Coordinator`):
    - Verify that no linked GitHub Project exists yet.
    - Record `Project not created yet` in the bootstrap issue and execution checkpoint.
-   - This approved deferral permits planning to proceed to the Plan stage without a premature `In progress` Project status move.
+   - This lets bootstrap continue without a premature `In progress` Project status move.
 
 ---
 
-## Plan stage
+## No separate plan
 
-Implementation planning, Architect assessment, and Maintainer plan approval follow the canonical [Lifecycle](lifecycle.yaml). No implementation edits or administrative setup may run before the Plan stage is approved.
+Bootstrap works like an installer: this runbook is the plan, and starting a bootstrap approves it. Once intake is complete, go straight to Implementation and report progress in the bootstrap issue. Don't write a bootstrap plan or spec, and don't ask the Maintainer to approve requirements or a plan.
+
+For bootstrap only, this takes precedence over the Lifecycle's requirements approval in Define, its Plan stage, its Architect steps (`plan-assessment`, `recommendations-review`, and `signed-off-assessment`), and any later step that waits on a plan, plan approval, or assessment.
+
+If an answer or situation falls outside this runbook, ask the Maintainer through the Coordinator before going on. Report problems with the runbook for a Template fix through its normal issue and approval process; repairs to the new repository still need its normal approvals. The Reviewer's independent review, CI, the Maintainer's sign-off, and Maintainer-only actions all still apply.
 
 ---
 
 ## Implementation
 
+### Pre-approved setup
+
+Starting a bootstrap pre-approves two standard operations. After intake, the agent runs them without asking:
+
+- The setup script's apply mode: it creates or updates the labels in [.github/labels.yml](../.github/labels.yml), deletes GitHub's stock labels (`default: true`) that aren't in that file, and turns on the `delete_branch_on_merge` repository setting.
+- A new user-level GitHub Project owned by the repository owner and named after the repository, with the four required Status options, linked to the repository, with the bootstrap issue set to `In progress`.
+
+Before each, the agent checks the repository on `github.com`, the signed-in account, admin access, and that the target isn't a Template. It records the planned effects in the bootstrap issue, runs the operation, and verifies the result. If anything is unexpected, ambiguous, outside these operations, or fails, such as an existing or ambiguous Project or a permission error, it stops and reports through the Coordinator.
+
+Apart from these and [Agent Git publishing](#agent-git-publishing), pre-approval covers nothing else. Deleting or changing custom labels, changing an existing Project, and other repository settings need the Maintainer's explicit decision. Sign-in and token changes, secrets, the wiki's first page, final sign-off, and merges stay with the Maintainer.
+
+### Agent Git publishing
+
+Starting a bootstrap also pre-approves the routine Git work, so the Maintainer never runs Git commands. For bootstrap only, this takes precedence over the rules in `AGENTS.md`, the role SOPs, and the Lifecycle that leave commits and pushes to the Maintainer. Agents:
+
+- commit and push the prepared pages to the new repository's wiki
+- after validation, the Reviewer's independent review, and the Maintainer's sign-off, commit exactly the reviewed and signed-off changes to the bootstrap branch, push it, and open its pull request. The Maintainer signs off in conversation; the agent does the Git work.
+
+Before each commit or push, the agent checks the working directory, remote, and branch against the recorded target, reviews `git status` including untracked files, and stages only the files bootstrap changed. It never stages secrets or the `.agent-state/` checkpoint, and pushes only the bootstrap branch and the recorded wiki branch, never the Template or the site repository's default branch. It never force-pushes, merges, approves the pull request, enables auto-merge, or changes Git or credential settings. If history, branches, or files look unexpected, or a push is rejected, it stops and reports through the Coordinator instead of stashing, resetting, rebasing, or deleting anything.
+
 ### Labels and delete-on-merge
 
-1. **Present apply effects for written approval** (`Agent — Coder — written approval required`):
+1. **Record apply effects** (`Agent — Coder`):
    - Run the setup script in read-only check mode:
      ```sh
      npm run bootstrap:check
      ```
-   - Give the Coordinator the exact effects check mode reports, to show the Maintainer:
+   - Record the exact effects check mode reports in the bootstrap issue:
      - Exact label additions to create from [.github/labels.yml](../.github/labels.yml) (name, color, description).
      - Exact label updates to modify (name casing, color, description).
      - Exact GitHub stock default labels (`default === true`) to delete.
      - Preserved custom labels (`default !== true`) noted as kept for separate review.
      - `delete_branch_on_merge` repository setting to enable.
-   - Get the Maintainer's written approval through the Coordinator before continuing.
-2. **Execute and verify apply mode** (`Agent — Coder — written approval required`):
+2. **Execute and verify apply mode** (`Agent — Coder`):
    - Run the setup script in apply mode:
      ```sh
      npm run bootstrap:apply
      ```
-   - Immediately repeat the command once under the same approval to verify repeatability:
+   - Immediately run it once more to verify repeatability:
      ```sh
      npm run bootstrap:apply
      ```
@@ -177,16 +199,17 @@ Implementation planning, Architect assessment, and Maintainer plan approval foll
 
 ### GitHub Project setup
 
-1. **Prerequisites and approval** (`Agent — Coder — written approval required`):
+1. **Prerequisites** (`Agent — Coder`):
    - Verify prerequisites: repository admin access, `project` token scope (`gh auth status`), and user account ownership.
    - Check the repository owner type:
      ```sh
      gh api /repos/<owner>/<repo> --jq .owner.type
      ```
      If the repository is owned by an Organization, pause and route the conflict through the Coordinator to the Maintainer. A user-level same-owner Project is required; do not silently create or substitute an organization Project.
-   - Get the Maintainer's written approval, through the Coordinator, to create a user-level GitHub Project and link it to the repository.
+   - Check that the owner has no Project named after the repository. If one exists, stop and report; don't reuse or change it.
+   - Record the planned Project in the bootstrap issue: owner, title, Status options, and repository link.
 
-2. **Create, configure, link, and record GitHub Project** (`Agent — Coder — written approval required`):
+2. **Create, configure, link, and record GitHub Project** (`Agent — Coder`):
    - Execute the Project creation, initial recording, configuration, repository link, readback verification, and full recording in a single coherent shell block:
      ```sh
      set -eu
@@ -349,19 +372,20 @@ Implementation planning, Architect assessment, and Maintainer plan approval foll
        }
      ' "$TGT_WIKI" "$OWNER" "$REPO" "$DEFAULT_BRANCH"
 
-     # Review local diff in target wiki checkout
+     # Review changes in target wiki checkout, including new untracked pages
+     git -C "$TGT_WIKI" status --short
      git -C "$TGT_WIKI" diff
 
      # Record BOTH source and target checkout paths and target branch in bootstrap issue comment
-     gh issue comment "$BOOTSTRAP_ISSUE" --body "Wiki prepared for Maintainer review and publishing:
+     gh issue comment "$BOOTSTRAP_ISSUE" --body "Wiki prepared for publishing:
      - Source wiki checkout path: $SRC_WIKI
      - Target wiki checkout path: $TGT_WIKI
      - Target wiki branch: $TGT_BRANCH"
      ```
    - If subsequent operations or agents inspect the prepared wiki, they bind the concrete literal checkout paths recorded in the bootstrap issue comment rather than relying on cross-shell persistence.
 
-4. **Publish wiki** (`Maintainer`):
-   - The Coder reads the wiki path and branch recorded in the bootstrap issue, checks that checkout, and gives the Coordinator these commands with both values filled in:
+4. **Publish wiki** (`Agent — Coder`):
+   - The Coder reads the wiki path and branch recorded in the bootstrap issue, checks that checkout as [Agent Git publishing](#agent-git-publishing) describes, and runs these commands with both values filled in:
      ```sh
      git -C <target-wiki-path> remote -v
      git -C <target-wiki-path> status
@@ -370,10 +394,10 @@ Implementation planning, Architect assessment, and Maintainer plan approval foll
      git -C <target-wiki-path> push origin <wiki-branch>
      ```
      Quoting `'*.md'` makes Git, not the shell, match the pages inside the wiki checkout.
-   - The Coordinator gives the Maintainer the filled-in commands, then confirms the published pages after the push.
+   - The Coder checks that the pushed commit is on the remote wiki branch and the pages appear on the wiki, then records the result in the bootstrap issue.
 
 5. **Clean up temporary directories** (`Agent — Coder`):
-   - After the Maintainer confirms the wiki is published, clean up temporary directories. The Coder binds the literal paths recorded in the bootstrap issue comment at the start of the block and validates them before removal:
+   - After the wiki push is verified, clean up temporary directories. The Coder binds the literal paths recorded in the bootstrap issue comment at the start of the block and validates them before removal:
      ```sh
      set -eu
 
@@ -424,11 +448,16 @@ Perform only the specified bootstrap modifications (`Agent — Coder`):
    - Update the `"name"` field in [package.json](../package.json) to match the normalized repository name (valid lowercase npm package name: lowercase, URL-friendly, converted spaces/underscores to hyphens). If the repository name is ambiguous or cannot be cleanly normalized, surface it to the Maintainer.
    - Refresh [package-lock.json](../package-lock.json) with `npm install --package-lock-only`. Verify package name matches in both files; no dependency upgrades.
 6. **[docs/plans/](plans/) & [docs/specs/](specs/)**:
-   - Inventory existing plans and specs before removing:
+   - Bootstrap leaves both folders empty except for a `.gitkeep` file. This is a bootstrap-only exception to keeping Task Artifacts; later work adds plans and specs here as usual.
+   - Compare the folders with what the Template supplied in the repository's first commit:
      ```sh
-     ls -la docs/plans docs/specs
+     git rev-list --max-parents=0 HEAD
+     git ls-tree -r --name-only "$(git rev-list --max-parents=0 HEAD)" -- docs/plans docs/specs
+     ls -A docs/plans docs/specs
      ```
-   - Remove only Template-specific plans and specs (such as `docs/plans/87-bootstrap-website.md`). Keep [docs/plans/README.md](plans/README.md) and repository Task Artifacts (including the bootstrap plan). Note: there is no `docs/specs/README.md`.
+     The first command must print exactly one commit. Expect only the Template's files. If an earlier bootstrap attempt left its own plan or spec, post its text to the bootstrap issue, read the comment back to check it matches, and include it in the removal. If anything else is there, such as a plan for new site work, or there is more than one first commit, stop and ask the Maintainer through the Coordinator.
+   - Remove those files, including the plans guide `docs/plans/README.md`, and add an empty `.gitkeep` to each folder.
+   - The plans guide stays available from the Template. Point its links in `docs/agents/issue-tracker.md` and `docs/agents/roles/planner.md` to `https://github.com/joebaz/web-starter/blob/main/docs/plans/README.md`.
    - In [docs/lifecycle.yaml](lifecycle.yaml), update the `authority` reference for `specs/15-lifecycle.md` to point to the Template's published URL:
      `https://github.com/joebaz/web-starter/blob/main/docs/specs/15-lifecycle.md`
    - Inspect retained documentation links across the repository and repoint any links into the removed Template history to valid destinations.
@@ -445,7 +474,12 @@ Perform only the specified bootstrap modifications (`Agent — Coder`):
 8. **[astro.config.mjs](../astro.config.mjs), [src/pages/404.astro](../src/pages/404.astro), and smoke tests**:
    - Apply any custom sitemap exclusions or 404 copy choices confirmed during intake. Update [tests/smoke/not-found.spec.ts](../tests/smoke/not-found.spec.ts) and [tests/smoke/build.spec.ts](../tests/smoke/build.spec.ts) if 404 text was modified.
 9. **[AGENTS.md](../AGENTS.md)**:
-   - At the completion of all bootstrap file modifications, remove the single bullet pointing to `docs/bootstrap-website.md`. Preserve all other guidance and the [CLAUDE.md](../CLAUDE.md) symlink.
+   - Do this last, once all other bootstrap file changes are done.
+   - Confirm `docs/plans/` and `docs/specs/` still hold only `.gitkeep`:
+     ```sh
+     ls -A docs/plans docs/specs
+     ```
+   - Remove the single bullet in [AGENTS.md](../AGENTS.md) pointing to `docs/bootstrap-website.md`. Preserve all other guidance and the [CLAUDE.md](../CLAUDE.md) symlink.
 
 ---
 
@@ -469,9 +503,10 @@ The remainder of the bootstrap process completes through the canonical [Lifecycl
      ```
      In early bootstrap, `bootstrap:check` is expected to exit with code `1` because GitHub Project setup, contact URL, and pull request CI are pending.
 
-2. **Commit and push** (`Maintainer`):
-   - When the Lifecycle calls for it, the Coordinator checks the working directory, branch, remote, and changed files, then gives the Maintainer the exact commands, including the commit message.
-   - After the push, the Coordinator confirms the pushed commit matches local `HEAD`.
+2. **Commit, push, and open the pull request** (`Agent — Coordinator`):
+   - After validation, the Reviewer's independent review, and the Maintainer's sign-off, the Coordinator commits the bootstrap changes, pushes the bootstrap branch, and opens a pull request into the default branch with `Closes #<bootstrap-issue-number>`, as [Agent Git publishing](#agent-git-publishing) describes.
+   - The Maintainer's sign-off covers the exact reviewed changes, not a later commit. The Coordinator commits exactly those changes, records the commit SHA in the bootstrap issue, and checks that the commit's changes match the signed-off diff. Any change after sign-off goes back through review and sign-off. For bootstrap only, this takes the place of the Lifecycle's sign-off on an existing commit.
+   - It confirms the pushed commit matches local `HEAD` and records the pull request URL in the bootstrap issue.
 
 3. **Verify publishing evidence** (`Agent — Coordinator`):
    - Verify a clean working tree:
@@ -499,4 +534,4 @@ The remainder of the bootstrap process completes through the canonical [Lifecycl
      Verify that `bootstrap:check` exits with code `0`.
 
 4. **Merge** (`Maintainer`):
-   - When the Lifecycle calls for it, the Coordinator gives the Maintainer the pull request URL and its checked head commit. After the merge, it confirms the result on the default branch.
+   - Once CI passes, the Coordinator gives the Maintainer the pull request URL and its checked head commit to merge in GitHub. After the merge, it confirms the result on the default branch.

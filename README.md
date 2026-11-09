@@ -6,7 +6,7 @@ This repository is the [web-starter Template](https://github.com/joebaz/web-star
 
 ## Getting Started
 
-1. On GitHub, select **Use this template** > **Create a new repository**, then choose its owner, name, and visibility.
+1. On GitHub’s **Create a new repository** page, under **Start with a template**, select **joebaz/web-starter**. Choose the new repository’s owner, name, and visibility.
 2. Clone the new repository and open it in your agent tool. Its machine setup is listed under [Requirements](#requirements) and in the Wiki's [Agent setup](https://github.com/joebaz/web-starter/wiki/Agent-Setup). [Paseo](https://paseo.sh/) is optional.
 3. In a fresh agent session, send this prompt, replacing `<site-name>` with the website's name:
 
@@ -14,7 +14,7 @@ This repository is the [web-starter Template](https://github.com/joebaz/web-star
    Bootstrap this repo for a new website called <site-name>.
    ```
 
-The agent then guides you through intake questions and approvals; you make the commits and publish the changes. Bootstrap sets up the repository; website content comes later. The full procedure is in [docs/bootstrap-website.md](docs/bootstrap-website.md).
+The agent asks you a few setup questions, then does the work, including commits, pushes, and the pull request; you give final sign-off and merge. Bootstrap sets up the repository; website content comes later. The full procedure is in [docs/bootstrap-website.md](docs/bootstrap-website.md).
 
 <!-- template-only:end -->
 
