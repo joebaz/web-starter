@@ -66,6 +66,15 @@ A cohesive outcome, one GitHub Issue or Sub-Issue, delivered through every Layer
 **Layer**:
 A part of the Template or Project that owns one kind of responsibility for many outcomes, such as site configuration, page layouts, or the lifecycle's sequencing.
 
+**Spec-only parent**:
+An issue that owns shared requirements and coordinates acceptance across several
+independently deliverable child outcomes, rather than delivering their
+implementation itself.
+
+**Coordination Plan**:
+A plan describing the order, dependencies and acceptance coverage of two or more
+Sub-Issues within a parent effort.
+
 ## Workflow
 
 **Lifecycle**:

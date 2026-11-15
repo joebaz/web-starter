@@ -15,6 +15,6 @@
 | `bug`          | `fix`              | Broken behavior, layout, accessibility, performance, or functionality |
 | `enhancement`  | `feature`          | New or expanded capability                                            |
 
-This repo also uses `content` (Content and Page Structure changes that are neither fixes nor features) and `docs` (repository documentation and instructions) as categories with no canonical equivalent. Each triaged issue carries exactly one category label.
+This repo also uses `content` (Content and Page Structure changes that are neither fixes nor features) and `docs` (repository documentation and instructions) as categories with no canonical equivalent. Each triaged issue carries exactly one category label. The category describes the issue's own outcome; it doesn't choose the [Lifecycle](../lifecycle.yaml) route.
 
 When a skill names a canonical role, use its label in this table.

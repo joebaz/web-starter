@@ -7,12 +7,28 @@ authority:
   - specs/15-lifecycle.md is the historical design record.
 reading:
   - Stages run in order. Steps run in listed order unless a transition names another step.
+  - Steps keyed parent-* run only on the spec-only-parent route. An ordinary step reaches them only through a transition.
   - Transitions target unique step keys, independent of position.
   - Wait at a gate until its condition is met.
-  - Closing a stage opens the next. Closing Retro completes the Lifecycle.
+  - Closing a stage opens the next stage on the issue's route. Closing Retro completes the Lifecycle.
   - A Coordinator resuming work enters at the step its reconciled state establishes, not at Define.
   - State that stays unknown waits at the gate it affects.
 rules:
+  routes:
+    - An issue follows the ordinary route, Define → Plan → Implement → Publish → Retro, unless the Maintainer chooses the spec-only-parent route.
+    - The spec-only-parent route is for several independently deliverable outcomes, in any category. A Feature label needs neither a spec nor children.
+    - A spec-only parent follows Define → Plan → Publish → Retro. Its children deliver the outcome, each through its own Lifecycle and with its own category. The parent validates their combined result in Publish.
+    - The Coordinator records the Maintainer's route choice and its evidence. Labels, skill output, and agent findings never choose the route.
+  parent:
+    - These rules apply on the spec-only-parent route.
+    - Only the parent's Planner edits the parent spec and Coordination Plans.
+    - A child's Coordinator sends a needed parent-spec change to the parent Coordinator at once and pauses affected work. The parent Coordinator relays the Maintainer's decision, including a decline.
+    - Gate evidence names the artifact revision it covers. On entering or returning to a stage, skip each parent-* step whose evidence already matches. A requirements approval alone completes no parent review or assessment.
+    - From any step, a spec that must change or lacks matching evidence returns to parent-spec-draft; a Coordination Plan returns to planner-briefing. Pause affected children under agents/roles/coordinator.md#when-approved-requirements-change.
+    - Before the parent leaves Publish for Define or Plan, the Coordinator records, or keeps, a resume obligation naming the step to return to after publication. At plan-close without one, it records parent-child-issues. parent-publication-check closes it.
+    - A spec change keeps the evidence of an unchanged plan. Keep earlier revisions, plans, launches, and publications, so a return neither repeats a launch nor loses a publication.
+    - If no exact approved text of an artifact survives, rerun its gates.
+    - In shared Publish steps, a parent's signed-off revision means its gated artifact revisions. Parent PRs use Refs #<parent>. A tracker-only change needs readback evidence, not a PR or CI.
   authorization:
     - The Maintainer approves requirements, scope, and changes to either, and the final plan revision under rules.approvals.
     - Agent findings, recommendations, reports, checkpoints, and Progress Readouts authorize nothing.
@@ -30,6 +46,7 @@ rules:
     - An Agent Brief summarizes and links the approved requirements; it is neither a second contract nor an approval.
     - A skill-applied label or a checkpoint is not approval.
     - An already approved, ready issue needs no further approval and no second spec.
+    - A proposed revision of a parent spec, such as a proposal comment, is not a second contract.
   approvals:
     - Requirements approval, plan approval, and final sign-off are separate Maintainer decisions; none implies another.
     - Requirements approval accepts the requirements contract in Define.
@@ -40,6 +57,7 @@ rules:
     - Before Plan closes, a material revision from any step returns to implementation-plan, then plan-assessment and recommendation decisions before plan-approval.
     - After Plan closes, pause the work that depends on a material revision until the Maintainer approves the revised plan; continue under the normal cycle, review, and sign-off rules, with signed-off-assessment covering the final signed-off commit.
     - Other revisions, such as recording an already approved decision or fixing a typo or link, keep the approval. Record the new revision with the approval it falls under. Merely recording an already approved recommendation decision does not require another assessment.
+    - On the spec-only-parent route, spec sign-off is the requirements approval and Coordination Plan sign-off is the plan approval. Each comes after independent review and before the Architect's assessment and the Maintainer's recommendation decisions. Publishing an artifact needs no further approval, and there is no final sign-off. A material revision returns under rules.parent.
   artifacts:
     - Create Task Artifacts only when needed, at the locations in agents/issue-tracker.md.
   state:
@@ -48,7 +66,7 @@ rules:
     - A running or waiting step, or one with an unresolved failure, stays current with its wait, error, or partial output recorded.
     - Kept output satisfies a later transition only through the evidence that transition names, such as a Maintainer direction.
   tracking:
-    - On every stage entry, including a return to Implement, refresh the native task list to that stage's steps.
+    - On every stage entry, including a return to an earlier stage, refresh the native task list to that stage's steps.
     - At every transition, update the task list's step status.
     - Give the Progress Readout as progress_readout describes.
     - Follow agents/roles/coordinator.md#track-the-stage.
@@ -60,6 +78,7 @@ rules:
     - An assignment does not imply a waiver.
     - Keep validation, final Maintainer sign-off, the final Architect assessment, cycle authorization, count and limits, and evidence matching the current revision.
     - Record an eligible exception as an exception; never claim a Reviewer pass.
+    - On the spec-only-parent route, review_exception applies to parent-spec-review and parent-plan-review, with the artifact's sign-off and assessment in place of final sign-off and the final assessment.
   cycles:
     - A cycle is one round of changes followed by one independent review or a recorded eligible review_exception.
     - Count exempt rounds as cycles too.
@@ -68,7 +87,9 @@ rules:
     - Each later cycle needs a Maintainer request for changes or an authorized fix.
     - After Reviewer findings, the Coordinator gives them to the Maintainer and waits for the go-ahead before another cycle.
     - At most five cycles per issue; a sixth or later needs an explicit Maintainer extension.
-    - Returning for further changes, including to coder-briefing from Implement or Publish, never resets the count.
+    - Returning for further changes, including to coder-briefing from Implement or Publish, or a parent's return to Define or Plan, never resets the count.
+    - On the spec-only-parent route, each round of parent spec or Coordination Plan edits is a cycle, including the first Coordination Plan. Entering a stage authorizes no round. The Coordinator checks each round's authorization, count, and any extension at parent-spec-draft or parent-coordination-plan before the Planner edits.
+    - Parent and child Coordinators count separately. Parent validation is not a cycle.
 checkpoint:
   format: execution-checkpoint.md
   method: agents/roles/coordinator.md#keep-the-execution-checkpoint
@@ -87,7 +108,7 @@ progress_readout:
     - Each applicable step of the current stage follows, in Lifecycle order, by step key.
     - "[x] marks a step completed with recorded evidence, and [ ] marks a pending step."
     - The current step shows its status emoji in place of its checkbox, then a short note. When the Maintainer must act, the note names the exact action and gate; otherwise it says what is happening.
-    - A step is conditional when some route from the stage's entry to its exit skips it. List a conditional step, and the steps its branch then runs in order, only once the transition into it is taken.
+    - A step is conditional when some path from the stage's entry to its exit skips it. List a conditional step, and the steps its branch then runs in order, only once the transition into it is taken.
     - After a return to an earlier step, the steps that must run again show [ ]. Cycle counts and approvals are kept.
     - "Until the state is established, the Progress Readout is Stage: reconciling with no list. Never report a stage or step that isn't confirmed."
   status:
@@ -98,25 +119,33 @@ progress_readout:
     🟢: Work moving forward. Status started, or waiting on an agent or CI.
   examples: agents/roles/coordinator.md#track-the-stage
 scenarios:
-  about: Optional routes through Define into the Plan stage; the steps below still govern readiness and approval.
-  method: agents/roles/planner.md#choose-a-route
+  about: Optional interview approaches and entry skills for Define. Declining one skips no step; the steps below still govern readiness and approval.
+  method: agents/roles/planner.md#choose-an-interview-approach
 stages:
   - name: Define
-    entry: The Maintainer starts a Coordinator on an issue.
+    entry:
+      - The Maintainer starts a Coordinator on an issue.
+      - A spec-only parent also enters here when the Maintainer chooses that route at scope-decision, or returns under rules.parent.
     exit: readiness-confirmation
-    completion: Requirements are approved and ready to plan; issue status is In progress.
+    completion:
+      - Requirements are approved and ready to plan; issue status is In progress.
+      - A spec-only parent also has matching evidence for every parent-spec step.
     steps:
       - key: readiness-check
         role: Coordinator
-        action: Establish the issue's state and check that it is ready.
+        action: Establish the issue's state and route, and check that it is ready.
         method:
           - agents/roles/coordinator.md#start
           - agents/roles/coordinator.md#check-that-the-issue-is-ready
-        evidence: Chat readiness report; the issue and its approved artifacts.
+        evidence: Chat readiness report; the issue, its approved artifacts, and any route choice.
         transitions:
-          - when: Requirements approved under rules.requirements and ready; no repeat interview or approval.
+          - when: Ordinary route; requirements approved under rules.requirements and ready; no repeat interview or approval.
             to: readiness-confirmation
-          - when: needs-triage or otherwise unready.
+          - when: Spec-only parent; every parent-spec step has matching evidence.
+            to: readiness-confirmation
+          - when: Spec-only parent without needs-triage; a parent-spec step lacks matching evidence.
+            to: parent-spec-draft
+          - when: needs-triage, or otherwise unready on the ordinary route.
             to: planner-handoff
       - key: planner-handoff
         role: Coordinator
@@ -131,35 +160,94 @@ stages:
         evidence: Issue or linked spec revision; chat interview.
       - key: requirements-review
         role: Maintainer
-        action: Review the requirements contract under rules.requirements.
-        evidence: Maintainer decision in chat or the issue, naming the artifact and revision.
+        action: Review the requirements contract under rules.requirements. When the Planner proposes the spec-only-parent route, choose the route.
+        evidence: Maintainer decision in chat or the issue, naming the artifact and revision, and any route choice.
         transitions:
           - when: Changes needed.
             to: requirements-interview
-          - when: Accepted.
+          - when: Accepted on the ordinary route.
+            to: readiness-confirmation
+          - when: The Maintainer chooses the spec-only-parent route.
+            to: parent-spec-draft
+      - key: parent-spec-draft
+        role: Coordinator and Planner
+        action:
+          - The Coordinator checks the round under rules.cycles and briefs the Planner.
+          - The Planner drafts the spec or its authorized change and validates it. The approved live contract stays unchanged until publication.
+        method:
+          - agents/roles/planner.md#own-a-parents-spec-and-plans
+        evidence: Cycle record; proposed spec revision and validation results in chat.
+      - key: parent-spec-review
+        role: Coordinator and Reviewer
+        action: The Coordinator records an eligible review_exception or dispatches a separate Reviewer on the whole changed spec revision.
+        method:
+          - agents/roles/reviewer.md#review
+        evidence: Chat findings tied to the reviewed revision, or the recorded eligible waiver.
+        transitions:
+          - when: Findings.
+            to: parent-spec-draft
+          - when: No findings, or a recorded eligible review_exception.
+            to: parent-spec-sign-off
+      - key: parent-spec-sign-off
+        role: Maintainer and Coordinator
+        action: The Maintainer signs off the reviewed spec revision, approving the requirements, or requests changes.
+        method:
+          - agents/roles/coordinator.md#hand-back
+        evidence: Maintainer sign-off in chat or the issue, naming the spec revision.
+        transitions:
+          - when: Changes requested.
+            to: parent-spec-draft
+          - when: Signed off.
+            to: parent-spec-assessment
+      - key: parent-spec-assessment
+        role: Coordinator and Architect
+        action: The Architect assesses the signed-off spec revision.
+        method:
+          - agents/roles/architect.md#work
+        evidence: Architect assessment in chat, tied to the spec revision.
+      - key: parent-spec-decisions
+        role: Maintainer and Coordinator
+        action: The Maintainer decides each Architect recommendation.
+        evidence: Maintainer decisions in chat or the issue; updated checkpoint.
+        transitions:
+          - when: The Maintainer authorizes a spec change.
+            to: parent-spec-draft
+          - when: No spec change authorized.
             to: readiness-confirmation
       - key: readiness-confirmation
         role: Coordinator
         action:
           - Confirm readiness.
-          - Change the issue's status from To do to In progress.
+          - Change the issue's status from To do to In progress, or keep it In progress.
           - Close Define; the Plan stage needs no entry approval.
         method:
           - agents/roles/coordinator.md#change-github-project-status
         evidence: Issue status and chat confirmation; updated checkpoint.
   - name: Plan
-    entry: Define is closed.
+    entry:
+      - Define is closed.
+      - A spec-only parent also returns here under rules.parent, or from parent-gap-triage for a corrective batch.
     exit: plan-close
     completion:
       - The Architect has assessed the plan.
       - Every recommendation has a decision.
       - The plan reflects authorized feedback, with no pending scope decision.
       - The Maintainer has approved the final plan revision under rules.approvals.
+      - A spec-only parent meets these for its active Coordination Plan, in the order rules.approvals sets, unless planner-briefing recorded "no new plan".
     steps:
       - key: planner-briefing
         role: Coordinator
-        action: Brief the Planner on the approved requirements, artifacts, and constraints.
-        evidence: Chat briefing with requirement references and revisions.
+        action:
+          - Brief the Planner on the approved requirements, artifacts, and constraints.
+          - For a spec-only parent, record "no new plan" instead when its active Coordination Plan is unaffected, or the next correction is a single child with no plan change.
+        evidence: Chat briefing with requirement references and revisions, or the no-new-plan record.
+        transitions:
+          - when: Ordinary route.
+            to: implementation-plan
+          - when: Spec-only parent needing a new or changed Coordination Plan.
+            to: parent-coordination-plan
+          - when: Spec-only parent with "no new plan" recorded.
+            to: plan-close
       - key: implementation-plan
         role: Planner
         action: Build the implementation plan.
@@ -179,21 +267,28 @@ stages:
         action:
           - The Coordinator sends the Architect's recommendations to the Planner.
           - The Planner revises the plan for in-scope recommendations.
-          - The Planner refers out-of-scope recommendations through the Coordinator to the Maintainer.
+          - The Planner refers out-of-scope recommendations and any proposed split through the Coordinator to the Maintainer.
         evidence: Recommendations and their disposition in chat; revised plan.
         transitions:
-          - when: Out-of-scope recommendations need decisions.
+          - when: Out-of-scope recommendations or a proposed split need decisions.
             to: scope-decision
-          - when: No out-of-scope recommendation is pending.
+          - when: No out-of-scope recommendation or proposed split is pending.
             to: plan-approval
       - key: scope-decision
         role: Maintainer and Planner
         action:
-          - The Maintainer decides each pending out-of-scope recommendation once.
+          - The Maintainer decides each pending out-of-scope recommendation once, and any proposed split, including whether to choose the spec-only-parent route.
           - The Planner revises the plan for approved ones.
         method:
           - agents/roles/coordinator.md#when-approved-requirements-change
         evidence: Maintainer decisions in chat or the issue; updated plan and checkpoint.
+        transitions:
+          - when: The Maintainer chooses the spec-only-parent route. Keep the earlier plan and the cycle count.
+            to: parent-spec-draft
+          - when: A decision makes a material plan revision under rules.approvals.
+            to: implementation-plan
+          - when: Decisions recorded with no material plan revision.
+            to: plan-approval
       - key: plan-approval
         role: Maintainer and Coordinator
         action:
@@ -207,10 +302,60 @@ stages:
             to: implementation-plan
           - when: Approved.
             to: plan-close
+      - key: parent-coordination-plan
+        role: Coordinator and Planner
+        action:
+          - The Coordinator checks the round under rules.cycles and briefs the Planner.
+          - The Planner writes or revises the Coordination Plan, with each new child's exact proposed issue content, and validates it. A corrective batch gets a separate linked plan.
+        method:
+          - agents/roles/planner.md#own-a-parents-spec-and-plans
+        evidence: Cycle record; plan file and revision linked in chat, with validation results.
+      - key: parent-plan-review
+        role: Coordinator and Reviewer
+        action: The Coordinator records an eligible review_exception or dispatches a separate Reviewer on the whole changed plan revision.
+        method:
+          - agents/roles/reviewer.md#review
+        evidence: Chat findings tied to the reviewed revision, or the recorded eligible waiver.
+        transitions:
+          - when: Findings.
+            to: parent-coordination-plan
+          - when: No findings, or a recorded eligible review_exception.
+            to: parent-plan-sign-off
+      - key: parent-plan-sign-off
+        role: Maintainer and Coordinator
+        action: The Maintainer signs off the reviewed plan revision, approving the plan, or requests changes.
+        method:
+          - agents/roles/coordinator.md#hand-back
+        evidence: Maintainer sign-off in chat or the issue, naming the plan revision.
+        transitions:
+          - when: Changes requested.
+            to: parent-coordination-plan
+          - when: Signed off.
+            to: parent-plan-assessment
+      - key: parent-plan-assessment
+        role: Coordinator and Architect
+        action: The Architect assesses the signed-off plan revision.
+        method:
+          - agents/roles/architect.md#work
+        evidence: Architect assessment in chat, tied to the plan revision.
+      - key: parent-plan-decisions
+        role: Maintainer and Coordinator
+        action: The Maintainer decides each Architect recommendation.
+        evidence: Maintainer decisions in chat or the issue; updated checkpoint.
+        transitions:
+          - when: The Maintainer authorizes a plan change.
+            to: parent-coordination-plan
+          - when: No plan change authorized.
+            to: plan-close
       - key: plan-close
         role: Coordinator
         action: Confirm the Plan stage's obligations and close it.
         evidence: Chat confirmation and updated checkpoint.
+        transitions:
+          - when: Ordinary route; Implement opens.
+            to: coder-briefing
+          - when: Spec-only parent; Publish opens.
+            to: parent-publication-check
   - name: Implement
     entry:
       - Plan is closed, or Publish returns for an authorized file change.
@@ -295,9 +440,15 @@ stages:
         action: Confirm every Implement completion condition and close the stage.
         evidence: Matching sign-off, assessment, review or eligible waiver, and validation references; updated checkpoint.
   - name: Publish
-    entry: Implement is closed for the revision to publish.
-    exit: merge-confirmation
-    completion: The signed-off revision is merged into main, the remote branch is deleted, and the Maintainer confirms the merge.
+    entry:
+      - "Ordinary route: Implement is closed for the revision to publish."
+      - "Spec-only parent: Plan is closed."
+    exit:
+      - "Ordinary route: merge-confirmation."
+      - "Spec-only parent: parent-outcome-acceptance."
+    completion:
+      - "Ordinary route: the signed-off revision is merged into main, the remote branch is deleted, and the Maintainer confirms the merge."
+      - "Spec-only parent: every approved artifact is published, every child has completed, full validation of their combined result passes, and the Maintainer has accepted it."
     steps:
       - key: remote-push
         role: Maintainer
@@ -323,11 +474,15 @@ stages:
         action:
           - Diagnose the CI failure or merge blocker.
           - A transient failure needs no file change; CI reruns on the same commit.
-          - A file change needs Maintainer authorization and a full return through Implement, including its evidence check, before remote-push updates the same PR.
+          - A file change needs Maintainer authorization and a full return through Implement, including its evidence check, before remote-push updates the same PR. For a spec-only parent, it returns to the artifact's owning stage instead.
         evidence: Chat diagnosis and authorization; GitHub CI and PR evidence.
         transitions:
-          - when: File change needed; wait for Maintainer authorization.
+          - when: Ordinary route; file change needed; wait for Maintainer authorization.
             to: coder-briefing
+          - when: Spec-only parent; spec change needed; wait for Maintainer authorization.
+            to: parent-spec-draft
+          - when: Spec-only parent; Coordination Plan change needed; wait for Maintainer authorization.
+            to: planner-briefing
           - when: Transient failure, no file change.
             to: ci-result
       - key: maintainer-merge
@@ -352,8 +507,128 @@ stages:
         role: Maintainer and Coordinator
         action:
           - The Maintainer confirms the merge.
-          - The Coordinator closes Publish.
+          - The Coordinator closes Publish, or for a spec-only parent returns to parent-publication-check.
         evidence: GitHub merge, chat confirmation, and updated checkpoint.
+        transitions:
+          - when: Ordinary route; Publish closed and Retro opens.
+            to: retro-drafts
+          - when: Spec-only parent; merge confirmed.
+            to: parent-publication-check
+      - key: parent-publication-check
+        role: Coordinator
+        action:
+          - Check that each artifact's validation, review, sign-off, and assessment evidence names the same revision, and compare it with the published copy.
+          - Publish only what differs. The Maintainer commits repository artifacts before remote-push.
+          - When everything matches, update the parent's plan links, close the resume obligation, and go to the step it names.
+        method:
+          - agents/roles/coordinator.md#publish-parent-artifacts
+        evidence: Each artifact's gated revision beside its merged commit or live readback digest; the closed resume obligation.
+        transitions:
+          - when: A repository artifact is unpublished.
+            to: remote-push
+          - when: A tracker artifact is unpublished.
+            to: parent-tracker-publication
+          - when: All published; the resume obligation names parent-child-scope-approval.
+            to: parent-child-scope-approval
+          - when: All published; the resume obligation names parent-child-issues.
+            to: parent-child-issues
+          - when: All published; the resume obligation names parent-children-wait.
+            to: parent-children-wait
+          - when: All published; the resume obligation names parent-validation.
+            to: parent-validation
+      - key: parent-tracker-publication
+        role: Coordinator
+        action: Copy the signed-off spec snapshot into the parent issue's body, read it back, and check that its digest matches.
+        method:
+          - agents/roles/coordinator.md#publish-parent-artifacts
+        evidence: Live body digest matching the approved snapshot.
+        transitions:
+          - when: Published and verified.
+            to: parent-publication-check
+      - key: parent-child-scope-approval
+        role: Maintainer and Coordinator
+        action: The Maintainer approves the proposed corrective child's scope and acceptance criteria, which authorizes its creation and launch, or asks for changes, or declines it.
+        evidence: Maintainer decision in chat or the issue, naming the proposal revision.
+        transitions:
+          - when: Approved.
+            to: parent-child-issues
+          - when: Changes requested or declined.
+            to: parent-gap-triage
+      - key: parent-child-issues
+        role: Coordinator
+        action: Create each approved child issue from its exact proposed content, or reuse one already recorded.
+        method:
+          - agents/roles/coordinator.md#create-and-launch-children
+        evidence: Child issue links and body digests matching the approved proposals.
+      - key: parent-child-launch
+        role: Coordinator
+        action: For each created child whose dependencies are met, create its workspace and start its Coordinator, or reuse recorded ones. A launch waives none of the child's gates or blockers.
+        method:
+          - agents/roles/coordinator.md#create-and-launch-children
+        evidence: Child workspace and session records.
+      - key: parent-children-wait
+        role: Coordinator
+        action: Keep the parent In progress, record each child's outstanding hand back and the next action, and act on events, such as a child's message or the Maintainer's.
+        method:
+          - agents/roles/coordinator.md#wait-for-children
+        evidence: Child hand backs with their evidence; checkpoint waits and obligations.
+        transitions:
+          - when: A created, unlaunched child's dependencies are now met.
+            to: parent-child-launch
+          - when: Children are still running, and none is ready to launch.
+            to: parent-children-wait
+          - when: Every child has completed and handed back.
+            to: parent-validation
+      - key: parent-validation
+        role: Coordinator and Reviewer
+        action: A separate Reviewer runs or reproduces full parent validation on the children's combined delivered revision, covering every parent criterion. Child closure alone isn't evidence.
+        method:
+          - agents/roles/coordinator.md#validate-the-combined-result
+          - agents/roles/reviewer.md#review
+        evidence: Chat results naming the combined revision, each criterion, and the checks the Coordination Plan names.
+        transitions:
+          - when: Checks are running, incomplete, or failed to run; result and next action recorded. Rerun when ready.
+            to: parent-validation
+          - when: Complete; a criterion fails or a substantial related gap is found.
+            to: parent-gap-triage
+          - when: Complete; every criterion passes and no substantial related gap is found.
+            to: parent-outcome-acceptance
+      - key: parent-gap-triage
+        role: Coordinator, Planner, and Maintainer
+        action:
+          - The Coordinator sends the gaps to the Planner, who triages them, read-only, into proposed new children grouped by outcome. Count new children, not findings.
+          - The Coordinator proposes unrelated improvements to the Maintainer separately.
+          - The Maintainer decides. A required gap blocks acceptance until it is resolved or removed from the approved requirements; filing, closing, cancelling, or deferring an issue doesn't resolve it.
+        method:
+          - agents/roles/coordinator.md#validate-the-combined-result
+          - agents/roles/planner.md#own-a-parents-spec-and-plans
+        evidence: Triage proposal in chat; Maintainer decisions.
+        transitions:
+          - when: The Maintainer authorizes a spec change. This goes first, even with new children.
+            to: parent-spec-draft
+          - when: No spec change; two or more new children, or a Coordination Plan change.
+            to: planner-briefing
+          - when: No spec or plan change; one new child.
+            to: parent-child-scope-approval
+          - when: No spec or plan change and no new child; the validation needs rerunning or correcting.
+            to: parent-validation
+          - when: No spec or plan change and no new child; every criterion passes and the Maintainer rules the remaining gaps not required.
+            to: parent-outcome-acceptance
+          - when: Triage or the Maintainer's decision is pending.
+            to: parent-gap-triage
+      - key: parent-outcome-acceptance
+        role: Maintainer and Coordinator
+        action: The Maintainer accepts the combined outcome against the current criteria, or gives direction. On acceptance, the Coordinator closes Publish.
+        method:
+          - agents/roles/coordinator.md#hand-back
+        evidence: Maintainer acceptance in chat or the issue, naming the validated combined revision.
+        transitions:
+          - when: Accepted.
+            to: retro-drafts
+          - when: The Maintainer asks for a rerun or more evidence.
+            to: parent-validation
+          - when: Not accepted.
+            to: parent-gap-triage
   - name: Retro
     entry: Publish is closed.
     exit: retro-close
@@ -398,6 +673,10 @@ stages:
         role: Coordinator
         action:
           - Confirm every stage obligation is met, including the recorded skip, the recorded zero-candidate result, or every draft filed or dropped.
+          - For a spec-only parent, once every checkpoint obligation is also met, close the issue and verify that its Project status is Done. No final edit or PR is needed.
           - Close Retro, completing the Lifecycle.
-          - Hand back to the Maintainer and tell them the worktree can be archived.
-        evidence: Chat completion confirmation, hand back, and archive notice; checkpoint with Retro closed.
+          - Hand back to the Maintainer and tell them the worktree can be archived. A child of a spec-only parent also sends its final hand back to the parent Coordinator and records delivery; a failed delivery keeps that obligation open.
+        method:
+          - agents/roles/coordinator.md#change-github-project-status
+          - agents/roles/coordinator.md#coordinate-a-child-of-a-parent
+        evidence: Chat completion confirmation, hand back, and archive notice; checkpoint with Retro closed. For a parent, the closed issue and Done status; for a child, the delivered final hand back.

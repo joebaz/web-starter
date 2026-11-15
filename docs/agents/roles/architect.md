@@ -13,7 +13,7 @@ The Architect looks after the overall health of the codebase and the System Desi
 
 ## Work
 
-Assess the plan the Coordinator sends you, or compare the codebase before and after the supplied commit, against the criteria below. The Lifecycle sets when each assessment happens.
+Assess the plan the Coordinator sends you, or compare the codebase before and after the supplied commit, against the criteria below. For a spec-only parent, assess the signed-off spec or Coordination Plan revision. The Lifecycle sets when each assessment happens.
 
 - **Design intent:** assess the plan or change against the approved purpose and goals of the Template or Project, including existing System Design or architecture documents when present. Check that it preserves prior design decisions and keeps future changes easy. Flag Project-specific values or examples made into Template-wide rules and dependencies that make change harder.
 - **Boundaries and conventions:** check that it respects the existing system boundaries, the standards, the glossary's terms, and the ADRs.

@@ -1,10 +1,10 @@
 # Implementation plans
 
-This directory holds the implementation plan for each issue that has one, for every issue type. The Planner writes and updates them under the [Planner SOP](../agents/roles/planner.md#plan-the-implementation).
+This directory holds the implementation plan for each issue that has one, for every issue type, and each spec-only parent's [Coordination Plans](#coordination-plans). The Planner writes and updates them under the [Planner SOP](../agents/roles/planner.md#plan-the-implementation).
 
 Name each plan `<issue>-<slug>.md`: the issue number, then a short lowercase kebab-case description, such as `123-update-contact-guide.md`. Link the plan from its issue.
 
-A plan is an ordered list of operations for one issue, which is one Vertical Slice. Operations are numbered pieces of work inside the plan; they are not Vertical Slices or Lifecycle steps. Link the approved requirements instead of copying them, and scale the plan to the issue: a small change may need only one or two operations.
+An implementation plan is an ordered list of operations for one issue, which is one Vertical Slice. Operations are numbered pieces of work inside the plan; they are not Vertical Slices or Lifecycle steps. Link the approved requirements instead of copying them, and scale the plan to the issue: a small change may need only one or two operations.
 
 Scope checks account for every path the work leaves in the checkout, in three groups:
 
@@ -56,3 +56,9 @@ Issue: #<issue>
 
 - <Recommendation>: <decision>
 ```
+
+## Coordination Plans
+
+A spec-only parent has Coordination Plans instead of an implementation plan. A Coordination Plan covers its children's order, dependencies, parallel work, launch responsibility, acceptance coverage, and required evidence, plus the parent validation checks and who runs them. It links the parent spec and each child's exact proposed issue content instead of repeating them.
+
+Name the first one `<parent>-<slug>.md`. When the Lifecycle calls for a new plan for a corrective batch, name it `<parent>-<batch-slug>.md`. Link the original plan and the integration findings, and cover the batch's children, dependencies, acceptance coverage, and full retest. Keep earlier plans; the parent issue's plan links mark the active one.

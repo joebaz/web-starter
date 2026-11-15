@@ -13,6 +13,10 @@ Issues live in this code repository's GitHub Issues, not in its wiki. Repository
 
 When a skill says “publish to the issue tracker,” create a GitHub issue. When it says “fetch the relevant ticket,” read that issue.
 
+## Spec-only parents
+
+A spec-only parent's issue body holds only its requirements contract, or a link to it. Proposed spec revisions go in clearly marked proposal comments. The Coordinator keeps one clearly marked comment that links every Coordination Plan and marks the active one. Link children as sub-issues with dependencies, as [Wayfinding](#wayfinding) does. Each child links the parent's contract, the revision it builds on, and the criteria it serves.
+
 ## Pull requests as a triage surface
 
 **PRs as a request surface: no.** Set this to `yes` only if external PRs should enter the triage queue.
