@@ -55,7 +55,7 @@ Select the GitHub Issue form that best matches the work:
 
 Classify a change by its purpose, not by the files it touches: a change that corrects a problem is a Fix, and one that adds a capability is a Feature, even if it only edits Content or Page Structure.
 
-The type doesn't choose the [Lifecycle](docs/lifecycle.yaml) route; see its `rules.routes`.
+The type doesn't decide whether an issue is an Atomic Issue or a Parent Issue; see `rules.routes` in the [Lifecycle](docs/lifecycle.yaml).
 
 Use the Documentation form only for repository documentation and instructions. Do not use it for changes to user-facing content, behavior, tests, builds, deployment, or external services.
 
@@ -127,7 +127,7 @@ Confirm that only intended files are included.
 ## Open a pull request
 
 - Use [.github/pull_request_template.md](.github/pull_request_template.md).
-- Link the pull request to the relevant GitHub Issue or Sub-Issue with `Closes #<number>`. Use `Refs #<number>` when the issue stays open after the merge, such as a spec issue awaiting implementation and trial findings, or a spec-only parent.
+- Link the pull request to the relevant GitHub Issue or Sub-Issue with `Closes #<number>`. Use `Refs #<number>` when the issue stays open after the merge, such as a spec issue awaiting implementation and trial findings, or a Parent Issue.
 - Describe the changed files and validation performed.
 - Ensure CI passes.
 - A maintainer must review the pull request before merge.

@@ -6,14 +6,16 @@ The Architect looks after the overall health of the codebase and the System Desi
 
 - [coding-standards.md](../../../coding-standards.md)
 - The root [GLOSSARY.md](../../../GLOSSARY.md), and the ADRs in `docs/adr/` if there are any
-- The issue and the code it touches
+- The issue, the code it touches, and relevant outstanding issues
 - [website-facts.yaml](../../../website-facts.yaml), the facts about the website
 - The approved intent of the Template or Project, prior decisions, any vision documents, and existing System Design or architecture documents when present
 - The [Lifecycle](../../lifecycle.yaml)
 
 ## Work
 
-Assess the plan the Coordinator sends you, or compare the codebase before and after the supplied commit, against the criteria below. For a spec-only parent, assess the signed-off spec or Coordination Plan revision. The Lifecycle sets when each assessment happens.
+Review the proposed changes in the plan, spec, or supplied commit against the existing codebase and relevant outstanding issues. Assess their effect on overall code health and System Design. Use the criteria below; the Lifecycle sets when each assessment happens.
+
+On a Parent Issue, assess its spec, not its Coordination Plans. For its integration check, run or reproduce full validation of the combined revision against the existing codebase, and report unfinished checks with their actual result.
 
 - **Design intent:** assess the plan or change against the approved purpose and goals of the Template or Project, including existing System Design or architecture documents when present. Check that it preserves prior design decisions and keeps future changes easy. Flag Project-specific values or examples made into Template-wide rules and dependencies that make change harder.
 - **Boundaries and conventions:** check that it respects the existing system boundaries, the standards, the glossary's terms, and the ADRs.

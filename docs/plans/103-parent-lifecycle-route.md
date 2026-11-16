@@ -1,4 +1,4 @@
-# Parent issue Lifecycle route: implementation plan
+# Parent Issue Lifecycle route: Implementation Plan
 
 Issue: [#103](https://github.com/joebaz/web-starter/issues/103)
 
@@ -14,6 +14,16 @@ Issue: [#103](https://github.com/joebaz/web-starter/issues/103)
   approval and authorized execution of revision
   `dbdddf8e75f37131aae15546d44a28aeb2c7b8a8`, including AR5 and AR14. The
   Coordinator holds the exact record. Independent review still applies.
+- Amendment: on 15 November 2026 the Maintainer approved the Parent Issue,
+  Atomic Issue, Sub-Issue and Implementation Plan terms and definitions, the
+  revised Coordination Plan definition, the Architect remit wording, the plans
+  guide's scope, plain `parent-` prefix wording, issue-only Coordinator starts
+  and the retained `#choose-a-route` anchor. It replaces the original wording of
+  the ADR, glossary entries and AGENTS qualifier; their decisions are unchanged.
+- Amendment: on 16 November 2026 the Maintainer removed the Architect's
+  assessment of Coordination Plans; the Reviewer reviews them. Parent
+  validation became two passes on the same combined revision: the Reviewer's
+  contract check, then the Architect's integration check.
 
 ## Operations
 
@@ -21,8 +31,8 @@ Issue: [#103](https://github.com/joebaz/web-starter/issues/103)
 
 - **Owner:** Coder, assigned as the only editor.
 - **Files/actions:** create `docs/adr/0001-spec-only-parent-lifecycle.md` from
-  the approved ADR body, byte-for-byte including status, D1–D6 and source links.
-  Add the exact two approved entries to `GLOSSARY.md`.
+  the approved ADR, keeping its status, D1–D6, evidence and source links in the
+  amended terminology. Add the approved definitions to `GLOSSARY.md`.
 - **Prerequisites:** approved final plan and authorized Implement cycle. The
   Coder sends the document-outline handoff before expansion: cite the approved
   ADR structure/full text and approval evidence, under the AR14 treatment
@@ -30,14 +40,15 @@ Issue: [#103](https://github.com/joebaz/web-starter/issues/103)
   Coordinator/Planner methods; evaluate other substantial changes at briefing.
 - **Handoff:** decision/term diff and outline evidence to the Coordinator;
   continue the same editing assignment through operations 2–3.
-- **Check:** compare ADR body/hash and glossary text to their approved sources.
+- **Check:** compare the ADR's decisions and evidence, and the glossary
+  definitions, with their approved sources.
   Retain #45's historical limitations; create no duplicate repository spec.
 
 ### 2. Add parent branches without changing the ordinary route
 
 - **Owner:** Coder.
 - **Files/actions:** `docs/lifecycle.yaml`, implementing D1–D6, including D3's
-  child creation/launch authority. The Lifecycle alone owns route selection,
+  Sub-Issue creation/launch authority. The Lifecycle alone owns route selection,
   threshold, order, conditions and completion gates.
 - **Prerequisites:** operation 1 and required outline approval.
 - **Handoff:** integrated YAML diff and branch inventory to operation 3.
@@ -54,9 +65,8 @@ listed-order fall-through.
 Qualify Lifecycle `scenarios.about`/`method` and rename the Planner heading
 `Choose a route` to `Choose an interview approach`, keeping the
 `#choose-a-route` anchor: requirements-interview approaches and entry skills are
-optional; the selected ordinary or spec-only-parent Lifecycle path still governs.
-Keep other headings/anchors and the exact approved glossary entries; introduce
-no new term.
+optional; the selected ordinary or parent route still governs. Keep other
+headings/anchors and use the approved glossary terms.
 
 - **Define:** existing `readiness-check` uses the recorded route. An unresolved
   choice follows `planner-handoff` / `requirements-interview` until the
@@ -70,9 +80,8 @@ no new term.
   Readiness status updates are idempotent when already In progress.
 - **Plan:** existing `planner-briefing` sends a new/materially changed parent
   plan through `parent-coordination-plan` → `parent-plan-review` →
-  `parent-plan-sign-off` → `parent-plan-assessment` →
-  `parent-plan-decisions` → `plan-close`. An unaffected plan with matching
-  approval/review/assessment/decisions goes directly to `plan-close`.
+  `parent-plan-sign-off` → `plan-close`. An unaffected plan with matching
+  review and sign-off goes directly to `plan-close`.
   A singleton correction records its no-new-parent-plan disposition and also
   bypasses these artifact gates. Parent `plan-close` enters
   `parent-publication-check`; ordinary `plan-close` still enters Implement.
@@ -86,30 +95,32 @@ no new term.
   at `remote-push`, or `parent-tracker-publication`. Both return to this
   check after verified completion. Mixed packages must finish both paths.
   Only then does the pending destination allow singleton scope approval,
-  child creation, resumed waiting, or validation; do not republish unchanged artifacts.
-- **Create children:** `parent-child-issues` is a Coordinator step separate
+  Sub-Issue creation, resumed waiting, or validation; do not republish unchanged artifacts.
+- **Create Sub-Issues:** `parent-child-issues` is a Coordinator step separate
   from `parent-child-launch`. It creates initial/corrective issues from the
   approved Planner proposal before workspace/session launch. Reuse recorded
   existing issues and sessions. Then `parent-children-wait` returns to launch
-  when another dependency is met, or to `parent-validation` when all finish.
-- **Validation:** running/incomplete checks wait; execution errors stay failed
-  pending direction. Completed related gaps lead to `parent-gap-triage`.
+  when another dependency is met, or to `parent-contract-check` when all finish.
+- **Validation:** the Reviewer's `parent-contract-check`, then the Architect's
+  `parent-validation`, on the same combined revision. Running/incomplete checks
+  wait; execution errors stay failed pending direction. Completed related gaps
+  from either lead to `parent-gap-triage`; reruns restart at the contract check.
   Changed acceptance criteria return to Define. Otherwise unresolved direction
   waits. Passing evidence reaches `parent-outcome-acceptance`, whose
   nonacceptance branches use those same three dispositions. Required gaps block
   completion. Only Maintainer acceptance closes parent Publish; common Retro
   follows, with parent closure/Done at `retro-close`.
-- **Corrective batches:** after read-only triage, two or more proposed children
+- **Corrective batches:** after read-only triage, two or more proposed Sub-Issues
   return through existing `planner-briefing` to `parent-coordination-plan`
   for a new linked plan, subject to cycle authorization.
   One goes to `parent-child-scope-approval`, then creation and
   launch without new parent plan gates. Requirements changes take Define first;
-  coordination changes take Plan. All corrective children finishing returns to
+  coordination changes take Plan. All corrective Sub-Issues finishing returns to
   full validation, not just checks of the fixes.
 
 The Coordinator records the resume destination as a checkpoint obligation,
 with the affected artifacts.
-Pause affected child work under the existing changed-requirements protocol.
+Pause affected Sub-Issue work under the existing changed-requirements protocol.
 Valid unchanged plan evidence can survive a spec return; changed plans cannot.
 Preserve recovery history so a return neither duplicates launches nor loses an
 unfinished publication.
@@ -121,7 +132,7 @@ Inventory these shared YAML provisions, not just new parent steps:
 | Existing provision                                                      | Required qualification                                                                                                                                                                                   |
 | ----------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `reading` stage/step order; tracking on returns                         | Selected-route branches override listed order; reset only rerun steps, preserving approvals/counts.                                                                                                      |
-| `rules.approvals`; Plan completion                                      | Ordinary Architect-before-approval remains; parent sign-off/assessment order and unchanged-plan/singleton exits are explicit.                                                                            |
+| `rules.approvals`; Plan completion                                      | Ordinary Architect-before-approval remains; parent spec sign-off/assessment order, plan sign-off without assessment, and unchanged-plan/singleton exits are explicit.                                    |
 | `rules.cycles`, return counters and `review_exception` references       | Apply existing authorization/caps/eligible waivers to parent artifact stages, without calling a waiver a review pass.                                                                                    |
 | Implement entry; Publish entry/exit/completion                          | Ordinary entry and merge exit remain; parent skips Implement, waits after publications and exits only on outcome acceptance.                                                                             |
 | `remote-push`, `maintainer-merge`, `ci-diagnosis`, `merge-confirmation` | Parent artifact evidence qualifies implemented-commit assumptions. CI changes return to the owning artifact stage. Parent merge confirmation returns to publication checking instead of closing Publish. |
@@ -131,7 +142,7 @@ The first parent artifact round uses Coordinator-start/go-ahead evidence under
 current cycles. **Every later artifact edit/review round**, including the first
 coordination plan and new batch plans, needs explicit Maintainer authorization;
 it can be recorded at an earlier handoff, never inferred from stage entry.
-Parent and child Coordinators own separate cumulative counts. Separate parent
+Parent Issue and Sub-Issue Coordinators own separate cumulative counts. Separate parent
 spec/plan rounds already consume two of the five allowed rounds; a sixth needs
 an explicit extension. Validation without artifact edits creates no new editing
 round and resets nothing.
@@ -147,40 +158,40 @@ round and resets nothing.
 - **Check:** an agent can find its actor, inputs, permission, completion evidence
   and return destination without a competing sequence.
 
-| File                                              | Focus                                                                                                                                                                       |
-| ------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `docs/agents/roles/coordinator.md`                | Route choice; approved issue creation separately from workspace launch; previews/publication, recovery, child handbacks and parent close-out methods.                       |
-| `docs/agents/roles/planner.md`                    | Parent-owned edits, proposal revisions and draft validation via CONTRIBUTING; qualify optional interview approaches; link to authoritative threshold and Lifecycle paths.   |
-| `docs/agents/roles/reviewer.md`                   | Applicable artifact reviews and full combined validation; findings go to the assigned owner; fix nothing. Retain ordinary duties and current skill requirement pending #84. |
-| `docs/agents/roles/architect.md`                  | Parent signed-off artifact/snapshot assessment alongside ordinary plan/commit work; preserve advisory authority.                                                            |
-| `docs/agents/issue-tracker.md`                    | Contract/proposal-comment links, parent links and active/prior plan links; reference existing evidence rules.                                                               |
-| `docs/plans/README.md`                            | Coordination-plan purpose and linked batch filenames/history; refer to Lifecycle for route/threshold, not a general no-plan policy.                                         |
-| `docs/agents/triage-labels.md`, `CONTRIBUTING.md` | Category independence, parent publication/closure pointers; preserve labels, validation and Git authority.                                                                  |
-| `AGENTS.md`                                       | Only the proposed same-issue/child-issue qualifier below.                                                                                                                   |
+| File                                              | Focus                                                                                                                                                                        |
+| ------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `docs/agents/roles/coordinator.md`                | Route choice; approved issue creation separately from workspace launch; previews/publication, recovery, Sub-Issue handbacks and parent close-out methods.                    |
+| `docs/agents/roles/planner.md`                    | Parent-owned edits, proposal revisions and draft validation via CONTRIBUTING; qualify optional interview approaches; link to authoritative threshold and Lifecycle paths.    |
+| `docs/agents/roles/reviewer.md`                   | Applicable artifact reviews and the parent contract check; findings go to the assigned owner; fix nothing. Retain ordinary duties and current skill requirement pending #84. |
+| `docs/agents/roles/architect.md`                  | Review proposed plan, spec or commit changes against the codebase and relevant outstanding issues; run the parent integration check; no Coordination Plan assessment.        |
+| `docs/agents/issue-tracker.md`                    | Contract/proposal-comment links, parent links and active/prior plan links; reference existing evidence rules.                                                                |
+| `docs/plans/README.md`                            | When to use Implementation or Coordination Plans, location, template and linking; batch filenames/history. No general no-plan policy.                                        |
+| `docs/agents/triage-labels.md`, `CONTRIBUTING.md` | Category independence, parent publication/closure pointers; preserve labels, validation and Git authority.                                                                   |
+| `AGENTS.md`                                       | The role-default and same-issue/Sub-Issue qualifier below.                                                                                                                   |
 
-**Child creation and return:** the Planner supplies exact proposed issue content
-and its snapshot/digest, linked from the approved coordination proposal or
-singleton decision. The Coordinator records whether the Maintainer also
-explicitly approved complete child requirements; use `rules.requirements` to
-reuse that approval, not repeat it. Unsettled child requirements still need the
-child's Define gates. `to-tickets` remains optional and Maintainer-started.
+**Sub-Issue creation and return:** the Planner supplies exact proposed issue
+content and its snapshot/digest, linked from the approved coordination proposal
+or singleton decision. The Coordinator records whether the Maintainer also
+explicitly approved complete Sub-Issue requirements; use `rules.requirements` to
+reuse that approval, not repeat it. Unsettled Sub-Issue requirements still need
+its Define gates. `to-tickets` remains optional and Maintainer-started.
 
-On discovering a proposed parent-spec change, the child Coordinator immediately
-notifies the parent Coordinator and pauses its own affected work under the
+On discovering a proposed parent spec change, the Sub-Issue's Coordinator
+immediately notifies the Parent Issue's Coordinator and pauses its own affected work under the
 existing change protocol. The parent obtains the Maintainer's decision and
 returns through Define when requirements change; unaffected work may continue.
 
-Each child records its final handback obligation: requirement revision,
+Each Sub-Issue records its final handback obligation: requirement revision,
 merges/checks, Lifecycle completion, deviations/obligations and remaining open
 parent-spec proposals. This is not the first notification of a proposal.
 Use the existing `retro-close` final handback: prepare evidence before closure,
 report actual completion in that handoff, and record delivery. A completed Retro
 is not a prerequisite to entering `retro-close`; a failed handback leaves its
-obligation open. Parent waits resume from events. Children never edit the parent
+obligation open. Parent waits resume from events. Sub-Issues never edit the parent
 spec from their assignment/workspace.
 
 **Tracker proposal and publication:** the parent Planner places exact next-spec
-text in a clearly marked proposal comment on the parent issue, preserving the
+text in a clearly marked proposal comment on the Parent Issue, preserving the
 approved live contract body. Record its comment snapshot/digest, original live
 baseline and approval evidence. Preserve reviewed text; revised proposals get
 new comments rather than overwrite the reviewed snapshot. A proposal is not a
@@ -193,22 +204,23 @@ survives, rerun affected gates rather than guess. After owning-stage gates,
 the Coordinator copies the approved spec snapshot to the canonical body and
 verifies its live digest; keep approval metadata separate. Mixed publication
 still waits for both tracker readback and repository merge/revision evidence
-before new child creation/launch.
+before new Sub-Issue creation/launch.
 
 For another repository publication after squash/head deletion, the Maintainer
 chooses/prepares the appropriate current baseline and branch. The Coordinator
 records them and opens the next PR after the normal checks. Agents do not reset,
 rebase, commit or push; the parent's Lifecycle/counts continue.
 
-**Existing checkpoint fields for future parents:**
+**Existing checkpoint fields for future Parent Issues:**
 
 - `evidence.requirements`: spec revision, approval and linked gate evidence.
 - `evidence.plan`: active and prior plan revisions/sign-offs/gate evidence;
   `evidence.assessment`: current artifact assessment.
-- `obligations`: each child's outstanding final hand back and any resume
+- `obligations`: each Sub-Issue's outstanding final hand back and any resume
   obligation (the step to resume after publication).
-- `evidence.review`: full validation result/coverage; preserve artifact review
-  references with their package evidence.
+- `evidence.review`: latest contract check; preserve artifact review references
+  with their package evidence. `evidence.assessment` also holds the latest
+  integration check.
 - `next`: the next action; `waits/errors`: actual blocked state;
   `cycles`: parent authorization/count history.
 - Parent `sign_off` stays `null`: it is Implement-specific; parent artifact
@@ -244,16 +256,18 @@ Walkthrough coverage (actors, keys, revisions, evidence and next action):
 1. Atomic Feature, and ordinary Plan discovering a split: recorded route decision,
    no automatic Feature fork, ordinary graph preserved. Declining an interview
    approach/skill never permits skipping the selected Lifecycle path.
-2. Docs parent with mixed-category children: stage-specific gates, issue creation
-   before launch, exact child proposals and already-approved child requirements.
-3. Child feedback changes the spec: immediate parent notification and affected-work
-   pause, not deferred until final handback; child cannot edit it;
+2. Docs Parent Issue with mixed-category Sub-Issues: stage-specific gates, issue
+   creation before launch, exact Sub-Issue proposals and already-approved
+   Sub-Issue requirements.
+3. Sub-Issue feedback changes the spec: immediate parent notification and
+   affected-work pause, not deferred until final handback; the Sub-Issue cannot
+   edit it;
    Define return, valid-plan fast path or changed-plan gates, correct publication.
-4. Full integration yields multiple corrective children: authorized separate
+4. Full integration yields multiple corrective Sub-Issues: authorized separate
    linked plan via `planner-briefing` → `parent-coordination-plan`, preserved
-   counts/history, all children finish, full retest.
-5. One corrective child, including changed parent criteria: scope approval,
-   no new parent plan, own child gates, Define return where needed, full retest.
+   counts/history, all Sub-Issues finish, full retest.
+5. One corrective Sub-Issue, including changed parent criteria: scope approval,
+   no new parent plan, its own gates, Define return where needed, full retest.
 6. Tracker-only and mixed publication: preserved exact proposal comment, unchanged
    approved body until publication, digest readback and both paths complete.
    Lost local copy recovers from exact source; digest-only recovery reruns gates.
@@ -274,16 +288,17 @@ classifier unchanged. Planner draft validation links to
 
 ## Maintainer decisions: AR5 and AR14
 
-**AR5 — AGENTS qualifier.** Approved D3 child workspaces need `AGENTS.md` in
-scope. Replace its same-checkout bullet with exactly:
+**AR5 — AGENTS qualifier.** Approved D3 Sub-Issue workspaces and issue-only
+Coordinator starts need `AGENTS.md` in scope. Its role bullets read:
 
 ```markdown
-- When you start another role agent for the same issue, start it in your checkout without a new worktree. Create child-issue workspaces and start their Coordinators only as authorized by the [Lifecycle](docs/lifecycle.yaml). Each agent's first message names its role and SOP, plus the issue, for example: "You are the Coder. Follow `docs/agents/roles/coder.md`."
+- If your first message names a role, you are that role. Otherwise, including when the maintainer opens a workspace with only an issue, you are the Coordinator.
+- When you start another role agent for the same issue, start it in your checkout without a new worktree. Its first message names its role and SOP, plus the issue, for example: "You are the Coder. Follow `docs/agents/roles/coder.md`." Create Sub-Issue workspaces and start their Coordinators only as the [Lifecycle](docs/lifecycle.yaml) authorizes.
 ```
 
 **AR14 — ADR outline treatment.** The approved ADR full text and D1–D6
 structure serve as its document outline. The Coder sends an outline handoff
-citing them before writing it, and writes the ADR byte-for-byte. Other new or
+citing them before writing it, and keeps its approved decisions and evidence. Other new or
 substantially revised documents still need outline approval.
 
 ## Scope, later handoffs and recommendation decisions

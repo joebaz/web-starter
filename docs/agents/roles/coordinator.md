@@ -27,7 +27,7 @@ Establish where the issue actually stands before advancing it. From your first r
 
 ## Check that the issue is ready
 
-An issue is ready for an agent when a Coder can build and check it without guessing. A spec-only parent is ready when its children can be defined and their combined result checked without guessing. An issue isn't ready when:
+An issue is ready for an agent when a Coder can build and check it without guessing. A Parent Issue is ready when its Atomic Issues can be defined and their combined result checked without guessing. An issue isn't ready when:
 
 - its goal, scope, or acceptance criteria are unclear or contradict each other
 - it needs a decision, an undecided [website fact](../../../website-facts.yaml), or an artifact it doesn't have, such as a specification it lists as required
@@ -36,7 +36,7 @@ An issue is ready for an agent when a Coder can build and check it without guess
 ## Coordinate the work
 
 - Brief each agent with the inputs it needs.
-- Hand the implementation to a Coder and the review to a separate Reviewer, in review cycles under the Lifecycle's `cycles` and `review_exception` rules. Apply the same rules to any change you make yourself; an assignment does not waive review. On a spec-only parent, the Planner edits the spec and Coordination Plans instead of a Coder.
+- Hand the implementation to a Coder and the review to a separate Reviewer, in review cycles under the Lifecycle's `cycles` and `review_exception` rules. Apply the same rules to any change you make yourself; an assignment does not waive review. On a Parent Issue, the Planner edits the spec and Coordination Plans instead of a Coder.
 - Let one agent edit files at a time. Read-only work can run alongside it, such as a Researcher answering a question while the Coder works.
 - Track which agent owns what, and which work depends on other work.
 - Check on the agents you started or inherited, as [Check on delegated work](#check-on-delegated-work) describes.
@@ -141,7 +141,7 @@ Keep each issue's execution checkpoint as the small local record the [execution 
 - **Recover:** if the record is missing, for example because the workspace was lost, rebuild the state from primary evidence as [Start](#start) describes: the issue, its linked spec and plan, Git, reviews, and the pull request. Leave anything the evidence doesn't establish as unknown, and ask the maintainer only about what stays uncertain.
 - **Confirm recorded approvals:** read the sign-off and the cycle count, authorizations, extensions, and waivers from the record, then confirm each against its primary evidence, such as the maintainer's message or comment, before relying on it. A record is not an approval.
 - **Keep:** leave the record in place until the maintainer archives the worktree.
-- **Record a parent:** use the existing fields. `evidence.requirements` holds the route choice and the spec's revision and gate evidence; `evidence.plan` each Coordination Plan's revision and gate evidence, marking the active one; `evidence.review` the latest full validation; and `obligations` each child's outstanding final hand back and any resume obligation, such as "resume at parent-children-wait after publishing the spec at <revision>". `sign_off` stays `null`.
+- **Record a Parent Issue:** use the existing fields. `evidence.requirements` holds the route choice and the spec's revision and gate evidence; `evidence.plan` each Coordination Plan's revision and gate evidence, marking the active one; `evidence.review` the latest contract check; `evidence.assessment` the latest Architect assessment or integration check; and `obligations` each Sub-Issue's outstanding final hand back and any resume obligation, such as "resume at parent-children-wait after publishing the spec at <revision>". `sign_off` stays `null`.
 
 ## Run Retro drafts
 
@@ -162,40 +162,40 @@ Use this method for an authorized issue-status change:
 3. If the issue is not a member of the established Project, attach it as part of the authorized status change. Set the mapped Status option.
 4. Read back the issue's membership and Status to verify the result. Confirm the Project and status in chat, or report the exact error encountered.
 
-## Coordinate a spec-only parent
+## Coordinate a Parent Issue
 
-Methods for the Lifecycle's `parent-*` steps.
+Methods for the Lifecycle's parent-route steps.
 
 ### Publish parent artifacts
 
 - **Tracker spec:** copy the signed-off proposal comment unchanged into the issue body. Read the body back and compare its digest with the approved snapshot. Keep approval notes out of the body.
 - **Repository files:** once the maintainer commits the signed-off files, take the shared Publish steps from `remote-push`. For a later publication, the maintainer chooses and prepares the branch and baseline; record them.
-- **Plan links:** keep one clearly marked comment on the parent issue that links every Coordination Plan and marks the active one. Update it whenever a plan is published.
+- **Plan links:** keep one clearly marked comment on the Parent Issue that links every Coordination Plan and marks the active one. Update it whenever a plan is published.
 - **Lost copies:** recover a lost local copy from its proposal comment or committed file, and check its digest.
 
-### Create and launch children
+### Create and launch Sub-Issues
 
-- **Issues:** create each child issue from the Planner's exact proposed content, check its body against the proposal's digest, and link it as the [issue tracker guide](../issue-tracker.md) describes. Reuse an issue already recorded for the proposal, including one created with `mattpocock-skills:to-tickets`.
-- **Approval:** record whether the maintainer approved the child's complete requirements. If so, the child reuses that approval; otherwise it goes through its own Define gates.
-- **Launch:** create the child's workspace and start its Coordinator, or reuse recorded ones. Its first message names the role, SOP, child issue, and parent issue, and asks for hand backs to you.
+- **Issues:** create each Sub-Issue from the Planner's exact proposed content, check its body against the proposal's digest, and link it as the [issue tracker guide](../issue-tracker.md) describes. Reuse an issue already recorded for the proposal, including one created with `mattpocock-skills:to-tickets`.
+- **Approval:** record whether the maintainer approved the Sub-Issue's complete requirements. If so, it reuses that approval; otherwise it goes through its own Define gates.
+- **Launch:** create the Sub-Issue's workspace and start its Coordinator, or reuse recorded ones. Its first message names the role, SOP, Sub-Issue, and Parent Issue, and asks for hand backs to you.
 
-### Wait for children
+### Wait for Sub-Issues
 
-- **Proposals:** when a child proposes a parent-spec change, take it to the maintainer at once and reply to the child with their decision, including a decline.
-- **Hand backs:** a child's obligation closes only with the final hand back listed in [Coordinate a child of a parent](#coordinate-a-child-of-a-parent).
+- **Proposals:** when a Sub-Issue's Coordinator proposes a parent spec change, take it to the maintainer at once and reply with their decision, including a decline.
+- **Hand backs:** a Sub-Issue's obligation closes only with the final hand back listed in [Coordinate a Sub-Issue](#coordinate-a-sub-issue).
 
 ### Validate the combined result
 
-- **Dispatch:** give the Reviewer the children's combined delivered revision, every parent criterion, and the checks the Coordination Plan names.
-- **Gaps:** send failing criteria and substantial related gaps to the Planner for triage. Propose unrelated improvements to the maintainer separately.
+- **Dispatch:** give the Reviewer, then the Architect, the Sub-Issues' combined delivered revision, every parent criterion, and the checks the Coordination Plan names.
+- **Gaps:** send failing criteria and substantial related gaps from either check to the Planner for triage. Propose unrelated improvements to the maintainer separately.
 
-## Coordinate a child of a parent
+## Coordinate a Sub-Issue
 
-When your issue is a child of a spec-only parent:
+When your issue is a Sub-Issue of a Parent Issue:
 
-- **Link the parent:** link the parent's contract, its revision, and the criteria your issue serves. Only the parent's Planner edits the parent spec.
-- **Propose changes:** as soon as anyone on your issue finds a needed parent-spec change, send the parent Coordinator the exact proposed text and the reason. Pause affected work until they relay the maintainer's decision.
-- **Hand back at the end:** at `retro-close`, send the parent Coordinator your requirements revision, merge and check evidence, Lifecycle completion, deviations, remaining obligations, and any open parent-spec proposals. Record delivery; if it fails, keep the obligation open and tell the maintainer.
+- **Link the Parent Issue:** link its contract, the revision you build on, and the criteria your issue serves. Only its Planner edits its spec.
+- **Propose changes:** as soon as anyone on your issue finds a needed parent spec change, send the Parent Issue's Coordinator the exact proposed text and the reason. Pause affected work until they relay the maintainer's decision.
+- **Hand back at the end:** at `retro-close`, send the Parent Issue's Coordinator your requirements revision, merge and check evidence, Lifecycle completion, deviations, remaining obligations, and any open parent spec proposals. Record delivery; if it fails, keep the obligation open and tell the maintainer.
 
 ## When approved requirements change
 
@@ -212,6 +212,6 @@ Report to the maintainer at the Lifecycle's handoffs. For their diff review, giv
 
 For plan approval, give the plan revision, the Architect's assessment, and each recommendation's decision, and ask the maintainer to approve that revision.
 
-For a parent spec or Coordination Plan sign-off, give the revision and its review result. For parent acceptance, give the validation evidence for each criterion and the combined revision it covers.
+For a parent spec or Coordination Plan sign-off, give the revision and its review result. For Parent Issue acceptance, give the contract and integration evidence and the combined revision both cover.
 
 When the maintainer needs to act in another agent's session, such as on a proposal or plan there, send a short notice naming the action and the session, for example: "Action needed: approve or revise the #76 requirements in the Planner session." Don't repeat that session's proposal or report. Add your own detail only to explain a blocker or a conflicting decision. Keep recording the wait and the decision evidence as the Lifecycle requires.
