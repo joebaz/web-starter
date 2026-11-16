@@ -91,7 +91,7 @@ rules:
     - At most five cycles per issue; a sixth or later needs an explicit Maintainer extension.
     - Returning for further changes, including to coder-briefing from Implement or Publish, or a Parent Issue's return to Define or Plan, never resets the count.
     - On the parent route, each round of parent spec or Coordination Plan edits is a cycle, including the first Coordination Plan. Entering a stage authorizes no round. The Coordinator checks each round's authorization, count, and any extension at parent-spec-draft or parent-coordination-plan before the Planner edits.
-    - A Parent Issue and each Sub-Issue keep separate counts. Parent validation checks and Implementation Plan reviews are not cycles.
+    - A Parent Issue and each Sub-Issue keep separate counts. Parent validation checks are not cycles. Implementation Plan revisions and their reviews are not cycles and need no go-ahead under this rule; plan approval still applies under rules.approvals.
 checkpoint:
   format: execution-checkpoint.md
   method: agents/roles/coordinator.md#keep-the-execution-checkpoint
@@ -583,7 +583,7 @@ stages:
             to: parent-validation
       - key: parent-validation
         role: Coordinator and Architect
-        action: On the revision the contract check passed, the Architect runs or reproduces full integration validation against the existing codebase, including relevant outstanding issues, system boundaries, and code health. The checks the Coordination Plan names apply, such as the required commands on the combined revision or, for a Docs Parent Issue, a consistency walkthrough.
+        action: On the revision the contract check passed, the Architect runs or reproduces full integration validation against the existing codebase, including relevant outstanding issues, system boundaries, and code health. The checks the Coordination Plan names apply, such as the required commands and the website checks the plan names, on the combined revision, or, for a Docs Parent Issue, a consistency walkthrough.
         method:
           - agents/roles/coordinator.md#validate-the-combined-result
           - agents/roles/architect.md#work

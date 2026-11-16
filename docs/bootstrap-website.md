@@ -147,7 +147,7 @@ The Planner works out which questions are needed. Ask only for answers that are 
 
 Bootstrap works like an installer: this runbook is the plan, and starting a bootstrap approves it. Once intake is complete, go straight to Implementation and report progress in the bootstrap issue. Don't write a bootstrap plan or spec, and don't ask the Maintainer to approve requirements or a plan.
 
-For bootstrap only, this takes precedence over the Lifecycle's requirements approval in Define, its Plan stage, its Architect steps (`plan-assessment`, `recommendations-review`, and `signed-off-assessment`), and any later step that waits on a plan, plan approval, or assessment.
+For bootstrap only, this takes precedence over the Lifecycle's requirements approval in Define, its Plan stage, its plan review steps (`plan-review` and `plan-findings`), the Architect's `signed-off-assessment`, and any later step that waits on a plan, plan approval, or assessment.
 
 If an answer or situation falls outside this runbook, ask the Maintainer through the Coordinator before going on. Report problems with the runbook for a Template fix through its normal issue and approval process; repairs to the new repository still need its normal approvals. The Reviewer's independent review, CI, the Maintainer's sign-off, and Maintainer-only actions all still apply.
 

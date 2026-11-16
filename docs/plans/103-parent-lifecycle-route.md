@@ -35,7 +35,8 @@ Issue: [#103](https://github.com/joebaz/web-starter/issues/103)
 - Amendment: later on 16 November 2026 the Maintainer approved a further
   outline. The Architect assesses requirements and delivered changes; a Reviewer
   reviews ordinary Implementation Plans before approval, in place of the
-  Architect's plan assessment. The Reviewer's contract check uses the combined
+  Architect's plan assessment. Implementation Plan revisions and their reviews
+  are not cycles; plan approval still applies. The Reviewer's contract check uses the combined
   result as visitors would, guided by a short website checklist in `docs/qa.md`.
   Plan fields move to `docs/agents/plan-format.md` and scope checks to
   CONTRIBUTING. The Lifecycle gains a route rubric, the glossary a new Vertical
@@ -188,7 +189,7 @@ round and resets nothing.
 | `docs/agents/plan-format.md`                      | New reference: Implementation Plan and Coordination Plan fields and templates; no scheduling or approval rules.                                                                                                                                       |
 | `docs/qa.md`                                      | Short, conditional website checklist and a documentation walkthrough alternative.                                                                                                                                                                     |
 | `docs/agents/triage-labels.md`, `CONTRIBUTING.md` | Category independence, parent publication/closure pointers, a Plans section, scope accounting in Every change; preserve labels, validation and Git authority.                                                                                         |
-| `docs/execution-checkpoint.md`                    | Example `assessment` value no longer shows an Architect plan assessment; format unchanged.                                                                                                                                                            |
+| `docs/execution-checkpoint.md`                    | Example `assessment` is `null` while the Implement assessment is pending; format unchanged.                                                                                                                                                           |
 | `AGENTS.md`                                       | The role-default and same-issue/Sub-Issue qualifier below.                                                                                                                                                                                            |
 
 **Sub-Issue creation and return:** the Planner supplies exact proposed issue
@@ -268,8 +269,9 @@ boundaries and gate waits. A human evaluates prose conditions against each
 scenario's route, approvals and evidence; the report does not execute English.
 For atomic cases, select ordinary guards and compare the possible successor
 graph with baseline, including implicit edges. Every ordinary successor must
-remain, apart from the approved rename of `plan-assessment` and
-`recommendations-review` to `plan-review` and `plan-findings`, and parent
+remain, apart from the cycle 7 rename of `plan-assessment` and
+`recommendations-review` to `plan-review` and `plan-findings`, a Coder
+choice within the approved Reviewer plan review, and parent
 insertion must add none. Check unique keys, resolved targets
 and reachable stage exits/Retro for both routes under successful conditions;
 also trace waits and corrective loops. Keep this report/script temporary, not

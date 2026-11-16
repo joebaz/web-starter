@@ -42,8 +42,8 @@ checks. Keep existing cycle authorizations, cumulative counts, limits and
 eligible exceptions, including across new plans and stage returns.
 
 **Why:** Skipping Implement must retain quality checks where the document is
-decided, rather than postpone them to Publish. Plans get the same independent
-review on both routes; the Architect's code-health view applies to what is
+decided, rather than postpone them to Publish. Plans get independent review on
+both routes; the Architect's code-health view applies to what is
 required and what is delivered.
 
 ## D3. Keep the parent spec under Parent Issue ownership

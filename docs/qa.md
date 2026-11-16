@@ -47,7 +47,7 @@ Performance measurement constraints:
 
 ## Check that the website works
 
-Passing commands and acceptance criteria don't show that visitors can use the site. Check what the change affects on the built site (`npm run build`, then `npm run preview`), and skip what it doesn't. This list chooses checks; it adds no requirements.
+Passing commands and acceptance criteria don't show that visitors can use the site. Check what the change affects on the built site (`npm run build`, then `npm run preview`), and skip what it doesn't. Every check that applies is required; the list adds no acceptance criteria or scope.
 
 - **Pages and files:** affected pages load at their configured URLs, with their images, styles, scripts, and any redirects working.
 - **Visitor tasks:** use each changed link, form, navigation path, or other task as a visitor would. Check the result they should get, and what happens when it fails, such as an invalid form entry.
