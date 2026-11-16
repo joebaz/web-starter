@@ -61,10 +61,25 @@ Documents intended to guide the Maintainer working on the Template or a Project.
 ## Planning
 
 **Vertical Slice**:
-A cohesive outcome, one GitHub Issue or Sub-Issue, delivered through every Layer it needs so it can be checked end to end on its own, such as the Docs lifecycle working for Docs issues before other issue types adopt it.
+A small, usable end-to-end result across the Layers it needs, which can be demonstrated and tested as a working whole. It may be delivered by one Atomic Issue or several coordinated under a Parent Issue.
 
 **Layer**:
 A part of the Template or Project that owns one kind of responsibility for many outcomes, such as site configuration, page layouts, or the lifecycle's sequencing.
+
+**Atomic Issue**:
+An issue for one cohesive deliverable that follows its own ordinary Lifecycle. It may stand alone or belong to a Parent Issue; depending on other issues doesn't change that.
+
+**Parent Issue**:
+An issue that coordinates several Atomic Issues toward a shared outcome and accepts their combined result. It holds the shared requirements and coordination; its Atomic Issues deliver the implementation.
+
+**Sub-Issue**:
+An Atomic Issue considered in relation to its Parent Issue.
+
+**Implementation Plan**:
+The operations and checks needed to deliver an Atomic Issue.
+
+**Coordination Plan**:
+The sequencing, dependencies and acceptance coverage of multiple Sub-Issues.
 
 ## Workflow
 
@@ -79,7 +94,7 @@ _Avoid_: readout (alone), status report
 A concise description of an agent’s assigned work, including its expected outcome, scope and acceptance criteria.
 
 **Task Artifact**:
-A document or record produced or used while carrying out an issue, such as a specification, implementation plan or review report.
+A document or record produced or used while carrying out an issue, such as a specification, Implementation Plan or review report.
 
 ## Changes and debt
 
@@ -115,7 +130,7 @@ The agent role that coordinates work on a GitHub issue between the Maintainer an
 _Avoid_: orchestrator, orchestrate
 
 **Planner**:
-The agent role that captures the Maintainer's intent and plans the implementation of a GitHub Issue or Sub-Issue.
+The agent role that captures the Maintainer's intent and plans the implementation of an Atomic Issue or the coordination of a Parent Issue.
 
 **Researcher**:
 The read-only agent role that answers approved research questions with checked facts and sources.

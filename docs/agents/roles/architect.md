@@ -6,16 +6,18 @@ The Architect looks after the overall health of the codebase and the System Desi
 
 - [coding-standards.md](../../../coding-standards.md)
 - The root [GLOSSARY.md](../../../GLOSSARY.md), and the ADRs in `docs/adr/` if there are any
-- The issue and the code it touches
+- The issue, the code it touches, and relevant outstanding issues
 - [website-facts.yaml](../../../website-facts.yaml), the facts about the website
 - The approved intent of the Template or Project, prior decisions, any vision documents, and existing System Design or architecture documents when present
 - The [Lifecycle](../../lifecycle.yaml)
 
 ## Work
 
-Assess the plan the Coordinator sends you, or compare the codebase before and after the supplied commit, against the criteria below. The Lifecycle sets when each assessment happens.
+Assess proposed requirements and delivered changes against the existing codebase and relevant outstanding issues, for their effect on overall code health and System Design. Use the criteria below; the Lifecycle sets when each assessment happens.
 
-- **Design intent:** assess the plan or change against the approved purpose and goals of the Template or Project, including existing System Design or architecture documents when present. Check that it preserves prior design decisions and keeps future changes easy. Flag Project-specific values or examples made into Template-wide rules and dependencies that make change harder.
+For a Parent Issue's integration check, use the Reviewer's evidence to assess the same finalized combined revision against the criteria below. Report any unfinished assessment with its actual result.
+
+- **Design intent:** assess the requirements or change against the approved purpose and goals of the Template or Project, including existing System Design or architecture documents when present. Check that it preserves prior design decisions and keeps future changes easy. Flag Project-specific values or examples made into Template-wide rules and dependencies that make change harder.
 - **Boundaries and conventions:** check that it respects the existing system boundaries, the standards, the glossary's terms, and the ADRs.
 - **Simplicity (KISS and YAGNI):** check that it is the simplest design that works, and builds only what the issue needs now, without extra parts, layers, dependencies, or ties between modules.
 - **Duplication (DRY):** check that each piece of knowledge, such as a rule, value, or piece of logic, lives in one place.

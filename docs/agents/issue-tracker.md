@@ -1,6 +1,6 @@
 # Issue tracker: GitHub
 
-Issues live in this code repository's GitHub Issues, not in its wiki. Repository specs live at `docs/specs/<issue>-<slug>.md`, linked from their issue. A specification may instead live in a linked GitHub Issue. Keep one approved requirements contract rather than duplicate specs. Plans for every issue type live at `docs/plans/<issue>-<slug>.md`, as the [plans guide](../plans/README.md) describes. Link specs and plans from the issue; don't open an issue only to hold a plan or a copy of a spec. Agent-facing instructions and project-owned references stay in the repository; the Wiki stays the maintainer's checklist. The issue tracks its status, the [Lifecycle](../lifecycle.yaml) holds the shared workflow, and the issue's local [execution checkpoint](../execution-checkpoint.md) records its progress. Run `gh` from this repository so it targets the `origin` remote; do not pass a hard-coded `--repo`.
+Issues live in this code repository's GitHub Issues, not in its wiki. Repository specs live at `docs/specs/<issue>-<slug>.md`, linked from their issue. A specification may instead live in a linked GitHub Issue. Keep one approved requirements contract rather than duplicate specs. Plans for every issue type live at `docs/plans/<issue>-<slug>.md`: the issue number, then a short lowercase kebab-case description, such as `123-update-contact-guide.md`. Their contents follow the [plan format](plan-format.md). Link specs and plans from the issue; don't open an issue only to hold a plan or a copy of a spec. Agent-facing instructions and project-owned references stay in the repository; the Wiki stays the maintainer's checklist. The issue tracks its status, the [Lifecycle](../lifecycle.yaml) holds the shared workflow, and the issue's local [execution checkpoint](../execution-checkpoint.md) records its progress. Run `gh` from this repository so it targets the `origin` remote; do not pass a hard-coded `--repo`.
 
 ## Issue operations
 
@@ -12,6 +12,10 @@ Issues live in this code repository's GitHub Issues, not in its wiki. Repository
 - Close: `gh issue close <number> --comment "..."`
 
 When a skill says “publish to the issue tracker,” create a GitHub issue. When it says “fetch the relevant ticket,” read that issue.
+
+## Parent Issues
+
+A Parent Issue's body holds only its requirements contract, or a link to it. Proposed spec revisions go in clearly marked proposal comments. A later Coordination Plan for a corrective batch is named `<parent>-<batch-slug>.md`. The Coordinator keeps one clearly marked comment that links every Coordination Plan and marks the active one. Link each Sub-Issue with GitHub sub-issues and dependencies, as [Wayfinding](#wayfinding) does. Each Sub-Issue links the Parent Issue's contract, the revision it builds on, and the criteria it serves.
 
 ## Pull requests as a triage surface
 

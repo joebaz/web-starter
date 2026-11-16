@@ -57,5 +57,5 @@ evidence:
   requirements: "https://github.com/OWNER/REPO/issues/123, body sha256:9c8d7e6f, approved in #issuecomment-111"
   plan: docs/plans/123-example-change.md@0f1e2d3
   review: null
-  assessment: "chat: Architect agent ar-01, plan 0f1e2d3, 2026-10-27T18:00+09:00"
+  assessment: null
 ```

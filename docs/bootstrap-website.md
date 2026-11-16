@@ -147,7 +147,7 @@ The Planner works out which questions are needed. Ask only for answers that are 
 
 Bootstrap works like an installer: this runbook is the plan, and starting a bootstrap approves it. Once intake is complete, go straight to Implementation and report progress in the bootstrap issue. Don't write a bootstrap plan or spec, and don't ask the Maintainer to approve requirements or a plan.
 
-For bootstrap only, this takes precedence over the Lifecycle's requirements approval in Define, its Plan stage, its Architect steps (`plan-assessment`, `recommendations-review`, and `signed-off-assessment`), and any later step that waits on a plan, plan approval, or assessment.
+For bootstrap only, this takes precedence over the Lifecycle's requirements approval in Define, its Plan stage, its plan review steps (`plan-review` and `plan-findings`), the Architect's `signed-off-assessment`, and any later step that waits on a plan, plan approval, or assessment.
 
 If an answer or situation falls outside this runbook, ask the Maintainer through the Coordinator before going on. Report problems with the runbook for a Template fix through its normal issue and approval process; repairs to the new repository still need its normal approvals. The Reviewer's independent review, CI, the Maintainer's sign-off, and Maintainer-only actions all still apply.
 
@@ -468,8 +468,7 @@ Perform only the specified bootstrap modifications (`Agent — Coder`):
      ls -A docs/plans docs/specs
      ```
      The first command must print exactly one commit. Expect only the Template's files. If an earlier bootstrap attempt left its own plan or spec, post its text to the bootstrap issue, read the comment back to check it matches, and include it in the removal. If anything else is there, such as a plan for new site work, or there is more than one first commit, stop and ask the Maintainer through the Coordinator.
-   - Remove those files, including the plans guide `docs/plans/README.md`, and add an empty `.gitkeep` to each folder.
-   - The plans guide stays available from the Template. Point its links in `docs/agents/issue-tracker.md` and `docs/agents/roles/planner.md` to `https://github.com/joebaz/web-starter/blob/main/docs/plans/README.md`.
+   - Remove those files and add an empty `.gitkeep` to each folder.
    - In [docs/lifecycle.yaml](lifecycle.yaml), update the `authority` reference for `specs/15-lifecycle.md` to point to the Template's published URL:
      `https://github.com/joebaz/web-starter/blob/main/docs/specs/15-lifecycle.md`
    - Inspect retained documentation links across the repository and repoint any links into the removed Template history to valid destinations.

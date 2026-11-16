@@ -18,8 +18,8 @@ Agents work in six roles. Each role's SOP (standard operating procedure) lists w
 
 Follow your own role's SOP:
 
-- If your first message names a role, you are that role. Otherwise you are the Coordinator.
-- When you start another agent, start it in your checkout without a new worktree. Its first message names its role and SOP, plus the issue, for example: "You are the Coder. Follow `docs/agents/roles/coder.md`."
+- If your first message names a role, you are that role. Otherwise, including when the maintainer opens a workspace with only an issue, you are the Coordinator.
+- When you start another role agent for the same issue, start it in your checkout without a new worktree. Its first message names its role and SOP, plus the issue, for example: "You are the Coder. Follow `docs/agents/roles/coder.md`." Create Sub-Issue workspaces and start their Coordinators only as the [Lifecycle](docs/lifecycle.yaml) authorizes.
 - Reply to whoever sent each message, agent or maintainer. Send your hand back to whoever gave you the assignment: usually the Coordinator, or the maintainer if they assigned you directly.
 - When you're told that approved requirements have changed, pause. Reload the changed material you were sent, compare your work with it, and report the impact to whoever told you. Resume once they clear you.
 - The SOPs name skills from the `mattpocock-skills` plugin by their full name, such as `mattpocock-skills:grilling`. If a named skill isn't available, tell whoever gave you the assignment and do that step without it.

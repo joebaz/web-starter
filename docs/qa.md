@@ -2,7 +2,7 @@
 
 This reference sets the repository-wide bar that every test plan must meet. An agent designs each test plan from the issue's intent, using test-driven development or otherwise; this reference sets constraints on that plan, not the steps to follow.
 
-Run the required commands for the change type in [Validate your change](../CONTRIBUTING.md#validate-your-change). When a check below cannot be done, report it as not done and why rather than claiming a pass.
+Run the required commands for the change type in [Validate your change](../CONTRIBUTING.md#validate-your-change), then [check that the website works](#check-that-the-website-works). When a check below cannot be done, report it as not done and why rather than claiming a pass.
 
 ## Browsers
 
@@ -44,6 +44,18 @@ Performance measurement constraints:
 - Emulation approximates a phone's viewport, pixel density, and touch input in a desktop browser. It does not reproduce a phone's browser, on-screen keyboard, toolbars, safe areas, or performance; see [Playwright device emulation](https://playwright.dev/docs/emulation) and [Chrome DevTools' mobile simulation limitations](https://developer.chrome.com/docs/devtools/device-mode#limitations).
 - When a change depends on real phone behavior, such as the on-screen keyboard, sticky elements, notch or safe areas, or shrinking toolbars, flag "needs a real-phone check" and list what to look at. The maintainer checks flagged items on real phones before merge. If a required device is unavailable, report the affected real-phone checks as "not done: no device".
 - Attach screenshots of what changed, at desktop and phone width, for a person to review. There is no automated screenshot comparison or mobile browser project.
+
+## Check that the website works
+
+Passing commands and acceptance criteria don't show that visitors can use the site. Check what the change affects on the built site (`npm run build`, then `npm run preview`), and skip what it doesn't. Every check that applies is required; the list adds no acceptance criteria or scope.
+
+- **Pages and files:** affected pages load at their configured URLs, with their images, styles, scripts, and any redirects working.
+- **Visitor tasks:** use each changed link, form, navigation path, or other task as a visitor would. Check the result they should get, and what happens when it fails, such as an invalid form entry.
+- **Nearby behavior:** pages and features next to the change still work.
+- **Screens and input:** phone widths, keyboard use, and accessibility, as the sections above describe.
+- **Metadata and speed:** titles, descriptions, canonical URLs, the sitemap, and robots output, and performance, only when the change affects them or the sections above require it.
+
+For documentation-only work, walk through each changed task as its reader would, and check that the documents agree with each other, instead of these website checks.
 
 ## Report results
 
