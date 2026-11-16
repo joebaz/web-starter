@@ -15,12 +15,15 @@ Retro, without a parent route.
 
 **Decision:** A Parent Issue follows Define → Plan → Publish → Retro, with
 Sub-Issue delivery and parent validation before Retro. Atomic Issues keep the
-ordinary route. Several independently deliverable outcomes can justify a Parent
-Issue in any category; no category label, Feature included, requires a spec or
-a split.
+ordinary route. The Planner recommends a route and the Maintainer chooses it. A
+Parent Issue fits a shared outcome that needs several bounded pieces of work
+coordinated through dependencies, shared requirements or combined acceptance, in
+any category. Its Sub-Issues may together deliver one Vertical Slice. No
+category label, Feature included, requires a spec or a split.
 
 **Why:** The Parent Issue coordinates implementation without pretending to
-implement its Atomic Issues' work itself.
+implement its Atomic Issues' work itself. Category, size or issue count alone
+doesn't show whether work needs coordinating.
 
 ## D2. Review each document in its owning stage
 
@@ -32,14 +35,16 @@ assessment sit in Implement.
 review → Maintainer sign-off → Architect assessment → Maintainer decisions on
 recommendations. Review Coordination Plans in Plan: draft and validation →
 independent review → Maintainer sign-off. Sign-off is the spec's requirements
-approval or the plan's approval; Publish adds no approval.
-Authorized changes repeat applicable checks. Keep existing cycle authorizations,
-cumulative counts, limits and eligible exceptions, including across new plans
-and stage returns. The ordinary route is unchanged.
+approval or the plan's approval; Publish adds no approval. Ordinary
+Implementation Plans also get independent review before Maintainer approval, in
+place of the Architect's plan assessment. Authorized changes repeat applicable
+checks. Keep existing cycle authorizations, cumulative counts, limits and
+eligible exceptions, including across new plans and stage returns.
 
 **Why:** Skipping Implement must retain quality checks where the document is
-decided, rather than postpone them to Publish. On the parent route, the
-Architect assesses the spec and the combined code, not Coordination Plans.
+decided, rather than postpone them to Publish. Plans get the same independent
+review on both routes; the Architect's code-health view applies to what is
+required and what is delivered.
 
 ## D3. Keep the parent spec under Parent Issue ownership
 
@@ -63,17 +68,19 @@ acceptance checks are not defined.
 
 **Decision:** Keep the Parent Issue open in Publish. After all Sub-Issues
 complete, its independent Reviewer checks their combined delivered revision
-against the parent contract. The Architect then runs or reproduces full
-integration validation of that revision against the existing codebase. The spec
-defines criteria; the Coordination Plan names checks and evidence. Use
-integration tests when needed, or a complete documentation walkthrough. The
-Maintainer accepts the result before the Parent Issue's final Retro, closure and
-verified Done status.
+against the parent contract and uses it as visitors or readers would, reporting
+missing criteria for the Maintainer to decide. The Architect then runs or
+reproduces full integration validation of that revision against the existing
+codebase. The spec defines criteria; the Coordination Plan names checks and
+evidence: the practical website checks that apply, or a task and consistency
+walkthrough for documentation. The Maintainer accepts the result before the
+Parent Issue's final Retro, closure and verified Done status.
 
-**Why:** Closed Sub-Issues do not prove a complete parent outcome, and a
-contract check alone does not show how the outcome fits the codebase. Required gaps
-block acceptance until resolved or explicitly changed in approved requirements.
-A follow-up issue alone is insufficient. Atomic Issues retain their own Retros.
+**Why:** Closed Sub-Issues do not prove a complete parent outcome. Written
+criteria can miss what visitors need, and a contract check alone does not show
+how the outcome fits the codebase. Required gaps block acceptance until
+resolved or explicitly changed in approved requirements. A follow-up issue alone
+is insufficient. Atomic Issues retain their own Retros.
 
 ## D5. Give corrective work a plan that fits its size
 

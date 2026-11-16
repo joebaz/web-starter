@@ -61,7 +61,7 @@ Documents intended to guide the Maintainer working on the Template or a Project.
 ## Planning
 
 **Vertical Slice**:
-A cohesive outcome, one Atomic Issue, delivered through every Layer it needs so it can be checked end to end on its own, such as the Docs lifecycle working for Docs issues before other issue types adopt it.
+A small, usable end-to-end result across the Layers it needs, which can be demonstrated and tested as a working whole. It may be delivered by one Atomic Issue or several coordinated under a Parent Issue.
 
 **Layer**:
 A part of the Template or Project that owns one kind of responsibility for many outcomes, such as site configuration, page layouts, or the lifecycle's sequencing.
@@ -71,7 +71,6 @@ An issue for one cohesive deliverable that follows its own ordinary Lifecycle. I
 
 **Parent Issue**:
 An issue that coordinates several Atomic Issues toward a shared outcome and accepts their combined result. It holds the shared requirements and coordination; its Atomic Issues deliver the implementation.
-_Avoid_: spec-only parent
 
 **Sub-Issue**:
 An Atomic Issue considered in relation to its Parent Issue.

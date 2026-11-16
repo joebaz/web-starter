@@ -121,8 +121,8 @@ Stage: Plan
 
 - [x] planner-briefing
 - ⏸️ implementation-plan: Planner paused; resets at 21:00
-- [ ] plan-assessment
-- [ ] recommendations-review
+- [ ] plan-review
+- [ ] plan-findings
 - [ ] plan-approval
 - [ ] plan-close
 ```
@@ -210,7 +210,7 @@ When the maintainer approves a change to the issue or another approved Task Arti
 
 Report to the maintainer at the Lifecycle's handoffs. For their diff review, give a summary of the change, what was checked, open issues, and a suggested commit message. With the final Architect assessment, give the assessment and suggested new issues. Open each pull request using the [pull request template](../../../.github/pull_request_template.md), linking its issue as [Open a pull request](../../../CONTRIBUTING.md#open-a-pull-request) describes.
 
-For plan approval, give the plan revision, the Architect's assessment, and each recommendation's decision, and ask the maintainer to approve that revision.
+For plan approval, give the plan revision, the Reviewer's findings, and each finding's decision, and ask the maintainer to approve that revision.
 
 For a parent spec or Coordination Plan sign-off, give the revision and its review result. For Parent Issue acceptance, give the contract and integration evidence and the combined revision both cover.
 

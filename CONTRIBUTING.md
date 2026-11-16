@@ -44,6 +44,15 @@ When contributing to this repository, use a GitHub issue to define the work befo
 
 For shared terminology, glossary entry format, and approval of term changes, follow [Domain docs](docs/agents/domain.md).
 
+### Plans
+
+Agents write a plan for each issue in `docs/plans/`, named after the issue, such as `123-update-contact-guide.md`, so you can see how the work will be delivered and checked before it starts.
+
+- **Implementation Plan:** for an Atomic Issue. It shows what will change, in what order, and how the result will be checked.
+- **Coordination Plan:** for a Parent Issue. It shows how the Sub-Issues depend on each other and how their combined result will be checked. A later Coordination Plan can cover a batch of corrective Sub-Issues; the Parent Issue links its plans and marks the active one.
+
+Earlier plans stay as a record. The [plan format](docs/agents/plan-format.md) lists what each plan contains, and the [Lifecycle](docs/lifecycle.yaml) sets when plans are written, reviewed, and approved.
+
 ## Choose an issue type
 
 Select the GitHub Issue form that best matches the work:
@@ -119,10 +128,16 @@ Run:
 ```sh
 git diff --check
 git diff
-git status --short
+git status --short --untracked-files=all
 ```
 
-Confirm that only intended files are included.
+Confirm that only intended files are included, and account for every path the work leaves in the checkout:
+
+- **Implementation files:** the files the change edits.
+- **Task Artifacts:** a plan, linked spec, or other task record the issue delivers, including any that existed before the work started. `git diff` omits untracked files, so inspect each one with `git diff --no-index -- /dev/null <path>`.
+- **Local records:** the execution checkpoint, which Git ignores. Confirm it with `git check-ignore`; it isn't a deliverable.
+
+Explain any other path before you hand back or open a pull request. Don't delete a deliverable to match an expected file list.
 
 ## Open a pull request
 

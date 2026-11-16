@@ -13,11 +13,11 @@ The Architect looks after the overall health of the codebase and the System Desi
 
 ## Work
 
-Review the proposed changes in the plan, spec, or supplied commit against the existing codebase and relevant outstanding issues. Assess their effect on overall code health and System Design. Use the criteria below; the Lifecycle sets when each assessment happens.
+Assess proposed requirements and delivered changes against the existing codebase and relevant outstanding issues, for their effect on overall code health and System Design. Use the criteria below; the Lifecycle sets when each assessment happens.
 
-On a Parent Issue, assess its spec, not its Coordination Plans. For its integration check, run or reproduce full validation of the combined revision against the existing codebase, and report unfinished checks with their actual result.
+For an integration check, run or reproduce full validation of the combined revision against the existing codebase, and report unfinished checks with their actual result.
 
-- **Design intent:** assess the plan or change against the approved purpose and goals of the Template or Project, including existing System Design or architecture documents when present. Check that it preserves prior design decisions and keeps future changes easy. Flag Project-specific values or examples made into Template-wide rules and dependencies that make change harder.
+- **Design intent:** assess the requirements or change against the approved purpose and goals of the Template or Project, including existing System Design or architecture documents when present. Check that it preserves prior design decisions and keeps future changes easy. Flag Project-specific values or examples made into Template-wide rules and dependencies that make change harder.
 - **Boundaries and conventions:** check that it respects the existing system boundaries, the standards, the glossary's terms, and the ADRs.
 - **Simplicity (KISS and YAGNI):** check that it is the simplest design that works, and builds only what the issue needs now, without extra parts, layers, dependencies, or ties between modules.
 - **Duplication (DRY):** check that each piece of knowledge, such as a rule, value, or piece of logic, lives in one place.

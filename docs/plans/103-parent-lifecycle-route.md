@@ -20,17 +20,36 @@ Issue: [#103](https://github.com/joebaz/web-starter/issues/103)
   guide's scope, plain `parent-` prefix wording, issue-only Coordinator starts
   and the retained `#choose-a-route` anchor. It replaces the original wording of
   the ADR, glossary entries and AGENTS qualifier; their decisions are unchanged.
+  Sub-Issue is used only where the link to a Parent Issue matters; otherwise
+  process text says Atomic Issue. Category labels describe the work and never
+  choose the route, and no category requires a spec or Sub-Issues. An Agent
+  Brief names the issue's route and any Parent Issue. Category-specific changes,
+  such as for Fix, wait until a real problem appears.
+- Writing: on 14 November 2026 the Maintainer directed that operating docs use
+  concise plain English, describe how things work from now on, and carry no
+  history. The ADR keeps the decision history.
 - Amendment: on 16 November 2026 the Maintainer removed the Architect's
   assessment of Coordination Plans; the Reviewer reviews them. Parent
   validation became two passes on the same combined revision: the Reviewer's
   contract check, then the Architect's integration check.
+- Amendment: later on 16 November 2026 the Maintainer approved a further
+  outline. The Architect assesses requirements and delivered changes; a Reviewer
+  reviews ordinary Implementation Plans before approval, in place of the
+  Architect's plan assessment. The Reviewer's contract check uses the combined
+  result as visitors would, guided by a short website checklist in `docs/qa.md`.
+  Plan fields move to `docs/agents/plan-format.md` and scope checks to
+  CONTRIBUTING. The Lifecycle gains a route rubric, the glossary a new Vertical
+  Slice definition, and the ADR moves to `docs/adr/0001-parent-issue-lifecycle.md`.
+- Amendment: on 16 November 2026 the Maintainer moved the plans guide into
+  CONTRIBUTING. `docs/plans/README.md` is removed, and the bootstrap guide no
+  longer removes or links it.
 
 ## Operations
 
 ### 1. Record the approved decision and terms
 
 - **Owner:** Coder, assigned as the only editor.
-- **Files/actions:** create `docs/adr/0001-spec-only-parent-lifecycle.md` from
+- **Files/actions:** create `docs/adr/0001-parent-issue-lifecycle.md` from
   the approved ADR, keeping its status, D1–D6, evidence and source links in the
   amended terminology. Add the approved definitions to `GLOSSARY.md`.
 - **Prerequisites:** approved final plan and authorized Implement cycle. The
@@ -86,8 +105,8 @@ headings/anchors and use the approved glossary terms.
   bypasses these artifact gates. Parent `plan-close` enters
   `parent-publication-check`; ordinary `plan-close` still enters Implement.
 - **A split discovered in ordinary Plan:** a split proposed in
-  `implementation-plan` or by the Architect reaches existing `scope-decision`
-  through `recommendations-review`. A Maintainer decision to adopt a parent
+  `implementation-plan` or in plan review reaches existing `scope-decision`
+  through `plan-findings`. A Maintainer decision to adopt a parent
   route returns to `parent-spec-draft` in Define. Declining the split resumes
   ordinary planning; unresolved direction waits. Keep the old plan/history and cycle count.
 - **Publish:** parent entry requires its owning-stage gates, not Implement.
@@ -132,7 +151,7 @@ Inventory these shared YAML provisions, not just new parent steps:
 | Existing provision                                                      | Required qualification                                                                                                                                                                                   |
 | ----------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `reading` stage/step order; tracking on returns                         | Selected-route branches override listed order; reset only rerun steps, preserving approvals/counts.                                                                                                      |
-| `rules.approvals`; Plan completion                                      | Ordinary Architect-before-approval remains; parent spec sign-off/assessment order, plan sign-off without assessment, and unchanged-plan/singleton exits are explicit.                                    |
+| `rules.approvals`; Plan completion                                      | Ordinary Reviewer plan review before approval; parent spec sign-off/assessment order, plan sign-off without assessment, and unchanged-plan/singleton exits are explicit.                                 |
 | `rules.cycles`, return counters and `review_exception` references       | Apply existing authorization/caps/eligible waivers to parent artifact stages, without calling a waiver a review pass.                                                                                    |
 | Implement entry; Publish entry/exit/completion                          | Ordinary entry and merge exit remain; parent skips Implement, waits after publications and exits only on outcome acceptance.                                                                             |
 | `remote-push`, `maintainer-merge`, `ci-diagnosis`, `merge-confirmation` | Parent artifact evidence qualifies implemented-commit assumptions. CI changes return to the owning artifact stage. Parent merge confirmation returns to publication checking instead of closing Publish. |
@@ -158,16 +177,19 @@ round and resets nothing.
 - **Check:** an agent can find its actor, inputs, permission, completion evidence
   and return destination without a competing sequence.
 
-| File                                              | Focus                                                                                                                                                                        |
-| ------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `docs/agents/roles/coordinator.md`                | Route choice; approved issue creation separately from workspace launch; previews/publication, recovery, Sub-Issue handbacks and parent close-out methods.                    |
-| `docs/agents/roles/planner.md`                    | Parent-owned edits, proposal revisions and draft validation via CONTRIBUTING; qualify optional interview approaches; link to authoritative threshold and Lifecycle paths.    |
-| `docs/agents/roles/reviewer.md`                   | Applicable artifact reviews and the parent contract check; findings go to the assigned owner; fix nothing. Retain ordinary duties and current skill requirement pending #84. |
-| `docs/agents/roles/architect.md`                  | Review proposed plan, spec or commit changes against the codebase and relevant outstanding issues; run the parent integration check; no Coordination Plan assessment.        |
-| `docs/agents/issue-tracker.md`                    | Contract/proposal-comment links, parent links and active/prior plan links; reference existing evidence rules.                                                                |
-| `docs/plans/README.md`                            | When to use Implementation or Coordination Plans, location, template and linking; batch filenames/history. No general no-plan policy.                                        |
-| `docs/agents/triage-labels.md`, `CONTRIBUTING.md` | Category independence, parent publication/closure pointers; preserve labels, validation and Git authority.                                                                   |
-| `AGENTS.md`                                       | The role-default and same-issue/Sub-Issue qualifier below.                                                                                                                   |
+| File                                              | Focus                                                                                                                                                                                                                                                 |
+| ------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `docs/agents/roles/coordinator.md`                | Route choice; approved issue creation separately from workspace launch; previews/publication, recovery, Sub-Issue handbacks and parent close-out methods; plan-approval hand back with Reviewer findings.                                             |
+| `docs/agents/roles/planner.md`                    | Parent-owned edits, proposal revisions and draft validation via CONTRIBUTING; qualify optional interview approaches; apply the Lifecycle's route rubric at `requirements-review` and `scope-decision`; plan authoring and Coordination Plan coverage. |
+| `docs/agents/roles/reviewer.md`                   | Ordinary and parent plan reviews, spec review and the parent contract check, using the website checks; missing criteria are findings for the Maintainer; fix nothing. Retain ordinary duties and current skill requirement pending #84.               |
+| `docs/agents/roles/architect.md`                  | Assess proposed requirements and delivered changes against the codebase and relevant outstanding issues; run the parent integration check.                                                                                                            |
+| `docs/agents/issue-tracker.md`                    | Contract/proposal-comment links, parent links and active/prior plan links; plan naming, including corrective batch plans; reference existing evidence rules.                                                                                          |
+| `docs/plans/README.md`                            | Removed; its plan overview moves to CONTRIBUTING's Plans section. No general no-plan policy.                                                                                                                                                          |
+| `docs/agents/plan-format.md`                      | New reference: Implementation Plan and Coordination Plan fields and templates; no scheduling or approval rules.                                                                                                                                       |
+| `docs/qa.md`                                      | Short, conditional website checklist and a documentation walkthrough alternative.                                                                                                                                                                     |
+| `docs/agents/triage-labels.md`, `CONTRIBUTING.md` | Category independence, parent publication/closure pointers, a Plans section, scope accounting in Every change; preserve labels, validation and Git authority.                                                                                         |
+| `docs/execution-checkpoint.md`                    | Example `assessment` value no longer shows an Architect plan assessment; format unchanged.                                                                                                                                                            |
+| `AGENTS.md`                                       | The role-default and same-issue/Sub-Issue qualifier below.                                                                                                                                                                                            |
 
 **Sub-Issue creation and return:** the Planner supplies exact proposed issue
 content and its snapshot/digest, linked from the approved coordination proposal
@@ -246,7 +268,9 @@ boundaries and gate waits. A human evaluates prose conditions against each
 scenario's route, approvals and evidence; the report does not execute English.
 For atomic cases, select ordinary guards and compare the possible successor
 graph with baseline, including implicit edges. Every ordinary successor must
-remain, and parent insertion must add none. Check unique keys, resolved targets
+remain, apart from the approved rename of `plan-assessment` and
+`recommendations-review` to `plan-review` and `plan-findings`, and parent
+insertion must add none. Check unique keys, resolved targets
 and reachable stage exits/Retro for both routes under successful conditions;
 also trace waits and corrective loops. Keep this report/script temporary, not
 a checker, engine, CI change or new testing policy.
@@ -254,8 +278,9 @@ a checker, engine, CI change or new testing policy.
 Walkthrough coverage (actors, keys, revisions, evidence and next action):
 
 1. Atomic Feature, and ordinary Plan discovering a split: recorded route decision,
-   no automatic Feature fork, ordinary graph preserved. Declining an interview
-   approach/skill never permits skipping the selected Lifecycle path.
+   no automatic Feature fork, ordinary graph preserved apart from the renamed
+   plan-review steps. Declining an interview approach/skill never permits
+   skipping the selected Lifecycle path.
 2. Docs Parent Issue with mixed-category Sub-Issues: stage-specific gates, issue
    creation before launch, exact Sub-Issue proposals and already-approved
    Sub-Issue requirements.
@@ -277,6 +302,14 @@ Walkthrough coverage (actors, keys, revisions, evidence and next action):
    changed criteria to Define, other unresolved direction waits; required gaps block.
 9. Success: combined-revision evidence, parent acceptance, final Retro and
    handbacks/obligations, closure/Done without an artificial final PR.
+10. Atomic Implementation Plan: Reviewer plan review, finding decisions and
+    Maintainer approval, with no Architect step before Implement.
+11. Several interdependent Atomic Issues delivering one working Vertical Slice
+    under a Parent Issue, none usable alone; the rubric and combined checks fit.
+12. The contract check finds a missing acceptance criterion while using the
+    site: a finding for Maintainer triage, not added scope.
+13. Documentation-only Parent Issue: task and consistency walkthrough in place
+    of website checks.
 
 Run `npm run format:check`, `git diff --check`, `git diff` and
 `git status --short --untracked-files=all`. Inspect untracked deliverables with
@@ -304,11 +337,13 @@ substantially revised documents still need outline approval.
 ## Scope, later handoffs and recommendation decisions
 
 Implementation files: `docs/lifecycle.yaml`,
-`docs/adr/0001-spec-only-parent-lifecycle.md`, `GLOSSARY.md`, `AGENTS.md`,
-`CONTRIBUTING.md`, four role SOPs, and the three other guides listed above.
+`docs/adr/0001-parent-issue-lifecycle.md`, `GLOSSARY.md`, `AGENTS.md`,
+`CONTRIBUTING.md`, `docs/qa.md`, `docs/execution-checkpoint.md`, four role
+SOPs, and the other guides listed above, including the new
+`docs/agents/plan-format.md`.
 Task Artifact: this plan only. Local record: Coordinator-owned
 `.agent-state/103.yaml`, confirmed ignored with `git check-ignore`.
-Explain unexpected paths. Keep historical specs/#15, #45, QA, issue forms, CI,
+Explain unexpected paths. Keep historical specs/#15, #45, issue forms, CI,
 website facts, bootstrap and #84/#101/#81/#82/#72 policy work unchanged.
 
 After merge, Coordinator sends #15 approved ADR/Lifecycle revisions, review/merge
