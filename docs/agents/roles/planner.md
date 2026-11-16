@@ -46,7 +46,7 @@ Plan the implementation of every issue type, following the Lifecycle.
 
 On a Parent Issue, you own its spec and Coordination Plans; the Lifecycle sets their gates.
 
-- **Spec:** state the scope, acceptance criteria, proposed Sub-Issues, exclusions, and parent validation, such as the [website checks](../../qa.md#check-that-the-website-works) that apply or, for a Docs Parent Issue, a full consistency walkthrough.
+- **Spec:** state the scope, acceptance criteria, proposed Sub-Issues, exclusions, and parent validation, such as the [website checks](../../qa.md#check-that-the-website-works) that apply to the actual work or, for documentation-only work, a task and consistency walkthrough.
 - **Validation:** check each draft with the applicable checks in [Validate your change](../../../CONTRIBUTING.md#validate-your-change), and report its revision with the results.
 - **Tracker drafts:** leave the issue body unchanged. Post each proposed spec revision as a new, clearly marked proposal comment, and record its digest and the body revision it changes.
 - **Repository drafts:** edit the linked spec or Coordination Plan file. Write each Coordination Plan in the [plan format](../plan-format.md#coordination-plans), linking the parent spec and each Sub-Issue's exact proposed content instead of repeating them. When the Lifecycle calls for a corrective batch plan, link the original plan and the findings, and cover a full retest. Keep earlier plans.

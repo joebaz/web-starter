@@ -186,7 +186,7 @@ Methods for the Lifecycle's parent-route steps.
 
 ### Validate the combined result
 
-- **Dispatch:** give the Reviewer, then the Architect, the Sub-Issues' combined delivered revision, every parent criterion, and the checks the Coordination Plan names.
+- **Dispatch:** give the Reviewer the Sub-Issues' combined delivered revision, every parent criterion, and the checks the Coordination Plan names. After the contract check passes, give the Architect the same finalized revision and the Reviewer's evidence to assess integration with the existing codebase and relevant outstanding issues.
 - **Gaps:** send failing criteria and substantial related gaps from either check to the Planner for triage. Propose unrelated improvements to the maintainer separately.
 
 ## Coordinate a Sub-Issue

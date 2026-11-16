@@ -31,7 +31,11 @@ Issue: [#103](https://github.com/joebaz/web-starter/issues/103)
 - Amendment: on 16 November 2026 the Maintainer removed the Architect's
   assessment of Coordination Plans; the Reviewer reviews them. Parent
   validation became two passes on the same combined revision: the Reviewer's
-  contract check, then the Architect's integration check.
+  contract check, then the Architect's integration assessment using the
+  Reviewer's evidence. The Reviewer runs the applicable website checks, or a
+  task and consistency walkthrough for documentation-only work; the Architect
+  assesses fit with the existing codebase, relevant outstanding issues, system
+  boundaries and code health.
 - Amendment: later on 16 November 2026 the Maintainer approved a further
   outline. The Architect assesses requirements and delivered changes; a Reviewer
   reviews ordinary Implementation Plans before approval, in place of the
@@ -121,9 +125,10 @@ headings/anchors and use the approved glossary terms.
   approved Planner proposal before workspace/session launch. Reuse recorded
   existing issues and sessions. Then `parent-children-wait` returns to launch
   when another dependency is met, or to `parent-contract-check` when all finish.
-- **Validation:** the Reviewer's `parent-contract-check`, then the Architect's
-  `parent-validation`, on the same combined revision. Running/incomplete checks
-  wait; execution errors stay failed pending direction. Completed related gaps
+- **Validation:** the Reviewer's `parent-contract-check` runs checks selected
+  from the actual combined work, then the Architect's `parent-validation`
+  assesses system fit using that evidence on the same finalized revision.
+  Running/incomplete checks wait; execution errors stay failed pending direction. Completed related gaps
   from either lead to `parent-gap-triage`; reruns restart at the contract check.
   Changed acceptance criteria return to Define. Otherwise unresolved direction
   waits. Passing evidence reaches `parent-outcome-acceptance`, whose
@@ -136,7 +141,7 @@ headings/anchors and use the approved glossary terms.
   One goes to `parent-child-scope-approval`, then creation and
   launch without new parent plan gates. Requirements changes take Define first;
   coordination changes take Plan. All corrective Sub-Issues finishing returns to
-  full validation, not just checks of the fixes.
+  both full passes, not just checks of the fixes.
 
 The Coordinator records the resume destination as a checkpoint obligation,
 with the affected artifacts.
@@ -182,8 +187,8 @@ round and resets nothing.
 | ------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `docs/agents/roles/coordinator.md`                | Route choice; approved issue creation separately from workspace launch; previews/publication, recovery, Sub-Issue handbacks and parent close-out methods; plan-approval hand back with Reviewer findings.                                             |
 | `docs/agents/roles/planner.md`                    | Parent-owned edits, proposal revisions and draft validation via CONTRIBUTING; qualify optional interview approaches; apply the Lifecycle's route rubric at `requirements-review` and `scope-decision`; plan authoring and Coordination Plan coverage. |
-| `docs/agents/roles/reviewer.md`                   | Ordinary and parent plan reviews, spec review and the parent contract check, using the website checks; missing criteria are findings for the Maintainer; fix nothing. Retain ordinary duties and current skill requirement pending #84.               |
-| `docs/agents/roles/architect.md`                  | Assess proposed requirements and delivered changes against the codebase and relevant outstanding issues; run the parent integration check.                                                                                                            |
+| `docs/agents/roles/reviewer.md`                   | Review plans against requirements, standards, glossary terms, ADRs and system boundaries; review specs; run parent contract and applicable website or reader checks. Retain ordinary duties and current skill requirement pending #84.                |
+| `docs/agents/roles/architect.md`                  | Assess proposed requirements and delivered changes against the codebase and relevant outstanding issues; assess the finalized combined revision's system fit using Reviewer evidence.                                                                 |
 | `docs/agents/issue-tracker.md`                    | Contract/proposal-comment links, parent links and active/prior plan links; plan naming, including corrective batch plans; reference existing evidence rules.                                                                                          |
 | `docs/plans/README.md`                            | Removed; its plan overview moves to CONTRIBUTING's Plans section. No general no-plan policy.                                                                                                                                                          |
 | `docs/agents/plan-format.md`                      | New reference: Implementation Plan and Coordination Plan fields and templates; no scheduling or approval rules.                                                                                                                                       |
@@ -283,9 +288,10 @@ Walkthrough coverage (actors, keys, revisions, evidence and next action):
    no automatic Feature fork, ordinary graph preserved apart from the renamed
    plan-review steps. Declining an interview approach/skill never permits
    skipping the selected Lifecycle path.
-2. Docs Parent Issue with mixed-category Sub-Issues: stage-specific gates, issue
-   creation before launch, exact Sub-Issue proposals and already-approved
-   Sub-Issue requirements.
+2. Docs-labelled Parent Issue whose combined scope includes website changes:
+   applicable website checks by the Reviewer regardless of category;
+   stage-specific gates, issue creation before launch, exact Sub-Issue proposals
+   and already-approved Sub-Issue requirements.
 3. Sub-Issue feedback changes the spec: immediate parent notification and
    affected-work pause, not deferred until final handback; the Sub-Issue cannot
    edit it;
@@ -304,8 +310,10 @@ Walkthrough coverage (actors, keys, revisions, evidence and next action):
    changed criteria to Define, other unresolved direction waits; required gaps block.
 9. Success: combined-revision evidence, parent acceptance, final Retro and
    handbacks/obligations, closure/Done without an artificial final PR.
-10. Atomic Implementation Plan: Reviewer plan review, finding decisions and
-    Maintainer approval, with no Architect step before Implement.
+10. Atomic Implementation Plan and parent Coordination Plan: Reviewer checks
+    requirements, scope, standards, glossary terms, ADRs, system boundaries,
+    bounded operations, plan format and proposed checks; finding decisions and
+    Maintainer approval, with no Architect plan gate.
 11. Several interdependent Atomic Issues delivering one working Vertical Slice
     under a Parent Issue, none usable alone; the rubric and combined checks fit.
 12. The contract check finds a missing acceptance criterion while using the

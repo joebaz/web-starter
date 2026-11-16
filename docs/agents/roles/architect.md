@@ -15,7 +15,7 @@ The Architect looks after the overall health of the codebase and the System Desi
 
 Assess proposed requirements and delivered changes against the existing codebase and relevant outstanding issues, for their effect on overall code health and System Design. Use the criteria below; the Lifecycle sets when each assessment happens.
 
-For an integration check, run or reproduce full validation of the combined revision against the existing codebase, and report unfinished checks with their actual result.
+For a Parent Issue's integration check, use the Reviewer's evidence to assess the same finalized combined revision against the criteria below. Report any unfinished assessment with its actual result.
 
 - **Design intent:** assess the requirements or change against the approved purpose and goals of the Template or Project, including existing System Design or architecture documents when present. Check that it preserves prior design decisions and keeps future changes easy. Flag Project-specific values or examples made into Template-wide rules and dependencies that make change harder.
 - **Boundaries and conventions:** check that it respects the existing system boundaries, the standards, the glossary's terms, and the ADRs.

@@ -69,12 +69,13 @@ acceptance checks are not defined.
 **Decision:** Keep the Parent Issue open in Publish. After all Sub-Issues
 complete, its independent Reviewer checks their combined delivered revision
 against the parent contract and uses it as visitors or readers would, reporting
-missing criteria for the Maintainer to decide. The Architect then runs or
-reproduces full integration validation of that revision against the existing
-codebase. The spec defines criteria; the Coordination Plan names checks and
-evidence: the practical website checks that apply, or a task and consistency
-walkthrough for documentation. The Maintainer accepts the result before the
-Parent Issue's final Retro, closure and verified Done status.
+missing criteria for the Maintainer to decide. The Reviewer runs the practical
+website checks that apply to the actual work, or a task and consistency
+walkthrough for documentation-only work. Using that evidence, the Architect then
+assesses how the same finalized revision fits the existing codebase, relevant
+outstanding issues, system boundaries, and code health. The spec defines
+criteria; the Coordination Plan names checks and evidence. The Maintainer accepts
+the result before the Parent Issue's final Retro, closure and verified Done status.
 
 **Why:** Closed Sub-Issues do not prove a complete parent outcome. Written
 criteria can miss what visitors need, and a contract check alone does not show
@@ -97,7 +98,8 @@ loop is defined.
   Implementation Plan and Lifecycle still apply.
 
 Count new Sub-Issues, not findings or completed Sub-Issues. After all corrective
-Sub-Issues finish, repeat full integration, not just checks of their fixes.
+Sub-Issues finish, repeat the full contract and integration checks, not just
+checks of their fixes.
 Repeat the loop for new related gaps. Requirements changes return through Define;
 Coordination Plan changes through Plan. Pause affected work under the existing
 changed-requirements protocol.

@@ -568,7 +568,7 @@ stages:
             to: parent-contract-check
       - key: parent-contract-check
         role: Coordinator and Reviewer
-        action: A separate Reviewer checks the Sub-Issues' combined delivered revision against every parent criterion and its acceptance evidence, and uses the combined result as its visitors or readers would. Closed Sub-Issues alone aren't evidence.
+        action: A separate Reviewer checks the Sub-Issues' combined delivered revision against every parent criterion and its acceptance evidence, and uses the combined result as visitors or readers would, with applicable website checks or, for documentation-only work, a task and consistency walkthrough. Closed Sub-Issues alone aren't evidence.
         method:
           - agents/roles/coordinator.md#validate-the-combined-result
           - agents/roles/reviewer.md#review
@@ -583,11 +583,11 @@ stages:
             to: parent-validation
       - key: parent-validation
         role: Coordinator and Architect
-        action: On the revision the contract check passed, the Architect runs or reproduces full integration validation against the existing codebase, including relevant outstanding issues, system boundaries, and code health. The checks the Coordination Plan names apply, such as the required commands and the website checks the plan names, on the combined revision, or, for a Docs Parent Issue, a consistency walkthrough.
+        action: Using the Reviewer's evidence, the Architect assesses how the same finalized combined revision fits the existing codebase, relevant outstanding issues, system boundaries, and code health.
         method:
           - agents/roles/coordinator.md#validate-the-combined-result
           - agents/roles/architect.md#work
-        evidence: Chat results naming the combined revision and the checks run.
+        evidence: Chat assessment naming the combined revision, the Reviewer's evidence, and the integration findings.
         transitions:
           - when: Checks are running, incomplete, or failed to run; result and next action recorded. Rerun when ready.
             to: parent-validation
