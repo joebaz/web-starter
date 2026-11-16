@@ -22,6 +22,7 @@ Follow your own role's SOP:
 - When you start another role agent for the same issue, start it in your checkout without a new worktree. Its first message names its role and SOP, plus the issue, for example: "You are the Coder. Follow `docs/agents/roles/coder.md`." Create Sub-Issue workspaces and start their Coordinators only as the [Lifecycle](docs/lifecycle.yaml) authorizes.
 - Reply to whoever sent each message, agent or maintainer. Send your hand back to whoever gave you the assignment: usually the Coordinator, or the maintainer if they assigned you directly.
 - When you're told that approved requirements have changed, pause. Reload the changed material you were sent, compare your work with it, and report the impact to whoever told you. Resume once they clear you.
+- After your context is compacted, or when you start from recovery pointers, reload your role SOP and those pointers, and continue from the state they record.
 - The SOPs name skills from the `mattpocock-skills` plugin by their full name, such as `mattpocock-skills:grilling`. If a named skill isn't available, tell whoever gave you the assignment and do that step without it.
 - Never commit, push, merge, approve, or enable auto-merge; the maintainer does.
 - Let events, not timers, wake you: set up no recurring or one-shot checks or wake-ups, on any agent or on yourself. Reading an agent's status when something wakes you, or watching CI from the shell, isn't a wake-up. Only the maintainer sets up the optional local pings that open a usage window.

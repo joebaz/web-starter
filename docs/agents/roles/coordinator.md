@@ -143,6 +143,42 @@ Keep each issue's execution checkpoint as the small local record the [execution 
 - **Keep:** leave the record in place until the maintainer archives the worktree.
 - **Record a Parent Issue:** use the existing fields. `evidence.requirements` holds the route choice and the spec's revision and gate evidence; `evidence.plan` each Coordination Plan's revision and gate evidence, marking the active one; `evidence.review` the latest contract check; `evidence.assessment` the latest Architect assessment or integration check; and `obligations` each Sub-Issue's outstanding final hand back and any resume obligation, such as "resume at parent-children-wait after publishing the spec at <revision>". `sign_off` stays `null`.
 
+## Compact agent context
+
+Use this method for the Lifecycle's [`compaction`](../../lifecycle.yaml) rules, which set the boundaries, order, participants, and failure handling. A finished turn or an idle agent isn't a boundary.
+
+### Check before sending
+
+- Confirm that the boundary's hand backs are verified and the checkpoint holds the recovery pointers.
+- Reconcile the agent's assignment, and any stop or usage limit, from the checkpoint. An idle agent can still be stopped or usage-limited.
+- Check that the agent is idle and has no pending permissions, with `get_agent_status` and `list_pending_permissions` in Paseo MCP, or `paseo inspect <id>` and `paseo permit ls`.
+- Record its session ID and context usage, with the time you read them.
+
+### Compact
+
+- **Codex:** send the exact text `/compact` with Paseo MCP `send_agent_prompt`.
+- **Claude:** run `env -u PASEO_AGENT_ID paseo send <id> /compact --behavior steer --no-wait`. Claude reads `/compact` from `send_agent_prompt` as ordinary text; without `PASEO_AGENT_ID`, the CLI sends it as a human message, which runs the native command. A human message carries no agent attribution and can clear the agent's pending permissions, so send it only after the checks above pass.
+
+A message telling an agent to compact isn't native compaction.
+
+### Verify
+
+1. Wait for the agent to go idle with `paseo wait <id> --timeout <seconds> --json`, or for a tool completion notification. Run the wait again if it times out.
+2. Read its raw timeline with `paseo logs <id> --json`. Find the item with `type` `compaction` and `status` `completed` that follows this `/compact` send, by position or time, and confirm the session ID is unchanged. `get_agent_activity` labels both the loading and the completed item `[Compacted]`, so that label isn't proof.
+3. Record the context usage again, with the time you read it. The idle reading can lag, so record what you observe; a smaller number isn't required, and an unchanged one alone isn't a failure.
+4. Send one bounded recovery check: ask the agent to reload its role SOP and the checkpoint's recovery pointers, then report the revision, current step, approvals, open findings, obligations, and next action. Compare its answer with the checkpoint.
+5. Record the evidence where `compaction` says. A missing completed compaction item, a changed session ID, or a mismatched answer is a failure under `compaction`.
+
+### Compact yourself through a helper
+
+You can't be idle while you send, so a helper runs your own transaction last.
+
+1. Before your boundary hand back, assign the helper: an existing idle agent with no unfinished assignment, or a new one. Reuse a helper at later boundaries.
+2. Brief it with your agent ID, the checkpoint path, and this section. Its assignment is control-only: it edits no files, may capture read-only evidence, and compacts only you.
+3. The helper waits for you with `paseo wait` or a tool completion notification, then runs [Check before sending](#check-before-sending), [Compact](#compact), and [Verify](#verify) on you. Those events are its only triggers: no detached jobs, timers, polling, or wake-ups.
+4. Answer the helper's recovery check from the reloaded pointers.
+5. When it hands back, record its agent ID with the evidence. Its assignment then closes.
+
 ## Run Retro drafts
 
 Use this method for the Lifecycle's optional `retro-drafts` step.

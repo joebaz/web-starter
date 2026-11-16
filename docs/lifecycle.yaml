@@ -98,6 +98,32 @@ checkpoint:
   updates:
     - Whenever a step starts, waits, fails, or completes, and at every transition.
     - Whenever a decision, handoff, or recorded field changes.
+compaction:
+  method: agents/roles/coordinator.md#compact-agent-context
+  boundary:
+    - A boundary is a stage's close, or a cycle's end under rules.cycles once its review result or eligible review_exception is recorded.
+    - Compaction starts after the boundary's hand backs are verified and the checkpoint holds the recovery pointers that execution-checkpoint.md lists.
+    - An interim hand back, a finished turn, or an idle agent isn't a boundary.
+  order:
+    - The Coordinator owns compaction and runs one transaction per participant, one at a time, oldest-started first.
+    - The Coordinator's own transaction runs last, through a supervised helper it arranges before its hand back. The Coordinator continues once that transaction is verified.
+  transaction:
+    - A transaction is one native compaction, its verification, one bounded recovery check against the checkpoint, and the checkpoint updates that record them.
+    - Coincident boundaries share a completed transaction only when they have the same revision and recovery state with no substantive work between them. Recording a transaction isn't substantive work; any other change needs a new transaction.
+    - Record each completed transaction's evidence, with the helper's agent ID for the Coordinator's, in a local record under .agent-state/ or a chat locator. Keep one checkpoint obligation pointing to it, separate from deferral, exclusion, and failure obligations.
+  participants:
+    - Participants are the delegated agents on the issue, including inherited ones. Before any send, reconcile each agent's assignment, stop, and usage limit from the checkpoint; being idle doesn't make an agent eligible.
+    - An agent with an unfinished assignment is deferred. It owes this boundary's transaction, which runs as soon as that assignment's hand back is verified and recorded, unless the agent is then stopped or usage-limited. An interim hand back with no owed boundary transaction triggers none.
+    - A stopped or usage-limited agent is excluded and gets no prompt. Its resume stays with the Maintainer under ../AGENTS.md#roles; once resumed, it owes a transaction at the next eligible boundary.
+    - The helper's assignment is control-only. The helper isn't a participant and owes no deferred transaction. Its assignment closes once the Coordinator's native completion and recovery are verified, with no further compaction obligation. A helper can be reused at later boundaries, and no boundary needs a fresh agent.
+    - Record each deferral and exclusion as an obligation. It closes when the owed transaction is verified, or when the agent is archived with its exclusion recorded.
+  failure:
+    - A failed transaction leaves the step holding the boundary current and failed under rules.state, with the failure in errors and an obligation. The boundary's remaining transactions wait until the affected agent's recovery is resolved. Other authorized work outside the boundary carries on; there's no automatic retry and no new gate.
+    - Recovering the affected agent under the Maintainer's direction, such as by a retry or a verified alternative, closes only its failure. The remaining transactions then resume in order, the Coordinator's last.
+    - The step completes only when every eligible delegate and the Coordinator have a verified transaction, and every other delegate has a recorded deferral or exclusion.
+  fallback:
+    - When a provider can't support native compaction, report the concrete limitation to the Maintainer, who decides the recovery alternative.
+    - A new-session handoff verifies the replacement agent's recovery before the original is archived. It proves only the handoff and is never reported as native compaction.
 progress_readout:
   when:
     - The Coordinator starts every message to the Maintainer that reports a change with the full Progress Readout.
@@ -181,7 +207,9 @@ stages:
         evidence: Cycle record; proposed spec revision and validation results in chat.
       - key: parent-spec-review
         role: Coordinator and Reviewer
-        action: The Coordinator records an eligible review_exception or dispatches a separate Reviewer on the whole changed spec revision.
+        action:
+          - The Coordinator records an eligible review_exception or dispatches a separate Reviewer on the whole changed spec revision.
+          - The recorded result ends the cycle; the Coordinator runs compaction for the cycle boundary.
         method:
           - agents/roles/reviewer.md#review
         evidence: Chat findings tied to the reviewed revision, or the recorded eligible waiver.
@@ -222,6 +250,7 @@ stages:
           - Confirm readiness.
           - Change the issue's status from To do to In progress, or keep it In progress.
           - Close Define; the Plan stage needs no entry approval.
+          - Run compaction for the stage boundary.
         method:
           - agents/roles/coordinator.md#change-github-project-status
         evidence: Issue status and chat confirmation; updated checkpoint.
@@ -314,7 +343,9 @@ stages:
         evidence: Cycle record; plan file and revision linked in chat, with validation results.
       - key: parent-plan-review
         role: Coordinator and Reviewer
-        action: The Coordinator records an eligible review_exception or dispatches a separate Reviewer on the whole changed plan revision.
+        action:
+          - The Coordinator records an eligible review_exception or dispatches a separate Reviewer on the whole changed plan revision.
+          - The recorded result ends the cycle; the Coordinator runs compaction for the cycle boundary.
         method:
           - agents/roles/reviewer.md#review
         evidence: Chat findings tied to the reviewed revision, or the recorded eligible waiver.
@@ -336,7 +367,9 @@ stages:
             to: plan-close
       - key: plan-close
         role: Coordinator
-        action: Confirm the Plan stage's obligations and close it.
+        action:
+          - Confirm the Plan stage's obligations and close it.
+          - Run compaction for the stage boundary.
         evidence: Chat confirmation and updated checkpoint.
         transitions:
           - when: Atomic Issue; Implement opens.
@@ -377,7 +410,7 @@ stages:
         role: Coordinator
         action:
           - Re-evaluate review_exception eligibility for the current revision.
-          - With a recorded eligible waiver, go to Maintainer review.
+          - With a recorded eligible waiver, which ends the cycle, run compaction for the cycle boundary, then go to Maintainer review.
           - Otherwise, dispatch a separate Reviewer on the whole changed issue revision, including earlier cycles' changes.
         evidence: Chat assignment, or the eligible waiver naming the exact revision; checkpoint record.
         transitions:
@@ -387,7 +420,9 @@ stages:
             to: independent-review
       - key: independent-review
         role: Reviewer
-        action: Check the change, run the applicable checks, and report findings and a recommendation.
+        action:
+          - Check the change, run the applicable checks, and report findings and a recommendation.
+          - The recorded result ends the cycle; the Coordinator runs compaction for the cycle boundary.
         method:
           - agents/roles/reviewer.md#review
         evidence: Chat findings and check results, tied to the reviewed revision.
@@ -424,7 +459,9 @@ stages:
             to: implementation-evidence
       - key: implementation-evidence
         role: Coordinator
-        action: Confirm every Implement completion condition and close the stage.
+        action:
+          - Confirm every Implement completion condition and close the stage.
+          - Run compaction for the stage boundary.
         evidence: Matching sign-off, assessment, review or eligible waiver, and validation references; updated checkpoint.
   - name: Publish
     entry:
@@ -495,6 +532,7 @@ stages:
         action:
           - The Maintainer confirms the merge.
           - The Coordinator closes Publish, or for a Parent Issue returns to parent-publication-check.
+          - When Publish closes, run compaction for the stage boundary.
         evidence: GitHub merge, chat confirmation, and updated checkpoint.
         transitions:
           - when: Atomic Issue; Publish closed and Retro opens.
@@ -622,7 +660,9 @@ stages:
             to: parent-gap-triage
       - key: parent-outcome-acceptance
         role: Maintainer and Coordinator
-        action: With contract and integration evidence for the same combined revision, the Maintainer accepts the combined outcome against the current criteria, or gives direction. On acceptance, the Coordinator closes Publish.
+        action:
+          - With contract and integration evidence for the same combined revision, the Maintainer accepts the combined outcome against the current criteria, or gives direction. On acceptance, the Coordinator closes Publish.
+          - When Publish closes, run compaction for the stage boundary.
         method:
           - agents/roles/coordinator.md#hand-back
         evidence: Maintainer acceptance in chat or the issue, naming the combined revision both checks covered.
@@ -679,6 +719,7 @@ stages:
           - Confirm every stage obligation is met, including the recorded skip, the recorded zero-candidate result, or every draft filed or dropped.
           - For a Parent Issue, once every checkpoint obligation is also met, close the issue and verify that its Project status is Done. No final edit or PR is needed.
           - Close Retro, completing the Lifecycle.
+          - Run compaction for the stage boundary.
           - Hand back to the Maintainer and tell them the worktree can be archived. A Sub-Issue also sends its final hand back to the Parent Issue's Coordinator and records delivery; a failed delivery keeps that obligation open.
         method:
           - agents/roles/coordinator.md#change-github-project-status
