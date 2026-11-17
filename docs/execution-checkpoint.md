@@ -23,6 +23,8 @@ The execution checkpoint is a small local record of where one issue stands in th
 
 The Progress Readout and the native task list are built from this record, as the Lifecycle's [`progress_readout`](lifecycle.yaml) defines.
 
+At a Lifecycle [`compaction`](lifecycle.yaml) boundary, the record holds the recovery pointers an agent reloads afterward: the revision, current step, decisions and approvals, review evidence and open findings, obligations, and next action. Each deferred, excluded, or failed compaction is an obligation, and a failure is also an error. A separate obligation points to the completed transactions' evidence.
+
 ## Example
 
 An illustrative record for a fictional issue, waiting on a Reviewer in its second cycle:
