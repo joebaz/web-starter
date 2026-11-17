@@ -101,26 +101,24 @@ checkpoint:
 compaction:
   method: agents/roles/coordinator.md#compact-agent-context
   boundary:
-    - A boundary is a stage's close, or a cycle's end under rules.cycles once its review result or eligible review_exception is recorded.
+    - A boundary is the close of Define, Plan, or Implement, or a cycle's end under rules.cycles once its review result or eligible review_exception is recorded. Closing Publish or Retro isn't a boundary, whether /retro ran or was skipped.
     - Compaction starts after the boundary's hand backs are verified and the checkpoint holds the recovery pointers that execution-checkpoint.md lists.
     - An interim hand back, a finished turn, or an idle agent isn't a boundary.
   order:
     - The Coordinator owns compaction and runs one transaction per participant, one at a time, oldest-started first.
-    - The Coordinator's own transaction runs last, through a supervised helper it arranges before its hand back. The Coordinator continues once that transaction is verified.
   transaction:
     - A transaction is one native compaction, its verification, one bounded recovery check against the checkpoint, and the checkpoint updates that record them.
     - Coincident boundaries share a completed transaction only when they have the same revision and recovery state with no substantive work between them. Recording a transaction isn't substantive work; any other change needs a new transaction.
-    - Record each completed transaction's evidence, with the helper's agent ID for the Coordinator's, in a local record under .agent-state/ or a chat locator. Keep one checkpoint obligation pointing to it, separate from deferral, exclusion, and failure obligations.
+    - Record each completed transaction's evidence in a local record under .agent-state/ or a chat locator. Keep one checkpoint obligation pointing to it, separate from deferral, exclusion, and failure obligations.
   participants:
-    - Participants are the delegated agents on the issue, including inherited ones. Before any send, reconcile each agent's assignment, stop, and usage limit from the checkpoint; being idle doesn't make an agent eligible.
+    - Participants are the delegated agents on the issue, including inherited ones. The Coordinator isn't a participant; provider auto-mode manages its context. Before any send, reconcile each agent's assignment, stop, and usage limit from the checkpoint; being idle doesn't make an agent eligible.
     - An agent with an unfinished assignment is deferred. It owes this boundary's transaction, which runs as soon as that assignment's hand back is verified and recorded, unless the agent is then stopped or usage-limited. An interim hand back with no owed boundary transaction triggers none.
     - A stopped or usage-limited agent is excluded and gets no prompt. Its resume stays with the Maintainer under ../AGENTS.md#roles; once resumed, it owes a transaction at the next eligible boundary.
-    - The helper's assignment is control-only. The helper isn't a participant and owes no deferred transaction. Its assignment closes once the Coordinator's native completion and recovery are verified, with no further compaction obligation. A helper can be reused at later boundaries, and no boundary needs a fresh agent.
     - Record each deferral and exclusion as an obligation. It closes when the owed transaction is verified, or when the agent is archived with its exclusion recorded.
   failure:
     - A failed transaction leaves the step holding the boundary current and failed under rules.state, with the failure in errors and an obligation. The boundary's remaining transactions wait until the affected agent's recovery is resolved. Other authorized work outside the boundary carries on; there's no automatic retry and no new gate.
-    - Recovering the affected agent under the Maintainer's direction, such as by a retry or a verified alternative, closes only its failure. The remaining transactions then resume in order, the Coordinator's last.
-    - The step completes only when every eligible delegate and the Coordinator have a verified transaction, and every other delegate has a recorded deferral or exclusion.
+    - Recovering the affected agent under the Maintainer's direction, such as by a retry or a verified alternative, closes only its failure. The remaining transactions then resume in order.
+    - The step completes only when every eligible delegate has a verified transaction, and every other delegate has a recorded deferral or exclusion.
   fallback:
     - When a provider can't support native compaction, report the concrete limitation to the Maintainer, who decides the recovery alternative.
     - A new-session handoff verifies the replacement agent's recovery before the original is archived. It proves only the handoff and is never reported as native compaction.
@@ -532,7 +530,6 @@ stages:
         action:
           - The Maintainer confirms the merge.
           - The Coordinator closes Publish, or for a Parent Issue returns to parent-publication-check.
-          - When Publish closes, run compaction for the stage boundary.
         evidence: GitHub merge, chat confirmation, and updated checkpoint.
         transitions:
           - when: Atomic Issue; Publish closed and Retro opens.
@@ -662,7 +659,6 @@ stages:
         role: Maintainer and Coordinator
         action:
           - With contract and integration evidence for the same combined revision, the Maintainer accepts the combined outcome against the current criteria, or gives direction. On acceptance, the Coordinator closes Publish.
-          - When Publish closes, run compaction for the stage boundary.
         method:
           - agents/roles/coordinator.md#hand-back
         evidence: Maintainer acceptance in chat or the issue, naming the combined revision both checks covered.
@@ -719,7 +715,6 @@ stages:
           - Confirm every stage obligation is met, including the recorded skip, the recorded zero-candidate result, or every draft filed or dropped.
           - For a Parent Issue, once every checkpoint obligation is also met, close the issue and verify that its Project status is Done. No final edit or PR is needed.
           - Close Retro, completing the Lifecycle.
-          - Run compaction for the stage boundary.
           - Hand back to the Maintainer and tell them the worktree can be archived. A Sub-Issue also sends its final hand back to the Parent Issue's Coordinator and records delivery; a failed delivery keeps that obligation open.
         method:
           - agents/roles/coordinator.md#change-github-project-status
