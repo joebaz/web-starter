@@ -145,7 +145,7 @@ Keep each issue's execution checkpoint as the small local record the [execution 
 
 ## Compact agent context
 
-Use this method for the Lifecycle's [`compaction`](../../lifecycle.yaml) rules, which set the boundaries, order, participants, and failure handling. A finished turn or an idle agent isn't a boundary.
+Use this method to compact delegated agents under the Lifecycle's [`compaction`](../../lifecycle.yaml) rules, which set the boundaries, order, participants, and failure handling. A finished turn or an idle agent isn't a boundary.
 
 ### Check before sending
 
@@ -168,16 +168,6 @@ A message telling an agent to compact isn't native compaction.
 3. Record the context usage again, with the time you read it. The idle reading can lag, so record what you observe; a smaller number isn't required, and an unchanged one alone isn't a failure.
 4. Send one bounded recovery check: ask the agent to reload its role SOP and the checkpoint's recovery pointers, then report the revision, current step, approvals, open findings, obligations, and next action. Compare its answer with the checkpoint.
 5. Record the evidence where `compaction` says. A missing completed compaction item, a changed session ID, or a mismatched answer is a failure under `compaction`.
-
-### Compact yourself through a helper
-
-You can't be idle while you send, so a helper runs your own transaction last.
-
-1. Before your boundary hand back, assign the helper: an existing idle agent with no unfinished assignment, or a new one. Reuse a helper at later boundaries.
-2. Brief it with your agent ID, the checkpoint path, and this section. Its assignment is control-only: it edits no files, may capture read-only evidence, and compacts only you.
-3. The helper waits for you with `paseo wait` or a tool completion notification, then runs [Check before sending](#check-before-sending), [Compact](#compact), and [Verify](#verify) on you. Those events are its only triggers: no detached jobs, timers, polling, or wake-ups.
-4. Answer the helper's recovery check from the reloaded pointers.
-5. When it hands back, record its agent ID with the evidence. Its assignment then closes.
 
 ## Run Retro drafts
 
